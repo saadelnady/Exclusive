@@ -1,9 +1,9 @@
 const express = require("express");
 const Router = express.Router();
 const {
-  addCategoryValidation,
-  editCategoryValidation,
-} = require("../middlewares/categoryValidation");
+  addSubCategoryValidation,
+  editSubCategoryValidation,
+} = require("../middlewares/subCategoryValidation");
 
 const {
   getAllSubCategories,
@@ -15,11 +15,11 @@ const {
 
 Router.route("/")
   .get(getAllSubCategories)
-  .post(addCategoryValidation(), addSubCategory);
+  .post(addSubCategoryValidation(), addSubCategory);
 
 Router.route("/:subCategoryId")
   .get(getSubCategory)
-  .put(editCategoryValidation(), editSubCategory)
+  .put(editSubCategoryValidation(), editSubCategory)
   .delete(deleteSubCategory);
 
 module.exports = Router;

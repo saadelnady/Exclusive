@@ -3,28 +3,52 @@ const asyncWrapper = require("../middlewares/asyncWrapper");
 const Category = require("../models/category.model");
 const appError = require("../utils/appError");
 const { httpStatusText } = require("../utils/constants");
+const mongoose = require("mongoose");
 
 const getAllCategories = asyncWrapper(async (req, res, next) => {
-  const { limit, page, text } = req.query;
+  const limit = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const text = req.query.text;
   const skip = (page - 1) * limit;
 
-  // Constructing the regex to match categories containing the provided text
-  const regex = new RegExp(text, "i");
+  const searchQuery = {};
 
-  // Query to find categories with title matching the regex
-  const categories = await Category.find({ title: regex }, { __v: false })
-    .populate("subCategories")
-    .limit(limit)
-    .skip(skip);
+  const escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
 
-  // Query to get all categories (for calculating total count)
-  const allCategories = await Category.find({}, { __v: false });
+  if (text) {
+    const safeText = escapeRegex(text);
+    const regex = { $regex: safeText, $options: "i" };
 
-  const categoriesLength = allCategories.length;
+    searchQuery.$or = [
+      { "title.ar": regex },
+      { "title.en": regex },
+      {
+        _id: mongoose.Types.ObjectId.isValid(text)
+          ? new mongoose.Types.ObjectId(text)
+          : undefined,
+      },
+    ].filter(Boolean);
+  }
+
+  const [categories, totalCategoriesCount] = await Promise.all([
+    Category.find(searchQuery, { __v: 0 })
+      .populate("subCategories")
+      .limit(limit)
+      .skip(skip),
+    Category.countDocuments(searchQuery),
+  ]);
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
-    data: { categories, total: categoriesLength },
+    data: {
+      categories,
+      total: totalCategoriesCount,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalCategoriesCount / limit),
+    },
   });
 });
 
@@ -34,14 +58,19 @@ const addCategory = asyncWrapper(async (req, res, next) => {
     return res.json({ status: httpStatusText.FAIL, errors: { errors } });
   }
 
-  const { title } = req.body;
+  const {
+    title: { ar, en },
+  } = req.body;
 
   const categoryExist = await Category.findOne({
-    title: title,
+    $or: [{ "title.ar": ar }, { "title.en": en }],
   });
   if (categoryExist) {
     const error = appError.create(
-      " category is already exists",
+      {
+        ar: "القسم موجود بالفعل",
+        en: "Category already exists",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -49,15 +78,16 @@ const addCategory = asyncWrapper(async (req, res, next) => {
   }
 
   const newCategory = new Category({ ...req.body });
-  if (req?.file) {
-    newCategory.image = `uploads/${req?.file?.filename}`;
-  }
+
   await newCategory.save();
 
   return res.status(201).json({
     status: httpStatusText.SUCCESS,
     data: { category: newCategory },
-    message: "category added Successfully",
+    message: {
+      ar: "تم اضافة القسم بنجاح",
+      en: "Category added successfully",
+    },
   });
 });
 
@@ -68,7 +98,10 @@ const getCategory = asyncWrapper(async (req, res, next) => {
   );
   if (!targetCategory) {
     const error = appError.create(
-      "category not found",
+      {
+        ar: "القسم غير موجود",
+        en: "Category not found",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -76,7 +109,10 @@ const getCategory = asyncWrapper(async (req, res, next) => {
   }
   if (!categoryId) {
     const error = appError.create(
-      "categoryId is required",
+      {
+        ar: "المعرف غير صحيح",
+        en: "Invalid id",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -99,44 +135,52 @@ const editCategory = asyncWrapper(async (req, res, next) => {
   const targetCategory = await Category.findById(categoryId);
   if (!targetCategory) {
     const error = appError.create(
-      "category not found",
+      {
+        ar: "القسم غير موجود",
+        en: "Category not found",
+      },
       400,
       httpStatusText.FAIL
     );
     return next(error);
   }
-  const options = {
-    new: true,
-  };
 
-  const { title } = req.body;
+  const {
+    title: { ar, en },
+  } = req.body;
+
   const categoryExist = await Category.findOne({
-    title: title,
+    _id: { $ne: categoryId },
+    $or: [{ "title.ar": ar }, { "title.en": en }],
   });
 
   if (categoryExist) {
     const error = appError.create(
-      "category is already exist",
+      {
+        ar: "القسم موجود بالفعل",
+        en: "Category already exists",
+      },
       400,
       httpStatusText.FAIL
     );
     return next(error);
   }
-  let updateFields = { ...req.body };
-  if (req.file) {
-    updateFields.image = `uploads/${req.file.filename}`;
-  }
 
-  const updatedCategory = await Category.findOneAndUpdate(
-    { _id: categoryId },
+  const updateFields = { ...req.body };
+
+  const updatedCategory = await Category.findByIdAndUpdate(
+    categoryId,
     { $set: updateFields },
-    { ...options, new: true }
+    { new: true }
   );
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: { category: updatedCategory },
-    message: "category updated Successfully",
+    message: {
+      ar: "تم تعديل القسم بنجاح",
+      en: "Category updated successfully",
+    },
   });
 });
 

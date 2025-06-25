@@ -50,7 +50,7 @@ const UploadImg = ({
         />
       </div>
       {errors?.image && (
-        <p className="error text-center mb-5">
+        <p className="error text-center mb-5 mx-auto">
           <IcError />
           {errors?.image.message}
         </p>

@@ -2,12 +2,14 @@ const mongoose = require("mongoose");
 const subcategorySchema = new mongoose.Schema(
   {
     title: {
-      type: String,
-      required: true,
+      ar: { type: String, required: true },
+      en: { type: String, required: true },
     },
     image: {
       type: String,
-      default: "uploads/subCategory-default.png",
+      default: function () {
+        return `${process.env.BASE_URL}/uploads/subCategory-default.png`;
+      },
     },
     category: {
       type: mongoose.Types.ObjectId,

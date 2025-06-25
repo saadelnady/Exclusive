@@ -128,14 +128,14 @@ export const adminLinks = [
       {
         id: v4(),
         title: "add-category",
-        to: "/add-category",
+        to: "/categories/new",
       },
     ],
   },
   {
     id: v4(),
     title: "sub-categories",
-    to: "/sub-categories",
+    to: "/subCategories",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -152,8 +152,8 @@ export const adminLinks = [
     children: [
       {
         id: v4(),
-        title: "add-sub-category",
-        to: "/add-sub-category",
+        title: "addSubCategory",
+        to: "/addSubCategory",
       },
     ],
   },

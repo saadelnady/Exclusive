@@ -7,7 +7,7 @@
   "categories": "الأقسام",
   "add-category": "إضافة قسم",
   "sub-categories": "الأقسام الفرعية",
-  "add-sub-category": "إضافة قسم فرعي",
+  "addSubCategory": "إضافة قسم فرعي",
   "logout": "تسجيل الخروج",
   "wellcome": "أهلا بعودتك",
   "login-text": " تسجيل الدخول",
@@ -68,5 +68,15 @@
   "block": "حظر",
   "unblock": "الغاء الحظر",
   "blockUser": "حظر المستخدم",
-  "min-length": "يجب ان يكون على الاقل 5 حروف"
+  "min-length": "يجب ان يكون على الاقل 5 حروف",
+  "max-length": "يجب ان لا يزيد عن 20 حرف",
+  "categoriesDescription": "يعرض الجدول جميع الاقسام في الموقع",
+  "addNewCategory": "اضافة قسم جديد",
+  "addNewCategoryDescription": "قم بملء الحقول لاضافة قسم جديد",
+  "titleAr": "العنوان بالعربية",
+  "titleEn": "العنوان بالانجليزية",
+  "editCategory": "تعديل القسم",
+  "editCategoryDescription": "قم بملء الحقول لتعديل القسم",
+  "delete-category-message": "هل تريد حذف هذا القسم؟",
+  "title": "العنوان"
 }

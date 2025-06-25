@@ -2,10 +2,12 @@ import Product from "../components/Product/Index.jsx";
 import PendingProducts from "../components/Products/PendingProducts.jsx";
 import AcceptedProducts from "../components/Products/AcceptedProducts.jsx";
 import BlockedProducts from "../components/Products/BlockedProducts.jsx";
-import Categories from "../components/Categories/Categories.jsx";
-import AddCategory from "../components/AddCategory/AddCategory.jsx";
-import AddSubCategory from "../components/AddsubCategory/AddSubCategory.jsx";
-import SubCategories from "../components/SubCategories/SubCategories.jsx";
+import Categories from "../components/Categories/Index.js";
+import AddCategory from "../components/Categories/addNewCategory.js";
+import ShowCategory from "@/components/Categories/showCategory.js";
+import AddSubCategory from "../components/Subcategories/addNewSubCategory.js";
+import SubCategories from "../components/Subcategories/Index.js";
+import ShowSubCategory from "../components/Subcategories/showSubCategory.js";
 import Seller from "../components/Seller/Index.jsx";
 import NotFoundPage from "../components/Shared/NotFoundPage.jsx";
 import AllAdmins from "@/components/admins/Index.js";
@@ -130,7 +132,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/add-category",
+    path: "/categories/new",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
         <AddCategory />
@@ -138,23 +140,23 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/categories/editCategory/:categoryId",
+    path: "/categories/show/:categoryId",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
-        <AddCategory />
+        <ShowCategory />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/sub-categories/:subCategoryId",
+    path: "/subCategories/show/:subCategoryId",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
-        <AddSubCategory />
+        <ShowSubCategory />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/sub-categories",
+    path: "/subCategories",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
         <SubCategories
@@ -165,7 +167,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/add-sub-category",
+    path: "/addSubCategory",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
         <AddSubCategory />

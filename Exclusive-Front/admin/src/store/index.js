@@ -2,8 +2,8 @@ import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { adminReducer } from "./reducers/adminReducer/adminReducer.js";
 import { productReducer } from "./reducers/productReducer/productReducer.js";
 import { sellerReducer } from "./reducers/sellerReducer/sellerReducer.js";
-import { categoryReducer } from "./reducers/categoryReducer/categoryReducer.js";
-import { subCategoryReducer } from "./reducers/subCategory/subCategoryReducer.js";
+import { categoriesReducer } from "./reducers/categoriesReducer/categoriesReducer.js";
+import { subCategoriesReducer } from "./reducers/subCategoriesReducer/subCategoriesReducer.js";
 import { couponCodeReducer } from "./reducers/couponCodeRdeucer/couponCodeReducer.js";
 import { localeReducer } from "./reducers/languageReducer/languageReducer.js";
 import { thunk } from "redux-thunk";
@@ -21,8 +21,8 @@ const appReducers = combineReducers({
   userReducer,
   productReducer,
   sellerReducer,
-  categoryReducer,
-  subCategoryReducer,
+  categoriesReducer,
+  subCategoriesReducer,
   couponCodeReducer,
   localeReducer,
   statisticsReducer,

@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const addCategoryValidation = () => {
+const addSubCategoryValidation = () => {
   return [
     body("title.ar")
       .notEmpty()
@@ -16,7 +16,7 @@ const addCategoryValidation = () => {
   ];
 };
 
-const editCategoryValidation = () => {
+const editSubCategoryValidation = () => {
   return [
     body("title.ar")
       .optional()
@@ -30,4 +30,4 @@ const editCategoryValidation = () => {
   ];
 };
 
-module.exports = { addCategoryValidation, editCategoryValidation };
+module.exports = { addSubCategoryValidation, editSubCategoryValidation };

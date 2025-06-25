@@ -71,7 +71,7 @@ router.post("/", upload.array("files", 10), (req, res) => {
   }));
 
   res.status(200).json({
-    message: "Files uploaded successfully",
+    message: { ar: "تم رفع الملفات بنجاح", en: "Files uploaded successfully" },
     files: uploadedFiles,
   });
 });
