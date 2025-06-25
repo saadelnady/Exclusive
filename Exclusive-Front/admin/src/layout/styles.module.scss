@@ -1,0 +1,32 @@
+.admin-layout {
+  :global {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    background-color: $bg-light;
+    [data-theme="dark"] & {
+      background-color: $bg-dark;
+    }
+
+    .pages {
+      padding: 44px;
+      height: 100%;
+      background-color: $bg-light-2;
+      [data-theme="dark"] & {
+        background-color: $bg-dark;
+      }
+      .page {
+        padding: 40px;
+        border-radius: 15px;
+
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: $bg-light;
+        [data-theme="dark"] & {
+          background-color: $bg-dark-2;
+        }
+      }
+    }
+  }
+}

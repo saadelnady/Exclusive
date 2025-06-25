@@ -1,0 +1,62 @@
+.table-wrapper {
+  :global {
+    @media (max-width: 992px) {
+      overflow-x: auto;
+    }
+    margin-bottom: 40px;
+    .custom-table {
+      width: 100%;
+      font-size: 14px;
+      border: 1px solid $border-color-light;
+      background-color: $bg-light;
+      [data-theme="dark"] & {
+        border-color: $border-color-dark;
+        background-color: $bg-dark-2 !important;
+      }
+      thead {
+        background-color: $bg-light;
+        color: $text-dark;
+        [data-theme="dark"] & {
+          background-color: $bg-dark-2;
+          color: $text-light;
+        }
+      }
+
+      th,
+      td {
+        border: 1px solid $border-color-light;
+        [data-theme="dark"] & {
+          border-color: $border-color-dark;
+          color: $text-light;
+        }
+        padding: 20px 15px;
+        white-space: nowrap; // يمنع كسر الأسطر داخل الخلية
+      }
+
+      tr:hover {
+        background-color: $bg-light-2;
+        [data-theme="dark"] & {
+          background-color: $bg-dark;
+        }
+      }
+      .actions {
+        @media (max-width: 992px) {
+          .custom-dropdown {
+            top: -81%;
+            right: -120px;
+            [dir="ltr"] & {
+              right: unset;
+              left: -120px;
+            }
+          }
+        }
+      }
+      .no-data {
+        text-align: center;
+        padding: 20px;
+        font-style: italic;
+        color: #999;
+      }
+    }
+  }
+}

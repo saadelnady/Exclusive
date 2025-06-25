@@ -1,0 +1,54 @@
+.admin-product-page .product-details .description {
+  line-height: 1.7;
+  font-size: 20px;
+}
+
+.admin-product-page > div {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.admin-product-page .product-details .product-options thead {
+  background-color: #eff1ff;
+  height: 80px;
+}
+.admin-product-page .product-details tr:nth-child(even) {
+  background-color: #eff1ff;
+}
+.admin-product-page .product-details table th {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 992px) {
+  .admin-product-page .product-options {
+    overflow-x: auto;
+  }
+  .admin-product-page .product-details table th {
+    font-size: 0.8rem;
+  }
+  .admin-product-page .product-details .swiper-button-next {
+    display: none;
+  }
+  .admin-product-page .product-details .swiper-button-prev {
+    display: none;
+  }
+}
+.admin-product-page .product-details .product-options table {
+  width: 100%;
+  border-collapse: unset;
+}
+
+.admin-product-page .product-details .product-options table td {
+  padding: 5px 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.admin-product-page .product-details .product-options .product-color {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}

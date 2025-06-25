@@ -1,0 +1,99 @@
+.product {
+  position: relative;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  overflow: hidden;
+}
+.product-card {
+  min-height: 25rem;
+  position: relative;
+  min-width: 20rem;
+  margin-right: 5px;
+}
+.product-card .product-img {
+  width: 20rem;
+  height: 25rem;
+  transition: 0.5s;
+  -webkit-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -ms-transition: 0.5s;
+  -o-transition: 0.5s;
+}
+.product:hover .product-img {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}
+.product-card .header {
+  position: relative;
+  background-color: var(--bg-light);
+  overflow: hidden;
+  text-align: center;
+}
+.product .discountPercentage {
+  position: absolute;
+  background-color: var(--red-color);
+  top: 130px;
+  left: 40px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  color: #fff;
+  z-index: 600;
+}
+.product .product-icons {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 130px;
+  right: -40px;
+  z-index: 600;
+  transition: 0.5s;
+  -webkit-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -ms-transition: 0.5s;
+  -o-transition: 0.5s;
+}
+.product:hover .product-icons {
+  right: 40px;
+}
+.product .product-icons svg {
+  color: black;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  transition: 0.5s;
+  -webkit-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -ms-transition: 0.5s;
+  -o-transition: 0.5s;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.product .product-icons svg:hover {
+  color: #fff;
+  background-color: var(--red-color);
+}
+
+.product-card .content .final-price {
+  color: rgba(219, 68, 68, 1);
+}
+.product-card .content .price-before-discount {
+  color: rgba(0, 0, 0, 1);
+}
+
+.product-card .product-img {
+  pointer-events: none;
+}

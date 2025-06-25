@@ -1,0 +1,27 @@
+.tooltip-container {
+  position: relative;
+  display: flex;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tooltip {
+  position: absolute;
+  top: -30px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 1;
+  z-index: 999;
+}
+
+.tooltip-trigger {
+  cursor: pointer;
+  align-self: center;
+}

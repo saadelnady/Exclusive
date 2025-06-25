@@ -1,0 +1,90 @@
+.home {
+  :global {
+    .page-title {
+      color: $text-dark;
+      [data-theme="dark"] & {
+        color: $text-light;
+      }
+    }
+    .statistics {
+      justify-content: flex-start;
+      row-gap: 15px;
+      column-gap: 15px;
+      margin-bottom: 20px;
+      .state-card {
+        @media (min-width: 992px) {
+          flex-basis: calc(33.33% - 15px);
+        }
+        @media (max-width: 992px) {
+          flex-basis: calc(50% - 15px);
+        }
+        @media (max-width: 768px) {
+          flex-basis: 100%;
+        }
+        background-color: #fff;
+        color: $text-dark;
+        padding: 15px 0;
+        border-radius: 10px;
+        text-align: center;
+        transition: $transition;
+        border: 1px solid $border-color-light;
+
+        [data-theme="dark"] & {
+          background-color: $bg-dark;
+          border-color: $border-color-dark;
+          color: $text-light;
+        }
+        &:hover {
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        svg {
+          stroke: $primary-color;
+          margin-bottom: 15px;
+        }
+        h4 {
+          margin-bottom: 10px;
+          [data-theme="dark"] & {
+            color: $text-light;
+          }
+        }
+      }
+    }
+    .charts {
+      padding: 20px;
+      background-color: $bg-light;
+      color: $text-dark;
+      [data-theme="dark"] & {
+        background-color: $bg-dark;
+        color: $text-light;
+      }
+    }
+    .notifications,
+    .activities {
+      padding: 20px;
+      background-color: $bg-light;
+      color: $text-dark;
+      [data-theme="dark"] & {
+        background-color: $bg-dark-2;
+        color: $text-light;
+      }
+      h3 {
+        margin-bottom: 15px;
+        [data-theme="dark"] & {
+          color: $text-light;
+        }
+      }
+      ul {
+        padding-left: 20px;
+        li {
+          background-color: $bg-light;
+          color: $text-dark;
+          [data-theme="dark"] & {
+            background-color: $bg-dark-2;
+            color: $text-light;
+          }
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+.pagination-custom {
+  :global {
+    margin: auto auto 20px;
+
+    display: flex;
+    justify-content: center;
+    .page-item.active .page-link {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: $text-light;
+      [data-theme="dark"] & {
+        color: $text-light;
+        background-color: $primary-color;
+      }
+    }
+
+    .page-link {
+      color: $primary-color;
+      background-color: $bg-light;
+      border: 1px solid $border-color-light;
+      [data-theme="dark"] & {
+        color: $primary-color;
+        background-color: $bg-dark-2;
+        border-color: $border-color-dark;
+      }
+      &:hover {
+        background-color: $primary-color;
+        color: $text-light;
+      }
+    }
+    .page-item:first-child .page-link {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      [dir="ltr"] & {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    .page-item:last-child .page-link {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      [dir="ltr"] & {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+
+    // .page-item:first-child .page-link::before {
+    //   content: "\2192"; // → السهم لليمين
+    //   [dir="ltr"] & {
+    //     content: "\2190"; // ← السهم لليسار
+    //   }
+    //   font-size: 14px;
+    //   margin-right: 5px;
+    // }
+
+    // .page-item:last-child .page-link::after {
+    //   content: "\2190"; // ← السهم لليسار بدل النص الافتراضي
+    //   [dir="ltr"] & {
+    //     content: "\2192"; // → السهم لليمين
+    //   }
+    //   font-size: 14px;
+    //   margin-left: 5px;
+    // }
+    // .page-item:first-child,
+    // .page-item:last-child {
+    //   span:first-of-type {
+    //     display: none;
+    //   }
+    // }
+  }
+}
