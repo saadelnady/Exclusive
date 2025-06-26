@@ -5,6 +5,7 @@ import styles from "./styles/styles.module.scss";
 import { NavLink } from "react-router-dom";
 import SearchBar from "../Shared/search/Index";
 import Table from "../Shared/Table/Index";
+import Pagenation from "../Shared/Pagenation/Index";
 import Warning from "../Shared/warning/Index";
 
 import { useEffect, useRef, useState } from "react";
@@ -70,6 +71,7 @@ const SubCategories = ({ isWarning, handleShowWarning }) => {
   const popupInfo = {
     Icon: <DeleteIcon />,
     message: "delete-sub-category-message",
+    subMessage: "delete-sub-category-subMessage",
     actionTitle: "delete",
   };
   const cols = [
@@ -86,7 +88,7 @@ const SubCategories = ({ isWarning, handleShowWarning }) => {
       label: "image",
       name: "image",
       render: (row, rowIdx) => (
-        <div className="subCategory-img">
+        <div className="subcategory-img">
           <img src={row?.image} alt="subCategory-img" />
         </div>
       ),
@@ -185,7 +187,7 @@ const SubCategories = ({ isWarning, handleShowWarning }) => {
             </div>
           </Col>
           <Col xs={12} md={4}>
-            <NavLink to="/categories/new">
+            <NavLink to="/subCategories/add">
               + <FormattedMessage id="add-subCategory" />
             </NavLink>
           </Col>

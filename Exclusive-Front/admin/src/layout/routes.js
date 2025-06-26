@@ -167,7 +167,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/addSubCategory",
+    path: "/subCategories/add",
     element: (
       <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
         <AddSubCategory />

@@ -12,7 +12,7 @@ const Warning = ({ handleShowWarning, actionHandler, popupInfo }) => {
         )}
         {subMessage && (
           <p className="warning-sub-messge ">
-            {<FormattedMessage id={message} />}
+            {<FormattedMessage id={subMessage} />}
           </p>
         )}
         <div className="btns">

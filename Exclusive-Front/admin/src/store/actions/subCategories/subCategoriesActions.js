@@ -44,30 +44,34 @@ export const fetchSubCategory = (subCategoryId) => {
   };
 };
 // =========================================================================================
-export const addSubCategory = ({ formData, toast }) => {
+export const addSubCategory = ({ data, toast, navigate, locale }) => {
   return async (dispatch) => {
-    dispatch(actionsCreators.addSubCategory(formData));
+    dispatch(actionsCreators.addSubCategory(data));
     try {
-      const response = await postData(`/api/subCategories`, formData);
+      const response = await postData(`/api/subCategories`, data);
       dispatch(actionsCreators.addSubCategorySuccess(response));
-      showToast(toast, response?.message, "success");
+
+      showToast(toast, response?.message?.[locale], "success");
+      navigate("/subCategories");
     } catch (error) {
       dispatch(
-        actionsCreators.addSubCategoryFail(error?.response?.data?.message)
+        actionsCreators.addSubCategoryFail(
+          error?.response?.data?.message?.[locale]
+        )
       );
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };
 // =========================================================================================
-export const editSubCategory = ({ subCategoryId, formData, toast }) => {
+export const editSubCategory = ({ subCategoryId, data, toast }) => {
   return async (dispatch) => {
-    dispatch(actionsCreators.editSubCategory(formData));
+    dispatch(actionsCreators.editSubCategory(data));
 
     try {
       const response = await putData(
         `/api/subCategories/${subCategoryId}`,
-        formData
+        data
       );
       dispatch(actionsCreators.editSubCategorySuccess(response));
       showToast(toast, response?.message, "success");

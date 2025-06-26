@@ -131,6 +131,9 @@ html {
       fill: #fff;
       width: 20px;
       height: 20px;
+      [data-theme="dark"] & {
+        fill: $secondary-color;
+      }
     }
   }
 }

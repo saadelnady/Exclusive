@@ -78,5 +78,13 @@
   "editCategory": "تعديل القسم",
   "editCategoryDescription": "قم بملء الحقول لتعديل القسم",
   "delete-category-message": "هل تريد حذف هذا القسم؟",
-  "title": "العنوان"
+  "title": "العنوان",
+  "addNewSubCategory": "اضافة قسم فرعي جديد",
+  "addNewSubCategoryDescription": "قم بملء الحقول لاضافة قسم فرعي جديد",
+  "add": "اضافة",
+  "category": "القسم",
+  "selectCategory": "اختر القسم",
+  "delete-sub-category-message": "هل تريد حذف هذا القسم فرعي؟",
+  "delete-sub-category-subMessage": "سوف يتم حذف جميع المنتجات التابعة لهذا القسم فرعي",
+  "noMoreCategories": "لا يوجد اقسام فرعية أخرى"
 }

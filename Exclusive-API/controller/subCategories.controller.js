@@ -60,9 +60,15 @@ const addSubCategory = asyncWrapper(async (req, res, next) => {
     return res.json({ status: httpStatusText.FAIL, errors: { errors } });
   }
 
-  const { category: categoryId, title } = req.body; // title = { ar, en }
+  const { categoryId, title, image } = req.body;
+  console.log("req.body", req.body);
 
-  const targetCategory = await Category.findById(categoryId);
+  console.log("categoryId", categoryId);
+  console.log("title", title);
+
+  const targetCategory = await Category.findOne({ _id: categoryId });
+  console.log("targetCategory", targetCategory);
+
   if (!targetCategory) {
     return res.json({
       status: httpStatusText.FAIL,
@@ -94,6 +100,7 @@ const addSubCategory = asyncWrapper(async (req, res, next) => {
   const newSubCategory = new subCategory({
     title,
     category: categoryId,
+    image,
   });
 
   await newSubCategory.save();

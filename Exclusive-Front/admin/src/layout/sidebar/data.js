@@ -153,7 +153,7 @@ export const adminLinks = [
       {
         id: v4(),
         title: "addSubCategory",
-        to: "/addSubCategory",
+        to: "/subCategories/add",
       },
     ],
   },

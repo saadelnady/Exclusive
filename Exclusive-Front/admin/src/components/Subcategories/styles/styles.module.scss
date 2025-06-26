@@ -42,7 +42,7 @@
         }
       }
     }
-    .category-img {
+    .subcategory-img {
       width: 60px;
       height: 60px;
       overflow: hidden;
@@ -186,7 +186,23 @@
           padding: 0 15px;
           margin-bottom: 15px;
         }
-
+        .special-select {
+          position: relative;
+          &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            text-align: end;
+            height: 10px;
+            [dir="ltr"] & {
+              right: 15px;
+              text-align: start;
+            }
+            left: 15px;
+          }
+        }
         .icon {
           position: absolute;
           top: 64px;

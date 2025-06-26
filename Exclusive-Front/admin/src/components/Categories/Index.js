@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import SearchBar from "../Shared/search/Index";
 import Table from "../Shared/Table/Index";
 import Warning from "../Shared/warning/Index";
-
+import Pagenation from "../Shared/Pagenation/Index";
 import {
   deleteCategory,
   fetchCategories,
