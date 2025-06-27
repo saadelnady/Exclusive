@@ -1,21 +1,32 @@
-import React, { useState } from "react";
-import styles from "./styles/styles.module.scss";
+import {
+  editAdmin,
+  fetchSelectedAdminBySuperAdmin,
+} from "@/store/actions/admin/adminActions";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../Shared/loading";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
+import styles from "./styles/styles.module.scss";
 import { Col, Row } from "react-bootstrap";
+import UploadImg from "../Shared/uploadImg/Index";
 
 import IcError from "./assets/images/svgs/ic-error.svg";
-import IcEye from "./assets/images/svgs/ic-eye.svg";
-import IcEyeSlash from "./assets/images/svgs/ic-eyeslash.svg";
-
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { postAddAdmin } from "@/store/actions/admin/adminActions";
-import UploadImg from "../Shared/uploadImg/Index";
 import { postData } from "@/API/API";
+import { toast } from "react-toastify";
 
-const AddNewAdmin = () => {
+const Settings = () => {
+  const { adminId } = useParams();
+  const { selectedAdminBySuperAdmin, isLoading } = useSelector(
+    (state) => state.adminReducer
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchSelectedAdminBySuperAdmin({ adminId }));
+  }, [adminId, dispatch]);
+
   const [selectedImg, setSelectedImg] = useState({
     file: null,
     preview: null,
@@ -25,15 +36,27 @@ const AddNewAdmin = () => {
     register,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors },
+    watch,
   } = useForm();
-  const intl = useIntl();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+
   const { locale, formatMessage } = useIntl();
+
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
     data.image = selectedImg?.preview ? selectedImg?.preview : null;
-    dispatch(postAddAdmin({ data, toast, navigate, locale }));
+    const cleanedData = { ...data };
+
+    if (!data.currentPassword && !data.newPassword && !data.confirmPassword) {
+      delete cleanedData.currentPassword;
+      delete cleanedData.newPassword;
+      delete cleanedData.confirmPassword;
+    }
+
+    dispatch(
+      editAdmin({ data: cleanedData, adminId, toast, locale, navigate })
+    );
   };
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
@@ -54,7 +77,8 @@ const AddNewAdmin = () => {
     }
   };
   const [showPassword, setShowPassword] = useState({
-    password: false,
+    current: false,
+    new: false,
     confirm: false,
   });
   const togglePassword = (field) => {
@@ -63,21 +87,42 @@ const AddNewAdmin = () => {
       [field]: !prev[field],
     }));
   };
+  useEffect(() => {
+    if (selectedAdminBySuperAdmin) {
+      setSelectedImg({ file: null, preview: selectedAdminBySuperAdmin?.image });
+      setValue("firstName", selectedAdminBySuperAdmin?.firstName);
+      setValue("lastName", selectedAdminBySuperAdmin?.lastName);
+      setValue("email", selectedAdminBySuperAdmin?.email);
+      setValue("mobilePhone", selectedAdminBySuperAdmin?.mobilePhone);
+    }
+  }, [selectedAdminBySuperAdmin]);
+
+  if (isLoading) return <Loading />;
+
   return (
-    <div className={`page ${styles.addNewAdmin}`}>
+    <div className={`page ${styles.settings}`}>
       <div className="page-header">
         <div className="text">
           <h4 className="page-title">
-            <FormattedMessage id="addNewAdmin" />
+            <FormattedMessage id="editSettings" />
           </h4>
           <p className="page-description">
-            <FormattedMessage id="addNewAdminDescription" /> :
+            <FormattedMessage id="editSettingsDescription" /> :
           </p>
         </div>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Row>
-          <Col xs={12}>
+          <Col xs={12} md={6}>
+            <UploadImg
+              handleImageChange={handleImageChange}
+              selectedImg={selectedImg}
+              handleRemoveImg={handleRemoveImg}
+              register={register}
+              errors={errors}
+            />
+          </Col>
+          <Col xs={12} md={6}>
             <UploadImg
               handleImageChange={handleImageChange}
               selectedImg={selectedImg}
@@ -196,88 +241,14 @@ const AddNewAdmin = () => {
               )}
             </div>
           </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="password">
-                {formatMessage({ id: "password" })} :
-              </label>
-              <input
-                id="password"
-                {...register("password", {
-                  required: formatMessage({ id: "required" }),
-                  pattern: {
-                    value: /^.{9,25}$/,
-                    message: formatMessage({
-                      id: "passwordLength",
-                    }),
-                  },
-                })}
-                className="special-input"
-                type={showPassword.confirm ? "text" : "password"}
-              />
-              <button
-                className="icon"
-                type="button"
-                onClick={() => togglePassword("password")}
-              >
-                {showPassword.password ? <IcEyeSlash /> : <IcEye />}
-              </button>
-              {errors.password && (
-                <p className="error">
-                  <IcError />
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="confirmPassword">
-                {formatMessage({ id: "confirmPassword" })} :
-              </label>
-              <input
-                id="confirmPassword"
-                {...register("confirmPassword", {
-                  required: formatMessage({ id: "required" }),
-                  pattern: {
-                    value: /^.{9,25}$/,
-                    message: formatMessage({
-                      id: "passwordLength",
-                    }),
-                  },
-                  validate: (value) => {
-                    const { password } = getValues();
-                    if (password !== value) {
-                      return formatMessage({ id: "passwordNotMatch" });
-                    }
-                  },
-                })}
-                className="special-input"
-                type={showPassword.confirm ? "text" : "password"}
-              />
-              <button
-                className="icon"
-                type="button"
-                onClick={() => togglePassword("confirm")}
-              >
-                {showPassword.confirm ? <IcEyeSlash /> : <IcEye />}
-              </button>
-              {errors.confirmPassword && (
-                <p className="error">
-                  <IcError />
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-          </Col>
         </Row>
 
         <button type="submit" className="btn submit">
-          {intl.formatMessage({ id: "addAdmin" })}
+          {formatMessage({ id: "editAdmin" })}
         </button>
       </form>
     </div>
   );
 };
 
-export default AddNewAdmin;
+export default Settings;

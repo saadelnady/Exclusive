@@ -14,6 +14,7 @@ const categoryRouter = require("./routes/category.route");
 const subCategoriesRouter = require("./routes/subCategory.route");
 const couponCodeRouter = require("./routes/couponCode.route");
 const cartRouter = require("./routes/cart.route");
+const settingsRouter = require("./routes/settings.route");
 const uploadRouter = require("./routes/upload");
 const wishListRouter = require("./routes/wishListRouter.route.js");
 
@@ -44,6 +45,7 @@ app.use("/api/subCategories", subCategoriesRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishList", wishListRouter);
 app.use("/api/couponCode", couponCodeRouter);
+app.use("/api/settings", settingsRouter);
 
 // wild card
 app.all("*", (req, res, next) => {

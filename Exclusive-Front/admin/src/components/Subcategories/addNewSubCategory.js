@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles/styles.module.scss";
 import { FormattedMessage, useIntl } from "react-intl";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Col, Row, Dropdown, Spinner } from "react-bootstrap";
 
 import IcError from "./assets/images/svgs/ic-error.svg";
@@ -15,52 +15,36 @@ import { fetchCategories } from "@/store/actions/categories/categoriesActions";
 import { addSubCategory } from "@/store/actions/subCategories/subCategoriesActions";
 
 const AddNewSubCategory = () => {
-  const { categories } = useSelector((state) => state.categoriesReducer);
+  const { categories, currentPage, totalPages, isLoading } = useSelector(
+    (state) => state.categoriesReducer
+  );
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedImg, setSelectedImg] = useState({ file: null, preview: null });
+
+  const { locale, formatMessage } = useIntl();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const dropdownRef = useRef();
 
   const {
     register,
     handleSubmit,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm();
 
-  const intl = useIntl();
-  const { locale, formatMessage } = intl;
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  // Dropdown logic
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const dropdownRef = useRef();
-
   useEffect(() => {
-    loadCategories(page);
-  }, [page]);
-
-  const loadCategories = (pageNumber) => {
-    setLoading(true);
-
-    dispatch(fetchCategories({ page: pageNumber, limit: 10, locale }));
-    const newLength = categories?.length || 0;
-    if (newLength < pageNumber * 10) setHasMore(false);
-    setLoading(false);
-  };
+    dispatch(fetchCategories({ page: 1, limit: 10, append: true }));
+  }, []);
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
-    const nearBottom = scrollTop + clientHeight >= scrollHeight - 10;
-    if (nearBottom && hasMore && !loading) {
-      setPage((prev) => prev + 1);
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 5;
+    if (isBottom && !isLoading && currentPage < totalPages) {
+      dispatch(fetchCategories({ page: currentPage + 1, append: true }));
     }
-  };
-
-  const handleSelect = (category) => {
-    setSelected(category);
-    setValue("categoryId", category._id, { shouldValidate: true });
   };
 
   const handleImageChange = async (event) => {
@@ -79,11 +63,20 @@ const AddNewSubCategory = () => {
   const handleRemoveImg = () => {
     setSelectedImg({ file: null, preview: null });
   };
+  const handleSelectCategory = (cat) => {
+    setSelectedCategory(cat);
+    setValue("categoryId", cat._id);
+    clearErrors("categoryId");
+  };
 
+  useEffect(() => {
+    setValue("categoryId", selectedCategory?._id);
+  }, [selectedCategory]);
   const onSubmit = (data) => {
     data.image = selectedImg?.preview || null;
     dispatch(addSubCategory({ data, toast, navigate, locale }));
   };
+  console.log(errors);
 
   return (
     <div className={`page ${styles.addNewSubCategory}`}>
@@ -120,11 +113,11 @@ const AddNewSubCategory = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 5,
-                    message: formatMessage({ id: "min-length" }),
+                    message: formatMessage({ id: "minLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "max-length" }),
+                    message: formatMessage({ id: "maxLength" }),
                   },
                 })}
                 className="special-input"
@@ -150,11 +143,11 @@ const AddNewSubCategory = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 5,
-                    message: formatMessage({ id: "min-length" }),
+                    message: formatMessage({ id: "minLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "max-length" }),
+                    message: formatMessage({ id: "maxLength" }),
                   },
                 })}
                 className="special-input"
@@ -179,8 +172,8 @@ const AddNewSubCategory = () => {
                   id="category"
                   className="special-input special-select"
                 >
-                  {selected
-                    ? selected.title?.[locale]
+                  {selectedCategory
+                    ? selectedCategory?.title?.[locale]
                     : formatMessage({ id: "selectCategory" })}
                 </Dropdown.Toggle>
 
@@ -196,19 +189,20 @@ const AddNewSubCategory = () => {
                   {categories?.map((cat) => (
                     <Dropdown.Item
                       key={cat._id}
-                      onClick={() => handleSelect(cat)}
+                      onClick={() => handleSelectCategory(cat)}
                     >
                       {cat.title?.[locale]}
                     </Dropdown.Item>
                   ))}
-                  {loading && (
-                    <Dropdown.Item disabled className="text-center">
-                      <Spinner animation="border" size="sm" />{" "}
-                      {formatMessage({ id: "loading" })}
+
+                  {isLoading && (
+                    <Dropdown.Item disabled className="text-center text-muted">
+                      <FormattedMessage id="loading" />
                     </Dropdown.Item>
                   )}
-                  {!hasMore && !loading && categories.length > 0 && (
-                    <Dropdown.Item disabled className="text-muted text-center">
+
+                  {!isLoading && currentPage === totalPages && (
+                    <Dropdown.Item disabled className=" ">
                       {formatMessage({ id: "noMoreCategories" })}
                     </Dropdown.Item>
                   )}
@@ -221,7 +215,8 @@ const AddNewSubCategory = () => {
                   required: formatMessage({ id: "required" }),
                 })}
               />
-              {errors?.categoryId?.message && (
+
+              {errors.categoryId && errors.categoryId.message && (
                 <p className="error d-flex align-items-center gap-1 mt-1">
                   <IcError />
                   {errors.categoryId.message}
@@ -232,7 +227,7 @@ const AddNewSubCategory = () => {
         </Row>
 
         <button type="submit" className="btn submit">
-          {intl.formatMessage({ id: "add" })}
+          <FormattedMessage id="add" />
         </button>
       </form>
     </div>

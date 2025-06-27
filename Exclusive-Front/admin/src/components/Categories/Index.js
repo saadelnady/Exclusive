@@ -25,12 +25,12 @@ const Categories = ({ isWarning, handleShowWarning }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategories({ limit: 10, page: 1 }));
+    dispatch(fetchCategories({ limit: 10, page: 1, append: false }));
   }, [dispatch]);
 
   const handlePageChange = (newPage) => {
     if (newPage !== currentPage) {
-      dispatch(fetchCategories({ limit: 10, page: newPage }));
+      dispatch(fetchCategories({ limit: 10, page: newPage, append: false }));
     }
   };
 
@@ -65,11 +65,11 @@ const Categories = ({ isWarning, handleShowWarning }) => {
     );
   };
   const searchHandler = (e) => {
-    dispatch(fetchCategories({ text: e, limit: 10, page: 1, locale }));
+    dispatch(fetchCategories({ text: e, append: false }));
   };
   const popupInfo = {
     Icon: <DeleteIcon />,
-    message: "delete-category-message",
+    message: "deleteCategoryMessage",
     actionTitle: "delete",
   };
   const cols = [
@@ -186,7 +186,7 @@ const Categories = ({ isWarning, handleShowWarning }) => {
           </Col>
           <Col xs={12} md={4}>
             <NavLink to="/categories/new">
-              + <FormattedMessage id="add-category" />
+              + <FormattedMessage id="addCategory" />
             </NavLink>
           </Col>
           <Col xs={12} lg={5} className="me-auto">

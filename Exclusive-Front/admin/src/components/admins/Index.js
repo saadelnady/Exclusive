@@ -65,7 +65,7 @@ const AllAdmins = ({ isWarning, handleShowWarning }) => {
   };
   const popupInfo = {
     Icon: <DeleteIcon />,
-    message: "delete-admin-message",
+    message: "deleteAdminMessage",
     actionTitle: "delete",
   };
   const cols = [
@@ -192,7 +192,7 @@ const AllAdmins = ({ isWarning, handleShowWarning }) => {
           </Col>
           <Col xs={12} md={4}>
             <NavLink to="/admins/new">
-              + <FormattedMessage id="add-admin" />
+              + <FormattedMessage id="addAdmin" />
             </NavLink>
           </Col>
           <Col xs={12} lg={5} className="me-auto">

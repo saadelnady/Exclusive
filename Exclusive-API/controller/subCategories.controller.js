@@ -4,6 +4,8 @@ const subCategory = require("../models/subCategory.model.js");
 const appError = require("../utils/appError");
 const { httpStatusText } = require("../utils/constants");
 const Category = require("../models/category.model");
+const Product = require("../models/product.model");
+
 const mongoose = require("mongoose");
 
 const getAllSubCategories = asyncWrapper(async (req, res, next) => {
@@ -61,10 +63,6 @@ const addSubCategory = asyncWrapper(async (req, res, next) => {
   }
 
   const { categoryId, title, image } = req.body;
-  console.log("req.body", req.body);
-
-  console.log("categoryId", categoryId);
-  console.log("title", title);
 
   const targetCategory = await Category.findOne({ _id: categoryId });
   console.log("targetCategory", targetCategory);
@@ -122,12 +120,15 @@ const addSubCategory = asyncWrapper(async (req, res, next) => {
 
 const getSubCategory = asyncWrapper(async (req, res, next) => {
   const { subCategoryId } = req.params;
-  const targetSubCategory = await Subcategory.findById(subCategoryId).populate(
-    "category"
-  );
+  const targetSubCategory = await subCategory
+    .findById(subCategoryId)
+    .populate("category");
   if (!targetSubCategory) {
     const error = appError.create(
-      "Subcategory not found",
+      {
+        ar: "القسم الفرعي غير موجود",
+        en: "Subcategory not found",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -135,7 +136,10 @@ const getSubCategory = asyncWrapper(async (req, res, next) => {
   }
   if (!subCategoryId) {
     const error = appError.create(
-      "subCategoryId is required",
+      {
+        ar: "المعرف غير صحيح",
+        en: "Invalid id",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -156,10 +160,10 @@ const editSubCategory = asyncWrapper(async (req, res, next) => {
   }
 
   const { subCategoryId } = req.params;
-  const { category: categoryId, title } = req.body; // title = { ar, en }
+  const { categoryId, title, image } = req.body; // title = { ar, en }
 
   // تأكد من وجود القسم الفرعي
-  const targetSubCategory = await Subcategory.findById(subCategoryId);
+  const targetSubCategory = await subCategory.findById(subCategoryId);
   if (!targetSubCategory) {
     const error = appError.create(
       {
@@ -187,7 +191,7 @@ const editSubCategory = asyncWrapper(async (req, res, next) => {
   }
 
   // التحقق من عدم وجود تكرار لنفس الاسم داخل نفس القسم ولكن يستثني القسم الفرعي الحالي
-  const subCategoryExist = await Subcategory.findOne({
+  const subCategoryExist = await subCategory.findOne({
     _id: { $ne: subCategoryId },
     category: categoryId,
     $or: [{ "title.ar": title.ar }, { "title.en": title.en }],
@@ -207,13 +211,10 @@ const editSubCategory = asyncWrapper(async (req, res, next) => {
 
   // تجهيز البيانات المحدثة
   const updatedSubCategoryData = {
+    image,
     title,
     category: categoryId,
   };
-
-  if (req?.file) {
-    updatedSubCategoryData.image = `uploads/${req.file.filename}`;
-  }
 
   // لو تم تغيير القسم الرئيسي، احذف من القديم وضيف في الجديد
   if (categoryId !== targetSubCategory.category.toString()) {
@@ -226,11 +227,13 @@ const editSubCategory = asyncWrapper(async (req, res, next) => {
     });
   }
 
-  const updatedSubCategory = await Subcategory.findByIdAndUpdate(
-    subCategoryId,
-    { $set: updatedSubCategoryData },
-    { new: true }
-  ).populate("category");
+  const updatedSubCategory = await subCategory
+    .findByIdAndUpdate(
+      subCategoryId,
+      { $set: updatedSubCategoryData },
+      { new: true }
+    )
+    .populate("category");
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -257,23 +260,33 @@ const deleteSubCategory = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  await subCategory.deleteOne({
-    _id: subCategoryId,
-  });
+  const hasProducts = await Product.exists({ subCategory: subCategoryId });
+  if (hasProducts) {
+    return res.status(400).json({
+      message: {
+        ar: "لا يمكن حذف القسم الفرعى لانه يحتوي على منتجات",
+        en: "Cannot delete the subcategory because it has products",
+      },
+    });
+  } else {
+    await subCategory.deleteOne({
+      _id: subCategoryId,
+    });
 
-  await Category.findByIdAndUpdate(
-    targetSubCategory.category,
-    { $pull: { subCategories: subCategoryId } },
-    { new: true }
-  );
-  res.status(201).json({
-    status: httpStatusText.SUCCESS,
-    message: {
-      ar: "تم حذف القسم الفرعي بنجاح",
-      en: "Subcategory deleted successfully",
-    },
-    data: { SubCategory: targetSubCategory },
-  });
+    await Category.findByIdAndUpdate(
+      targetSubCategory.category,
+      { $pull: { subCategories: subCategoryId } },
+      { new: true }
+    );
+    res.status(201).json({
+      status: httpStatusText.SUCCESS,
+      message: {
+        ar: "تم حذف القسم الفرعي بنجاح",
+        en: "Subcategory deleted successfully",
+      },
+      data: { SubCategory: targetSubCategory },
+    });
+  }
 });
 
 module.exports = {

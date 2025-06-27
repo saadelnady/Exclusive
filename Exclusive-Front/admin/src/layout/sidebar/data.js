@@ -38,7 +38,7 @@ export const adminLinks = [
     children: [
       {
         id: v4(),
-        title: "add-admin",
+        title: "addAdmin",
         to: "/admins/new",
       },
     ],
@@ -97,13 +97,13 @@ export const adminLinks = [
     children: [
       {
         id: v4(),
-        title: "pending-products",
-        to: "/pending-products",
+        title: "pendingProducts",
+        to: "/pendingProducts",
       },
       {
         id: v4(),
-        title: "blocked-products",
-        to: "/blocked-products",
+        title: "blockedProducts",
+        to: "/blockedProducts",
       },
     ],
   },
@@ -127,14 +127,14 @@ export const adminLinks = [
     children: [
       {
         id: v4(),
-        title: "add-category",
+        title: "addCategory",
         to: "/categories/new",
       },
     ],
   },
   {
     id: v4(),
-    title: "sub-categories",
+    title: "subCategories",
     to: "/subCategories",
     icon: (
       <svg

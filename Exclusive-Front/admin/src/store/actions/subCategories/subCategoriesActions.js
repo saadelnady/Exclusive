@@ -5,7 +5,6 @@ export const fetchSubCategories = ({
   limit = "",
   page = "",
   text = "",
-  locale,
 } = {}) => {
   return async (dispatch) => {
     dispatch(actionsCreators.getSubCategories());
@@ -64,7 +63,13 @@ export const addSubCategory = ({ data, toast, navigate, locale }) => {
   };
 };
 // =========================================================================================
-export const editSubCategory = ({ subCategoryId, data, toast }) => {
+export const editSubCategory = ({
+  subCategoryId,
+  data,
+  toast,
+  navigate,
+  locale,
+}) => {
   return async (dispatch) => {
     dispatch(actionsCreators.editSubCategory(data));
 
@@ -74,10 +79,11 @@ export const editSubCategory = ({ subCategoryId, data, toast }) => {
         data
       );
       dispatch(actionsCreators.editSubCategorySuccess(response));
-      showToast(toast, response?.message, "success");
+      showToast(toast, response?.message?.[locale], "success");
+      navigate("/subCategories");
     } catch (error) {
       dispatch(actionsCreators.editSubCategoryFail(error));
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };

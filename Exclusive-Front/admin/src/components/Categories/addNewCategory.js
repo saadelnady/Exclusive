@@ -86,11 +86,11 @@ const AddNewCategory = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 5,
-                    message: formatMessage({ id: "min-length" }),
+                    message: formatMessage({ id: "minLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "max-length" }),
+                    message: formatMessage({ id: "maxLength" }),
                   },
                 })}
                 className="special-input"
@@ -115,11 +115,11 @@ const AddNewCategory = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 5,
-                    message: formatMessage({ id: "min-length" }),
+                    message: formatMessage({ id: "minLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "max-length" }),
+                    message: formatMessage({ id: "maxLength" }),
                   },
                 })}
                 className="special-input"

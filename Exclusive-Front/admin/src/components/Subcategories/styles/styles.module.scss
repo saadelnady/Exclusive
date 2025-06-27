@@ -222,6 +222,27 @@
           }
         }
       }
+      .dropdown-menu {
+        text-align: right;
+        [dir="ltr"] & {
+          text-align: left;
+        }
+        background-color: #ffffff;
+        [data-theme="dark"] & {
+          background-color: $bg-dark-2;
+        }
+        a {
+          color: $text-dark;
+          [data-theme="dark"] & {
+            color: #ffffff;
+          }
+          &:hover {
+            [data-theme="dark"] & {
+              background-color: $bg-dark;
+            }
+          }
+        }
+      }
       .submit {
         height: 45px;
         border: none;

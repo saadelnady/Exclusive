@@ -37,12 +37,13 @@ const categoriesReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        categories: action.payLoad.categories,
+        categories: action.payLoad.append
+          ? [...state.categories, ...action.payLoad.categories]
+          : action.payLoad.categories,
         total: action.payLoad.total,
         currentPage: action.payLoad.currentPage,
         pageSize: action.payLoad.pageSize,
         totalPages: action.payLoad.totalPages,
-        error: null,
       };
 
     case GET_CATEGORIES_FAIL:

@@ -3,25 +3,35 @@ import { showToast } from "../../../helpers/toast_helper";
 import * as actionsCreators from "./categoriesActionsCreators";
 // =========================================================================================
 
-export const fetchCategories = ({ limit = "", page = "", text = "" } = {}) => {
+export const fetchCategories = ({
+  limit = "",
+  page = "",
+  text = "",
+  append = false,
+} = {}) => {
   return async (dispatch) => {
     dispatch(actionsCreators.getCategories());
     try {
-      let response = "";
-      if (text) {
-        response = await getData(
-          `/api/categories?limit=${limit}&page=${page}&text=${text}`
-        );
-      } else {
-        response = await getData(`/api/categories?limit=${limit}&page=${page}`);
-      }
+      const params = new URLSearchParams();
+      if (text) params.append("text", text);
+      if (limit) params.append("limit", limit);
+      if (page) params.append("page", page);
 
-      dispatch(actionsCreators.getCategoriesSuccess(response.data));
+      const response = await getData(`/api/categories?${params.toString()}`);
+
+      dispatch(
+        actionsCreators.getCategoriesSuccess({
+          ...response.data,
+          append, // ✅ أرسله للـ reducer
+        })
+      );
     } catch (error) {
+      console.log(error);
       dispatch(actionsCreators.getCategoriesFail(error));
     }
   };
 };
+
 // =========================================================================================
 
 export const fetchCategory = ({ categoryId }) => {
@@ -78,14 +88,14 @@ export const editCategory = ({ categoryId, data, toast, locale, navigate }) => {
 };
 // =========================================================================================
 
-export const deleteCategory = ({ categoryId, toast }) => {
+export const deleteCategory = ({ categoryId, toast, locale }) => {
   return async (dispatch) => {
     dispatch(actionsCreators.deleteCategory());
 
     try {
       const response = await deleteData(`/api/categories/${categoryId}`);
       dispatch(actionsCreators.deleteCategorySuccess(response));
-      showToast(toast, response?.message, "success");
+      showToast(toast, response?.message?.[locale], "success");
     } catch (error) {
       dispatch(actionsCreators.deleteCategoryFail(error));
       showToast(toast, error?.response?.data?.message, "error");

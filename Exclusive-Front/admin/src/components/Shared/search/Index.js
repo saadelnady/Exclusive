@@ -28,7 +28,7 @@ const SearchComponent = ({ searchHandler }) => {
               required: formatMessage({ id: "required" }),
             })}
             className="search-input"
-            placeholder={formatMessage({ id: "search-placeholder" })}
+            placeholder={formatMessage({ id: "searchPlaceholder" })}
           />
           {getValues("searchText") !== "" && (
             <button

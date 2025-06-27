@@ -45,7 +45,7 @@ const Index = () => {
             <FormattedMessage id="wellcome" />
           </h1>
           <p className="sub-title">
-            <FormattedMessage id="login-text" />
+            <FormattedMessage id="loginText" />
           </p>
         </div>
 
@@ -61,7 +61,7 @@ const Index = () => {
                 required: formatMessage({ id: "required" }),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: formatMessage({ id: "invalid-email" }),
+                  message: formatMessage({ id: "invalidEmail" }),
                 },
               })}
             />

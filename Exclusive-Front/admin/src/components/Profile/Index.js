@@ -134,11 +134,11 @@ const ShowAdmin = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 3,
-                    message: formatMessage({ id: "name-min-length" }),
+                    message: formatMessage({ id: "nameMinLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "name-max-length" }),
+                    message: formatMessage({ id: "nameMaxLength" }),
                   },
                 })}
                 className="special-input"
@@ -163,11 +163,11 @@ const ShowAdmin = () => {
                   required: formatMessage({ id: "required" }),
                   minLength: {
                     value: 3,
-                    message: formatMessage({ id: "name-min-length" }),
+                    message: formatMessage({ id: "nameMinLength" }),
                   },
                   maxLength: {
                     value: 20,
-                    message: formatMessage({ id: "name-max-length" }),
+                    message: formatMessage({ id: "nameMaxLength" }),
                   },
                 })}
                 className="special-input"
@@ -195,7 +195,7 @@ const ShowAdmin = () => {
                   required: formatMessage({ id: "required" }),
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: formatMessage({ id: "invalid-email" }),
+                    message: formatMessage({ id: "invalidEmail" }),
                   },
                 })}
               />
@@ -218,7 +218,7 @@ const ShowAdmin = () => {
                   required: formatMessage({ id: "required" }),
                   pattern: {
                     value: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g,
-                    message: formatMessage({ id: "invalid-mobilePhone" }),
+                    message: formatMessage({ id: "invalidMobilePhone" }),
                   },
                 })}
                 className="special-input"
@@ -247,7 +247,7 @@ const ShowAdmin = () => {
                       return formatMessage({ id: "required" });
                     }
                     if (value && value.length < 9) {
-                      return formatMessage({ id: "password-length" });
+                      return formatMessage({ id: "passwordLength" });
                     }
                     return true;
                   },
@@ -282,7 +282,7 @@ const ShowAdmin = () => {
                       return formatMessage({ id: "required" });
                     }
                     if (value && value.length < 9) {
-                      return formatMessage({ id: "password-length" });
+                      return formatMessage({ id: "passwordLength" });
                     }
                     return true;
                   },
@@ -318,10 +318,10 @@ const ShowAdmin = () => {
                       return formatMessage({ id: "required" });
                     }
                     if (value && value.length < 9) {
-                      return formatMessage({ id: "password-length" });
+                      return formatMessage({ id: "passwordLength" });
                     }
                     if (value && value !== newPassword) {
-                      return formatMessage({ id: "password-not-match" });
+                      return formatMessage({ id: "passwordNotMatch" });
                     }
                     return true;
                   },

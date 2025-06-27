@@ -1,6 +1,8 @@
 const { validationResult } = require("express-validator");
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const Category = require("../models/category.model");
+const Product = require("../models/product.model");
+
 const appError = require("../utils/appError");
 const { httpStatusText } = require("../utils/constants");
 const mongoose = require("mongoose");
@@ -196,12 +198,25 @@ const deleteCategory = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  await Category.deleteOne({ _id: categoryId });
-  res.status(201).json({
-    status: httpStatusText.SUCCESS,
-    message: "category deleted Successfully",
-    data: { category: targetCategory },
-  });
+  const hasProducts = await Product.exists({ category: categoryId });
+  if (hasProducts) {
+    return res.status(400).json({
+      message: {
+        ar: "لا يمكن حذف القسم لانه يحتوي على منتجات",
+        en: "Cannot delete the category because it has products",
+      },
+    });
+  } else {
+    await Category.deleteOne({ _id: categoryId });
+    res.status(201).json({
+      status: httpStatusText.SUCCESS,
+      message: {
+        ar: "تم حذف القسم بنجاح",
+        en: "Category deleted successfully",
+      },
+      data: { category: targetCategory },
+    });
+  }
 });
 
 module.exports = {

@@ -20,6 +20,7 @@ import { SUPER_ADMIN } from "../helpers/roles.js";
 import Unauthorized from "@/components/Shared/UnAuthorized/Index.js";
 import ShowUser from "@/components/users/showUser.js";
 import AllUsers from "@/components/users";
+import Settings from "@/components/Settings/Index.js";
 
 const allRoutes = (isWarning, handleShowWarning) => [
   { path: "/", element: <Home /> },
@@ -94,7 +95,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/pending-products",
+    path: "/pendingProducts",
     element: (
       <PendingProducts
         isWarning={isWarning}
@@ -112,7 +113,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
     ),
   },
   {
-    path: "/blocked-products",
+    path: "/blockedProducts",
     element: (
       <BlockedProducts
         isWarning={isWarning}
@@ -178,6 +179,12 @@ const allRoutes = (isWarning, handleShowWarning) => [
     path: "/seller/:sellerId",
     element: (
       <Seller isWarning={isWarning} handleShowWarning={handleShowWarning} />
+    ),
+  },
+  {
+    path: "/settings",
+    element: (
+      <Settings isWarning={isWarning} handleShowWarning={handleShowWarning} />
     ),
   },
   {

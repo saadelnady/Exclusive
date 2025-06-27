@@ -67,7 +67,7 @@ const AllUsers = ({ isWarning, handleShowWarning }) => {
   };
   const popupInfo = {
     Icon: <DeleteIcon />,
-    message: "delete-user-message",
+    message: "deleteUserMessage",
     actionTitle: "delete",
   };
   const cols = [
@@ -194,7 +194,7 @@ const AllUsers = ({ isWarning, handleShowWarning }) => {
           </Col>
           {/* <Col xs={12} md={4}>
             <NavLink to="/users/new">
-              + <FormattedMessage id="add-admin" />
+              + <FormattedMessage id="addAdmin" />
             </NavLink>
           </Col> */}
           <Col xs={12} lg={5} className="me-auto">

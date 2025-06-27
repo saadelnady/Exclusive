@@ -66,12 +66,12 @@ const SubCategories = ({ isWarning, handleShowWarning }) => {
     );
   };
   const searchHandler = (e) => {
-    dispatch(fetchSubCategories({ text: e, limit: 10, page: 1, locale }));
+    dispatch(fetchSubCategories({ text: e }));
   };
   const popupInfo = {
     Icon: <DeleteIcon />,
-    message: "delete-sub-category-message",
-    subMessage: "delete-sub-category-subMessage",
+    message: "deleteSubCategoryMessage",
+    subMessage: "deleteSubCategorySubMessage",
     actionTitle: "delete",
   };
   const cols = [
@@ -188,7 +188,7 @@ const SubCategories = ({ isWarning, handleShowWarning }) => {
           </Col>
           <Col xs={12} md={4}>
             <NavLink to="/subCategories/add">
-              + <FormattedMessage id="add-subCategory" />
+              + <FormattedMessage id="addSubCategory" />
             </NavLink>
           </Col>
           <Col xs={12} lg={5} className="me-auto">
