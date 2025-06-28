@@ -72,10 +72,20 @@ const sendEmail = async (options) => {
 const generateVerificationCode = () => {
   return Math.floor(1000 + Math.random() * 9000).toString();
 };
+
+const generateSlug = (title) => {
+  return title
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\u0600-\u06FF\-]/g, "")
+    .toLowerCase();
+};
+
 module.exports = {
   calculateCartTotal,
   getImageFullPath,
   generateToken,
   sendEmail,
   generateVerificationCode,
+  generateSlug,
 };

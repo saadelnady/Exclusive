@@ -12,12 +12,15 @@ const UploadImg = ({
   handleRemoveImg,
   register,
   errors,
+  name,
 }) => {
   const { formatMessage } = useIntl();
+  const inputId = `img-${name}`;
+
   return (
     <div>
       <div className={styles["upload-img-container"]}>
-        <label htmlFor="img" className="label">
+        <label htmlFor={inputId} className="label">
           <img
             src={selectedImg?.preview ? selectedImg?.preview : ImgPlaceholder}
             alt="profile-img"
@@ -28,9 +31,7 @@ const UploadImg = ({
             <button
               className="btn close"
               type="button"
-              onClick={() => {
-                handleRemoveImg();
-              }}
+              onClick={handleRemoveImg}
             >
               <IcClose />
             </button>
@@ -38,10 +39,10 @@ const UploadImg = ({
         </label>
         <input
           type="file"
-          id="img"
+          id={inputId}
           className="d-none"
           accept="image/*"
-          {...register("image", {
+          {...register(name, {
             required: selectedImg?.preview
               ? false
               : formatMessage({ id: "required" }),
@@ -49,10 +50,10 @@ const UploadImg = ({
           onChange={handleImageChange}
         />
       </div>
-      {errors?.image && (
+      {errors?.[name] && (
         <p className="error text-center mb-5 mx-auto">
           <IcError />
-          {errors?.image.message}
+          {errors?.[name]?.message}
         </p>
       )}
     </div>

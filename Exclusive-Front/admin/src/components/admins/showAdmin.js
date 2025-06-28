@@ -125,6 +125,7 @@ const ShowAdmin = () => {
               handleRemoveImg={handleRemoveImg}
               register={register}
               errors={errors}
+              name="image"
             />
           </Col>
           <Col xs={12} md={6}>

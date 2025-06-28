@@ -17,6 +17,7 @@ const cartRouter = require("./routes/cart.route");
 const settingsRouter = require("./routes/settings.route");
 const uploadRouter = require("./routes/upload");
 const wishListRouter = require("./routes/wishListRouter.route.js");
+const pagesRouter = require("./routes/pages.route.js");
 
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -46,6 +47,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/wishList", wishListRouter);
 app.use("/api/couponCode", couponCodeRouter);
 app.use("/api/settings", settingsRouter);
+app.use("/api/pages", pagesRouter);
 
 // wild card
 app.all("*", (req, res, next) => {

@@ -99,6 +99,7 @@ const AddNewSubCategory = () => {
               handleRemoveImg={handleRemoveImg}
               register={register}
               errors={errors}
+              name="image"
             />
           </Col>
 

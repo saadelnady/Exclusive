@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import Logo from "@/assets/images/pngs/logo.png";
 import IcEye from "./assets/images/svgs/ic-eye.svg";
 import IcEyeSlash from "./assets/images/svgs/ic-eyeslash.svg";
 import IcError from "./assets/images/svgs/ic-error.svg";
@@ -15,10 +14,12 @@ import { FormattedMessage, useIntl } from "react-intl";
 
 import Loading from "../Shared/loading";
 import styles from "./styles/styles.module.scss";
+import { fetchSettings } from "@/store/actions/settings/settingsActions";
 
 const Index = () => {
   const { isLoading } = useSelector((state) => state.adminReducer);
   const { locale } = useSelector((state) => state.localeReducer);
+  const { settings } = useSelector((state) => state.settingsReducer);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { formatMessage } = useIntl();
@@ -33,12 +34,14 @@ const Index = () => {
     const payload = { values, toast, navigate, locale };
     dispatch(adminLogin(payload));
   };
-
+  useEffect(() => {
+    dispatch(fetchSettings({ toast, locale }));
+  }, []);
   return (
     <div className={styles.login}>
       <div className="inner">
         <div className="logo">
-          <img src={Logo} alt="logo" />
+          <img src={settings?.logo} alt="logo" />
         </div>
         <div className="content">
           <h1 className="title">

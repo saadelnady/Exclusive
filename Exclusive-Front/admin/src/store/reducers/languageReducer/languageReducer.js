@@ -1,4 +1,4 @@
-import { SET_LOCALE } from "@/store/actions/actionTypes";
+import { SET_LOCALE } from "@/store/actions/language/actionTypes";
 import { parseCookies } from "nookies";
 
 const cookies = parseCookies();

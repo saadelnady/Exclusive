@@ -20,30 +20,9 @@ const settingsSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-
       unique: true,
       validate: [validator.isEmail, "Email must be valid email"],
     },
-
-    socialMediaLinks: [
-      {
-        name: {
-          type: String,
-          enum: [
-            "facebook",
-            "twitter",
-            "instagram",
-            "linkedin",
-            "youtube",
-            "tiktok",
-          ],
-        },
-        url: {
-          type: String,
-          validate: [validator.isURL, "Must be a valid URL"],
-        },
-      },
-    ],
   },
   {
     timestamps: true,

@@ -1,23 +1,27 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { adminLogout } from "../../store/actions/admin/adminActions";
 import IcPower from "./assets/images/svgs/ic-power.svg";
 import IcCircle from "./assets/images/svgs/ic-circle.svg";
 import IcSettings from "./assets/images/svgs/ic-settings.svg";
 import { adminLinks } from "./data";
 import styles from "./styles/styles.module.scss";
-import { FormattedMessage } from "react-intl";
-import Logo from "@/assets/images/pngs/logo.png";
+import { FormattedMessage, useIntl } from "react-intl";
+import { fetchSettings } from "@/store/actions/settings/settingsActions";
 
 const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
-  const { admin } = useSelector((state) => state.adminReducer);
+  const { settings } = useSelector((state) => state.settingsReducer);
+  const { locale } = useIntl();
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchSettings({ locale, toast }));
+  }, [dispatch]);
   // بديل toggleStates
   const [activeToggleKey, setActiveToggleKey] = useState(null);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleToggle = (key) => {
@@ -37,7 +41,7 @@ const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
       ></div>
       <div className={`${isActive ? "active" : ""} sidebar`}>
         <div className="logo">
-          <img src={Logo} alt="Logo" />
+          <img src={settings?.logo} alt="Logo" />
         </div>
 
         <div className="Admin-links">

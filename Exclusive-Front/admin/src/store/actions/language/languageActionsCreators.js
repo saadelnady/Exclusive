@@ -1,5 +1,5 @@
 import { setCookie } from "nookies";
-import { SET_LOCALE } from "../actionTypes";
+import { SET_LOCALE } from "./actionTypes";
 
 export const setLocale = (locale) => {
   return (dispatch) => {

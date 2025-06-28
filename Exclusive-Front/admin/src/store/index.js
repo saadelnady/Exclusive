@@ -9,6 +9,7 @@ import { localeReducer } from "./reducers/languageReducer/languageReducer.js";
 import { thunk } from "redux-thunk";
 import { statisticsReducer } from "./reducers/statisticsReducser/statisticsReducser.js";
 import { userReducer } from "./reducers/userReducer/userReducer.js";
+import { settingsReducer } from "./reducers/settingsReducer/settingsReducer.js";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -26,5 +27,6 @@ const appReducers = combineReducers({
   couponCodeReducer,
   localeReducer,
   statisticsReducer,
+  settingsReducer,
 });
 export const store = createStore(appReducers, enhancer);

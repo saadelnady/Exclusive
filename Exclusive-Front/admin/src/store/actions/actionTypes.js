@@ -137,8 +137,6 @@ const WISHLIST_ACTIONS_TYPES = {
 };
 // ======================================================
 
-const SET_LOCALE = "SET_LOCALE";
-
 // ======================================================
 
 export {
@@ -150,5 +148,4 @@ export {
   COUPONS_ACTIONS_TYPES,
   CART_ACTIONS_TYPES,
   WISHLIST_ACTIONS_TYPES,
-  SET_LOCALE,
 };

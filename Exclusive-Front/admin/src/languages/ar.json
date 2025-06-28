@@ -91,6 +91,17 @@
   "loading": "جاري التحميل",
   "editSubCategory": " تعديل القسم الفرعي",
   "editSubCategoryDescription": "قم بملء الحقول لتعديل القسم الفرعي",
-  "editSettings": "تعديل الاعدادات",
-  "editSettingsDescription": "قم بملء الحقول لتعديل الاعدادات"
+  "editBasicSettings": "تعديل الاعدادات الاساسية",
+  "editBasicSettingsDescription": "قم بملء الحقول لتعديل الاعدادات الاساسية",
+  "appNameAr": "اسم التطبيق بالعربية",
+  "appNameEn": "اسم التطبيق بالانجليزية",
+  "addressMinLength": "يجب ان يكون على الاقل 10 أحرف",
+  "addressMaxLength": "يجب ان لا يزيد عن 100 حرف",
+  "addressAr": "العنوان بالعربية",
+  "addressEn": "العنوان بالانجليزية",
+  "settings": "اعدادات الموقع",
+  "basicInfo": "المعلومات الاساسية",
+  "socialMedia": "وسائل التواصل الاجتماعي",
+  "socialMediaDescription": "جميع وسائل التواصل الاجتماعية الموجودة في الموقع",
+  "addSocialMedia": "اضافة وسيلة تواصل جديدة"
 }

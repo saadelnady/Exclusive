@@ -121,6 +121,7 @@ const ShowSubCategory = () => {
               handleRemoveImg={handleRemoveImg}
               register={register}
               errors={errors}
+              name="image"
             />
           </Col>
 

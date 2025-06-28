@@ -1,252 +1,46 @@
-import {
-  editAdmin,
-  fetchSelectedAdminBySuperAdmin,
-} from "@/store/actions/admin/adminActions";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../Shared/loading";
-import { FormattedMessage, useIntl } from "react-intl";
-import { useForm } from "react-hook-form";
-import styles from "./styles/styles.module.scss";
-import { Col, Row } from "react-bootstrap";
-import UploadImg from "../Shared/uploadImg/Index";
 
-import IcError from "./assets/images/svgs/ic-error.svg";
-import { postData } from "@/API/API";
-import { toast } from "react-toastify";
+import { FormattedMessage, useIntl } from "react-intl";
+
+import styles from "./styles/styles.module.scss";
+
+import BasicInfo from "./BasicInfo";
+import SocialMedia from "./SocialMedia";
 
 const Settings = () => {
-  const { adminId } = useParams();
-  const { selectedAdminBySuperAdmin, isLoading } = useSelector(
-    (state) => state.adminReducer
-  );
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchSelectedAdminBySuperAdmin({ adminId }));
-  }, [adminId, dispatch]);
-
-  const [selectedImg, setSelectedImg] = useState({
-    file: null,
-    preview: null,
-  });
-
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    setValue,
-    formState: { errors },
-    watch,
-  } = useForm();
-
-  const { locale, formatMessage } = useIntl();
-
-  const navigate = useNavigate();
-  const onSubmit = async (data) => {
-    data.image = selectedImg?.preview ? selectedImg?.preview : null;
-    const cleanedData = { ...data };
-
-    if (!data.currentPassword && !data.newPassword && !data.confirmPassword) {
-      delete cleanedData.currentPassword;
-      delete cleanedData.newPassword;
-      delete cleanedData.confirmPassword;
-    }
-
-    dispatch(
-      editAdmin({ data: cleanedData, adminId, toast, locale, navigate })
-    );
+  const [activeSettings, setActiveSettings] = useState("basicInfo");
+  const handleActiveSettings = (settings) => {
+    setActiveSettings(settings);
   };
-  const handleImageChange = async (event) => {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("files", file);
-
-    try {
-      const uploadImgResponse = await postData("/api/upload", formData);
-
-      setSelectedImg({ file, preview: uploadImgResponse?.files?.[0]?.url });
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-  const handleRemoveImg = () => {
-    if (selectedImg?.preview || selectedImg?.file) {
-      setSelectedImg({ file: null, preview: null });
-    }
-  };
-  const [showPassword, setShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-  const togglePassword = (field) => {
-    setShowPassword((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
-  useEffect(() => {
-    if (selectedAdminBySuperAdmin) {
-      setSelectedImg({ file: null, preview: selectedAdminBySuperAdmin?.image });
-      setValue("firstName", selectedAdminBySuperAdmin?.firstName);
-      setValue("lastName", selectedAdminBySuperAdmin?.lastName);
-      setValue("email", selectedAdminBySuperAdmin?.email);
-      setValue("mobilePhone", selectedAdminBySuperAdmin?.mobilePhone);
-    }
-  }, [selectedAdminBySuperAdmin]);
-
-  if (isLoading) return <Loading />;
 
   return (
     <div className={`page ${styles.settings}`}>
       <div className="page-header">
         <div className="text">
-          <h4 className="page-title">
-            <FormattedMessage id="editSettings" />
-          </h4>
-          <p className="page-description">
-            <FormattedMessage id="editSettingsDescription" /> :
-          </p>
+          <h1 className="fw-bold mb-4 page-title">
+            <FormattedMessage id="settings" />
+          </h1>
+        </div>
+
+        <div className="settings-tabs">
+          <button
+            className={`btn ${activeSettings === "basicInfo" ? "active" : ""}`}
+            onClick={() => handleActiveSettings("basicInfo")}
+          >
+            <FormattedMessage id="basicInfo" />
+          </button>
+          <button
+            className={`btn ${
+              activeSettings === "socialMedia" ? "active" : ""
+            }`}
+            onClick={() => handleActiveSettings("socialMedia")}
+          >
+            <FormattedMessage id="socialMedia" />
+          </button>
         </div>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Row>
-          <Col xs={12} md={6}>
-            <UploadImg
-              handleImageChange={handleImageChange}
-              selectedImg={selectedImg}
-              handleRemoveImg={handleRemoveImg}
-              register={register}
-              errors={errors}
-            />
-          </Col>
-          <Col xs={12} md={6}>
-            <UploadImg
-              handleImageChange={handleImageChange}
-              selectedImg={selectedImg}
-              handleRemoveImg={handleRemoveImg}
-              register={register}
-              errors={errors}
-            />
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="firstName">
-                {formatMessage({ id: "firstName" })} :
-              </label>
-              <input
-                id="firstName"
-                {...register("firstName", {
-                  required: formatMessage({ id: "required" }),
-                  minLength: {
-                    value: 3,
-                    message: formatMessage({ id: "nameMinLength" }),
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: formatMessage({ id: "nameMaxLength" }),
-                  },
-                })}
-                className="special-input"
-              />
-              {errors.firstName && (
-                <p className="error">
-                  <IcError />
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="lastName">
-                {formatMessage({ id: "lastName" })} :
-              </label>
-
-              <input
-                id="lastName"
-                {...register("lastName", {
-                  required: formatMessage({ id: "required" }),
-                  minLength: {
-                    value: 3,
-                    message: formatMessage({ id: "nameMinLength" }),
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: formatMessage({ id: "nameMaxLength" }),
-                  },
-                })}
-                className="special-input"
-              />
-              {errors.lastName && (
-                <p className="error">
-                  <IcError />
-                  {errors.lastName.message}
-                </p>
-              )}
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="email">
-                {formatMessage({ id: "email" })} :
-              </label>
-
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className="special-input"
-                {...register("email", {
-                  required: formatMessage({ id: "required" }),
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: formatMessage({ id: "invalidEmail" }),
-                  },
-                })}
-              />
-              {errors.email && (
-                <p className="error">
-                  <IcError />
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="input-wrapper">
-              <label className="label" htmlFor="mobilePhone">
-                {formatMessage({ id: "mobilePhone" })} :
-              </label>
-              <input
-                id="mobilePhone"
-                {...register("mobilePhone", {
-                  required: formatMessage({ id: "required" }),
-                  pattern: {
-                    value: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g,
-                    message: formatMessage({ id: "invalidMobilePhone" }),
-                  },
-                })}
-                className="special-input"
-                type="tel"
-                dir="ltr"
-              />
-              {errors.mobilePhone && (
-                <p className="error">
-                  <IcError />
-                  {errors.mobilePhone.message}
-                </p>
-              )}
-            </div>
-          </Col>
-        </Row>
-
-        <button type="submit" className="btn submit">
-          {formatMessage({ id: "editAdmin" })}
-        </button>
-      </form>
+      {activeSettings === "basicInfo" && <BasicInfo />}
+      {activeSettings === "socialMedia" && <SocialMedia />}
     </div>
   );
 };

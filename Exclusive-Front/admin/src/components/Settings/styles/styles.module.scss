@@ -9,8 +9,7 @@
       .text {
         .page-title {
           font-size: 24px;
-          line-height: 1;
-          margin-bottom: 15px;
+
           font-weight: 600;
           color: $text-dark;
           [data-theme="dark"] & {
@@ -38,6 +37,31 @@
           background-color: $bg-dark-2;
           border-color: $border-color-dark;
           color: $text-light;
+        }
+      }
+      .settings-tabs {
+        display: flex;
+        column-gap: 20px;
+        button {
+          height: 60px;
+          display: flex;
+          padding: 0 20px;
+          align-items: center;
+          justify-content: center;
+          background-color: $bg-light;
+          border-radius: 10px;
+          color: $text-dark;
+          border: 1px solid $border-color-light;
+          [data-theme="dark"] & {
+            background-color: $bg-dark-2;
+            border-color: $border-color-dark;
+            color: $text-light;
+          }
+          &.active {
+            background-color: $primary-color;
+            border-color: $primary-color;
+            color: $text-light;
+          }
         }
       }
     }
@@ -93,6 +117,27 @@
         }
       }
       .submit {
+        height: 45px;
+        border: none;
+        outline: none;
+        border-radius: 10px;
+        padding: 0 15px;
+        margin-top: 30px;
+        background-color: $primary-color;
+        border: 1px solid transparent;
+        color: $text-light;
+        font-weight: 600;
+        font-size: 16px;
+        transition: $transition;
+        &:hover {
+          background-color: transparent;
+          border-color: $primary-color;
+          color: $primary-color;
+        }
+      }
+    }
+    .socialMedia {
+      .addSocialMedia {
         height: 45px;
         border: none;
         outline: none;

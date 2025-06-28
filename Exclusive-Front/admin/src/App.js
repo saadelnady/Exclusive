@@ -12,11 +12,12 @@ import Login from "./components/login";
 import { IntlProvider, useIntl } from "react-intl";
 import ar from "@/languages/ar.json";
 import en from "@/languages/en.json";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import GuestRoute from "./layout/GuestRoute";
 import ProtectedRoute from "./layout/ProtectedRoute";
-
+import { fetchSettings } from "./store/actions/settings/settingsActions";
+import { toast } from "react-toastify";
 const languages = {
   ar,
   en,
@@ -25,11 +26,23 @@ const languages = {
 function App() {
   const { locale } = useSelector((state) => state.localeReducer);
   const messages = languages[locale];
-
+  const { settings, isLoading } = useSelector((state) => state.settingsReducer);
+  const dispatch = useDispatch();
   useEffect(() => {
     document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    dispatch(fetchSettings({ locale, toast }));
+  }, []);
+  useEffect(() => {
+    const newFavicon = document.createElement("link");
+    newFavicon.rel = "icon";
+    newFavicon.href = settings?.favIcon;
+    document.head.appendChild(newFavicon);
+    document.title = settings?.appName?.[locale];
+  }, [dispatch, locale, settings]);
   return (
     <IntlProvider messages={messages} defaultLocale="ar" locale={locale}>
       <div className="app">
