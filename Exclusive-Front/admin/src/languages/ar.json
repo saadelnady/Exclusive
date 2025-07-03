@@ -103,5 +103,18 @@
   "basicInfo": "المعلومات الاساسية",
   "socialMedia": "وسائل التواصل الاجتماعي",
   "socialMediaDescription": "جميع وسائل التواصل الاجتماعية الموجودة في الموقع",
-  "addSocialMedia": "اضافة وسيلة تواصل جديدة"
+  "addSocialMedia": "اضافة وسيلة تواصل جديدة",
+  "logoutMessage": "تم تسجيل الخروج بنجاح",
+  "link": "الرابط",
+  "deleteSocialMessage": "هل تريد حذف وسيلة التواص الاجتماعى ؟",
+  "editSocialMedia": "تعديل وسيلة التواصل الاجتماعى",
+  "aboutPage": "من نحن",
+  "ourStory": "نبذة عنا",
+  "statistics": "الاحصاءات",
+  "teamMembers": "اعضاء الفريق",
+  "features": "المميزات",
+  "descriptionAr": "الوصف بالعربية",
+  "descriptionEn": "الوصف بالانجليزية",
+  "descriptionPlaceholderAr": "ادخل الوصف بالعربية",
+  "descriptionPlaceholderEn": "ادخل الوصف بالانجليزية"
 }

@@ -52,22 +52,24 @@ export const adminLogin = ({ values, toast, navigate, locale }) => {
 };
 // ========================================================================================
 
-export const adminLogout = ({ toast, navigate, role }) => {
+export const adminLogout = ({ toast, navigate, intl }) => {
   return async (dispatch) => {
     dispatch(actionCreators.postAdminLogout());
 
     try {
       dispatch(actionCreators.postAdminLogoutSuccess());
       localStorage.removeItem("TOKEN");
-      showToast(toast, "You have logged out successfully", "success");
+      showToast(
+        toast,
+        intl.formatMessage({
+          id: "logoutMessage",
+          defaultMessage: "You have successfully logged out", // اختياري
+        }),
+        "success"
+      );
 
       setTimeout(() => {
-        if (role === "ADMIN") {
-          navigate("/login");
-        }
-        if (role === "USER") {
-          navigate("/");
-        }
+        navigate("/login");
       }, 2500);
     } catch (error) {
       dispatch(actionCreators.postAdminLogoutFail());

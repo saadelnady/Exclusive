@@ -5,10 +5,10 @@ import { FormattedMessage, useIntl } from "react-intl";
 import styles from "./styles/styles.module.scss";
 
 import BasicInfo from "./BasicInfo";
-import SocialMedia from "./SocialMedia";
+import AllSocials from "./Socials";
 
-const Settings = () => {
-  const [activeSettings, setActiveSettings] = useState("basicInfo");
+const Settings = ({ isWarning, handleShowWarning }) => {
+  const [activeSettings, setActiveSettings] = useState("socialMedia");
   const handleActiveSettings = (settings) => {
     setActiveSettings(settings);
   };
@@ -40,7 +40,12 @@ const Settings = () => {
         </div>
       </div>
       {activeSettings === "basicInfo" && <BasicInfo />}
-      {activeSettings === "socialMedia" && <SocialMedia />}
+      {activeSettings === "socialMedia" && (
+        <AllSocials
+          isWarning={isWarning}
+          handleShowWarning={handleShowWarning}
+        />
+      )}
     </div>
   );
 };

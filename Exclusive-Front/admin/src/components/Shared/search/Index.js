@@ -12,8 +12,6 @@ const SearchComponent = ({ searchHandler }) => {
   } = useForm();
   const { formatMessage, locale } = useIntl();
   const onSubmit = (data) => {
-    console.log("data", data);
-
     if (data.searchText === "") return;
     searchHandler(data.searchText);
   };

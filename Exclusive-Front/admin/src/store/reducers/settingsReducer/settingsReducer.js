@@ -19,8 +19,6 @@ const settingsReducer = (state = initialState, action) => {
       return { ...state, isLoading: true };
 
     case GET_SETTINGS_SUCCESS:
-      console.log("action?.payLoad?.settings", action?.payLoad?.settings?.[0]);
-
       return {
         ...state,
         isLoading: false,

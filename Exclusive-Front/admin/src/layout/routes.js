@@ -1,3 +1,5 @@
+import { SUPER_ADMIN } from "../helpers/roles.js";
+
 import Product from "../components/Product/Index.jsx";
 import PendingProducts from "../components/Products/PendingProducts.jsx";
 import AcceptedProducts from "../components/Products/AcceptedProducts.jsx";
@@ -16,12 +18,14 @@ import ShowAdmin from "@/components/admins/showAdmin.js";
 import Home from "@/components/Home/Index.js";
 import Profile from "@/components/Profile/Index.js";
 import ProtectedRoute from "./ProtectedRoute.js";
-import { SUPER_ADMIN } from "../helpers/roles.js";
 import Unauthorized from "@/components/Shared/UnAuthorized/Index.js";
 import ShowUser from "@/components/users/showUser.js";
 import AllUsers from "@/components/users";
 import Settings from "@/components/Settings/Index.js";
-
+import OurStory from "@/components/AboutPage/OurStory/Index.js";
+import Features from "@/components/AboutPage/Features/Index.js";
+import Statistics from "@/components/AboutPage/Statistics/Index.js";
+import TeamMembers from "@/components/AboutPage/TeamMembers/Index.js";
 const allRoutes = (isWarning, handleShowWarning) => [
   { path: "/", element: <Home /> },
   {
@@ -185,6 +189,33 @@ const allRoutes = (isWarning, handleShowWarning) => [
     path: "/settings",
     element: (
       <Settings isWarning={isWarning} handleShowWarning={handleShowWarning} />
+    ),
+  },
+  {
+    path: "/ourStory",
+    element: (
+      <OurStory isWarning={isWarning} handleShowWarning={handleShowWarning} />
+    ),
+  },
+  {
+    path: "/features",
+    element: (
+      <Features isWarning={isWarning} handleShowWarning={handleShowWarning} />
+    ),
+  },
+  {
+    path: "/statistics",
+    element: (
+      <Statistics isWarning={isWarning} handleShowWarning={handleShowWarning} />
+    ),
+  },
+  {
+    path: "/teamMembers",
+    element: (
+      <TeamMembers
+        isWarning={isWarning}
+        handleShowWarning={handleShowWarning}
+      />
     ),
   },
   {

@@ -6,27 +6,30 @@ const cors = require("cors");
 const path = require("path");
 
 // Routers
-const adminRouter = require("./routes/admin.route");
-const userRouter = require("./routes/user.route");
-const productRouter = require("./routes/product.route");
-const sellerRouter = require("./routes/seller.route");
+const adminRouter = require("./routes/admin.route.js");
+const userRouter = require("./routes/user.route.js");
+const productRouter = require("./routes/product.route.js");
+const sellerRouter = require("./routes/seller.route.js");
 const categoryRouter = require("./routes/category.route");
-const subCategoriesRouter = require("./routes/subCategory.route");
+const subCategoriesRouter = require("./routes/subCategory.route.js");
 const couponCodeRouter = require("./routes/couponCode.route");
-const cartRouter = require("./routes/cart.route");
+const cartRouter = require("./routes/cart.route.js");
 const settingsRouter = require("./routes/settings.route");
-const uploadRouter = require("./routes/upload");
+const uploadRouter = require("./routes/upload.route.js");
 const wishListRouter = require("./routes/wishListRouter.route.js");
 const pagesRouter = require("./routes/pages.route.js");
 
+// express
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const app = express();
 
+// db connection
 const dbConnection = require("./db/dataBase");
 const errorHandler = require("./middlewares/errorHandler");
 
+// parsing body
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -37,6 +40,7 @@ app.set("trust proxy", true);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/upload", uploadRouter);
 
+// Routes
 app.use("/api/admin", adminRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);

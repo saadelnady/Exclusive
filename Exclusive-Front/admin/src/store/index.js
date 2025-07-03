@@ -10,6 +10,8 @@ import { thunk } from "redux-thunk";
 import { statisticsReducer } from "./reducers/statisticsReducser/statisticsReducser.js";
 import { userReducer } from "./reducers/userReducer/userReducer.js";
 import { settingsReducer } from "./reducers/settingsReducer/settingsReducer.js";
+import { socialsReducer } from "./reducers/socialsReducer/socialsReducer.js";
+import { pageSectionsReducer } from "./reducers/pageSectionsReducer/pageSectionsReducer.js";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -28,5 +30,7 @@ const appReducers = combineReducers({
   localeReducer,
   statisticsReducer,
   settingsReducer,
+  socialsReducer,
+  pageSectionsReducer,
 });
 export const store = createStore(appReducers, enhancer);

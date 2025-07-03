@@ -331,6 +331,10 @@ const editPageSection = asyncWrapper(async (req, res, next) => {
     );
     return next(error);
   }
+  const targetSection = updatedPage.sections.find(
+    (section) => section.slug === sectionSlug
+  );
+  console.log("saaaaad ==>", targetSection);
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -338,7 +342,71 @@ const editPageSection = asyncWrapper(async (req, res, next) => {
       ar: "تم تعديل القسم بنجاح.",
       en: "Section updated successfully.",
     },
-    page: updatedPage,
+    data: { section: targetSection },
+  });
+});
+
+const getPageSections = asyncWrapper(async (req, res, next) => {
+  const { pageSlug } = req.params;
+
+  const page = await Page.findOne({
+    slug: pageSlug,
+  });
+
+  if (!page) {
+    const error = appError.create(
+      {
+        ar: "الصفحة غير موجودة.",
+        en: "Page not found.",
+      },
+      400,
+      httpStatusText.FAIL
+    );
+    return next(error);
+  }
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    sections: page?.sections,
+  });
+});
+const getPageSection = asyncWrapper(async (req, res, next) => {
+  const { pageSlug, sectionSlug } = req.params;
+
+  const page = await Page.findOne({
+    slug: pageSlug,
+    "sections.slug": sectionSlug,
+  });
+
+  if (!page) {
+    const error = appError.create(
+      {
+        ar: "الصفحة غير موجودة.",
+        en: "Page not found.",
+      },
+      400,
+      httpStatusText.FAIL
+    );
+    return next(error);
+  }
+  const targetSection = page.sections.find(
+    (section) => section.slug === sectionSlug
+  );
+  if (!targetSection) {
+    const error = appError.create(
+      {
+        ar: "القسم غير موجود.",
+        en: "Section not found.",
+      },
+      400,
+      httpStatusText.FAIL
+    );
+    return next(error);
+  }
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { section: targetSection },
   });
 });
 
@@ -351,4 +419,6 @@ module.exports = {
   addPageSection,
   deletePageSection,
   editPageSection,
+  getPageSections,
+  getPageSection,
 };

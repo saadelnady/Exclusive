@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const asyncWrapper = require("../middlewares/asyncWrapper");
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -23,6 +24,8 @@ const storage = multer.diskStorage({
 const allowedExtensions = [
   ".jpg",
   ".jpeg",
+  ".webp",
+  ".svg",
   ".png",
   ".gif",
   ".mp4",
@@ -56,24 +59,33 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 
 // يمكن رفع عدة ملفات عبر المفتاح "files"
-router.post("/", upload.array("files", 10), (req, res) => {
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ error: "No files uploaded." });
-  }
-  const BASE_URL =
-    process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
+router.post(
+  "/",
+  upload.array("files", 10),
+  asyncWrapper(async (req, res) => {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        error: { ar: "لم يتم رفع اي ملفات", en: "No files uploaded" },
+      });
+    }
+    const BASE_URL =
+      process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
 
-  const uploadedFiles = req.files.map((file) => ({
-    filename: file.filename,
-    path: file.path,
-    size: file.size,
-    url: `${BASE_URL}/uploads/${file.filename}`,
-  }));
+    const uploadedFiles = req.files.map((file) => ({
+      filename: file.filename,
+      path: file.path,
+      size: file.size,
+      url: `${BASE_URL}/uploads/${file.filename}`,
+    }));
 
-  res.status(200).json({
-    message: { ar: "تم رفع الملفات بنجاح", en: "Files uploaded successfully" },
-    files: uploadedFiles,
-  });
-});
+    res.status(200).json({
+      message: {
+        ar: "تم رفع الملفات بنجاح",
+        en: "Files uploaded successfully",
+      },
+      files: uploadedFiles,
+    });
+  })
+);
 
 module.exports = router;

@@ -21,7 +21,17 @@
           color: $text-light;
         }
       }
-
+      .img {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
       th,
       td {
         border: 1px solid $border-color-light;
@@ -37,6 +47,53 @@
         background-color: $bg-light-2;
         [data-theme="dark"] & {
           background-color: $bg-dark;
+        }
+      }
+      .actions {
+        position: relative;
+        .actions-btn {
+          border: none;
+          outline: none;
+          background: none;
+          svg {
+            fill: #747684;
+            [data-theme="dark"] & {
+              fill: #ffffff;
+            }
+          }
+        }
+        .custom-dropdown {
+          position: absolute;
+          top: 100%;
+          background-color: $bg-light;
+          border: 1px solid $border-color-light;
+          border-radius: 5px;
+          min-width: 120px;
+          z-index: 1000;
+          right: 0;
+          [dir="ltr"] & {
+            right: unset;
+            left: 0;
+          }
+          [data-theme="dark"] & {
+            background-color: $bg-dark-2;
+            border-color: $border-color-dark;
+          }
+          a,
+          button {
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            gap: 5px;
+            font-size: 16px;
+            color: $text-dark;
+            [data-theme="dark"] & {
+              color: $text-light;
+            }
+          }
         }
       }
       .actions {

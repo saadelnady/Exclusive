@@ -9,6 +9,8 @@ const {
   addPageSection,
   deletePageSection,
   editPageSection,
+  getPageSections,
+  getPageSection,
 } = require("../controller/pages.controller.js");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -17,6 +19,7 @@ const alloewdTo = require("../middlewares/alloewdTo");
 
 const router = express.Router();
 
+// pages
 router
   .route("/")
   .get(getAllPages)
@@ -27,12 +30,15 @@ router
   .put(verifyToken, alloewdTo(roles.SUPER_ADMIN), editPage)
   .delete(verifyToken, alloewdTo(roles.SUPER_ADMIN), deletePage);
 
+// page sections
 router
   .route("/:pageSlug/sections")
+  .get(getPageSections)
   .post(verifyToken, alloewdTo(roles.SUPER_ADMIN), addPageSection);
 
 router
   .route("/:pageSlug/sections/:sectionSlug")
+  .get(getPageSection)
   .put(verifyToken, alloewdTo(roles.SUPER_ADMIN), editPageSection)
   .delete(verifyToken, alloewdTo(roles.SUPER_ADMIN), deletePageSection);
 

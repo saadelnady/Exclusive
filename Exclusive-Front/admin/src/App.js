@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "react-toastify/dist/ReactToastify.css";
+import "react-quill/dist/quill.snow.css";
+
 import "./styles/app.scss";
 import { ToastContainer } from "react-toastify";
 import Admin from "./layout";

@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
+const socialSchema = new mongoose.Schema(
+  {
+    image: { type: String },
+    title: {
+      ar: { type: String },
+      en: { type: String },
+    },
+    link: { type: String },
+  },
+  { _id: true }
+);
+
 const settingsSchema = new mongoose.Schema(
   {
     appName: {
@@ -23,6 +35,7 @@ const settingsSchema = new mongoose.Schema(
       unique: true,
       validate: [validator.isEmail, "Email must be valid email"],
     },
+    socials: [socialSchema],
   },
   {
     timestamps: true,

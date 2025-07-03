@@ -14,6 +14,7 @@ import { fetchSettings } from "@/store/actions/settings/settingsActions";
 const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
   const { settings } = useSelector((state) => state.settingsReducer);
   const { locale } = useIntl();
+  const intl = useIntl();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
   };
 
   const handleLogOut = () => {
-    const payLoad = { toast, navigate, role: "ADMIN" };
+    const payLoad = { toast, navigate, intl };
     dispatch(adminLogout(payLoad));
   };
 

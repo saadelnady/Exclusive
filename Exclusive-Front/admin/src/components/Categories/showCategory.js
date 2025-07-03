@@ -28,7 +28,6 @@ const ShowCategory = () => {
     dispatch(fetchCategory({ categoryId }));
   }, [categoryId, dispatch]);
 
-  console.log("category", category);
   const [selectedImg, setSelectedImg] = useState({
     file: null,
     preview: null,
