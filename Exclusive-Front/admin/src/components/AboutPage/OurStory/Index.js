@@ -78,6 +78,22 @@ const OurStory = () => {
       })
     );
   };
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      [{ font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script: "sub" }, { script: "super" }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ direction: "rtl" }],
+      [{ align: [] }],
+      ["link", "image", "video"],
+      ["clean"],
+    ],
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -176,6 +192,7 @@ const OurStory = () => {
               <Controller
                 name="description.ar"
                 direction="rtl"
+                dir="rtl"
                 control={control}
                 rules={{
                   required: formatMessage({ id: "required" }),
@@ -183,7 +200,9 @@ const OurStory = () => {
                 render={({ field }) => (
                   <ReactQuill
                     theme="snow"
+                    modules={quillModules}
                     direction="rtl"
+                    dir="rtl"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder={formatMessage({
@@ -216,6 +235,7 @@ const OurStory = () => {
                   <ReactQuill
                     theme="snow"
                     value={field.value}
+                    modules={quillModules}
                     onChange={field.onChange}
                     placeholder={formatMessage({
                       id: "descriptionPlaceholderEn",
