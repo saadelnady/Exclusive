@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { FormattedMessage, useIntl } from "react-intl";
 import styles from "./styles/styles.module.scss";
-import UploadImg from "@/components/Shared/uploadImg/Index";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import IcError from "./assets/images/svgs/ic-error.svg";
 import { toast } from "react-toastify";
-import ReactQuill from "react-quill";
-import { Controller } from "react-hook-form";
-import { postData } from "@/API/API";
 import { useDispatch, useSelector } from "react-redux";
 import {
   editPageSection,
@@ -16,17 +12,48 @@ import {
 } from "@/store/actions/pageSections/actions";
 import Loading from "@/components/Shared/loading";
 import StatisticsModal from "./StaticticsModal";
+import Table from "../../Shared/Table/Index";
+import DeleteIcon from "./assets/images/svgs/ic-delete.svg";
+import Warning from "@/components/Shared/warning/Index";
 
-const OurStory = () => {
+const OurStory = ({ isWarning, handleShowWarning }) => {
+  const [selectedStatisti, setSelectedStatistic] = useState(null);
+  const [show, setShow] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
   const { section, isLoading } = useSelector(
     (state) => state.pageSectionsReducer
   );
   const { locale, formatMessage } = useIntl();
-  const [show, setShow] = useState(false);
-  const hsndleShow = () => setShow(!show);
-  const [selectedStatisics, setSelectedStatistics] = useState(null);
-
   const dispatch = useDispatch();
+  const menuRefs = useRef({});
+
+  const handleShow = () => setShow(!show);
+
+  const handleDeleteFeature = () => {
+    console.log("daad");
+  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const clickedOutsideAll = Object.keys(menuRefs.current).every((key) => {
+        const ref = menuRefs.current[key];
+        return ref && !ref.contains(e.target);
+      });
+
+      if (clickedOutsideAll) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const popupInfo = {
+    Icon: <DeleteIcon />,
+    message: "deleteStatisicMessage",
+    actionTitle: "delete",
+  };
+
   const {
     register,
     handleSubmit,
@@ -34,7 +61,23 @@ const OurStory = () => {
     clearErrors,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      title: { ar: "", en: "" },
+      subTitle: { ar: "", en: "" },
+      items: [
+        {
+          title: "",
+          subTitle: { ar: "", en: "" },
+          image: "",
+        },
+      ],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "items",
+  });
 
   useEffect(() => {
     dispatch(
@@ -49,6 +92,8 @@ const OurStory = () => {
 
       setValue("subTitle.ar", section?.subTitle?.ar);
       setValue("subTitle.en", section?.subTitle?.en);
+
+      setValue("items", section?.items);
     }
   }, [section]);
 
@@ -64,6 +109,98 @@ const OurStory = () => {
       })
     );
   };
+
+  const cols = [
+    {
+      label: "#",
+      name: "#",
+      render: (row, rowIdx) => <div>{rowIdx + 1}</div>,
+    },
+    {
+      label: "image",
+      name: "image",
+      render: (row, rowIdx) => (
+        <div className="admin-img">
+          <img src={row?.image} alt="admin-img" />
+        </div>
+      ),
+    },
+    {
+      label: "title",
+      name: "title",
+      render: (row) => <div>{`${row?.title}`}</div>,
+    },
+    {
+      label: "subTitle",
+      name: "subTitle",
+      render: (row) => <div>{`${row?.subTitle?.[locale]}`}</div>,
+    },
+
+    {
+      label: "actions",
+      name: "actions",
+      render: (row) => (
+        <div
+          className="actions"
+          ref={(el) => {
+            if (el) menuRefs.current[row._id] = el;
+          }}
+        >
+          <button
+            className="actions-btn"
+            onClick={() =>
+              setOpenMenuId((prev) => (prev === row._id ? null : row._id))
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <circle cx="8" cy="3" r="1.5" />
+              <circle cx="8" cy="8" r="1.5" />
+              <circle cx="8" cy="13" r="1.5" />
+            </svg>
+          </button>
+          {openMenuId === row?._id && (
+            <div className="custom-dropdown">
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="bi bi-eye"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+
+                <FormattedMessage id="view" />
+              </button>
+
+              <button
+                onClick={() => {
+                  handleShowWarning();
+                  setSelectedStatistic(row);
+                }}
+              >
+                <DeleteIcon />
+                <FormattedMessage id="delete" />
+              </button>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   if (isLoading) {
     return <Loading />;
@@ -194,7 +331,7 @@ const OurStory = () => {
                 <button
                   type="button"
                   className="btn submit"
-                  onClick={hsndleShow}
+                  onClick={handleShow}
                 >
                   + <FormattedMessage id="addNewStatistic" />
                 </button>
@@ -202,6 +339,7 @@ const OurStory = () => {
             </div>
           </Col>
         </Row>
+        <Table cols={cols} rows={fields} />
         <button type="submit" className="btn submit">
           <FormattedMessage id="edit" />
         </button>
@@ -210,10 +348,16 @@ const OurStory = () => {
         register={register}
         errors={errors}
         show={show}
-        hsndleShow={hsndleShow}
-        selectedStatisics={selectedStatisics}
-        setSelectedStatistics={setSelectedStatistics}
+        handleShow={handleShow}
+        append={append}
       />
+      {isWarning && (
+        <Warning
+          handleShowWarning={handleShowWarning}
+          actionHandler={handleDeleteFeature}
+          popupInfo={popupInfo}
+        />
+      )}
     </div>
   );
 };

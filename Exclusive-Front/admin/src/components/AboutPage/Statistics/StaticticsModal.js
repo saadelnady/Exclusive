@@ -6,6 +6,8 @@ import { FormattedMessage, useIntl } from "react-intl";
 import IcClose from "./assets/images/svgs/ic-close.svg";
 import styles from "./styles/styles.module.scss";
 import { isObjectNotEmpty } from "@/helpers/checkers";
+import IcError from "./assets/images/svgs/ic-error.svg";
+
 const StatisticsModal = ({
   register,
   errors,
@@ -13,6 +15,8 @@ const StatisticsModal = ({
   handleShow,
   selectedStatisics,
   setSelectedStatistics,
+  append,
+  index,
 }) => {
   const [selectedImg, setSelectedImg] = useState({ file: null, preview: null });
   const { locale, formatMessage } = useIntl();
@@ -45,6 +49,8 @@ const StatisticsModal = ({
   const handleRemoveImg = () => {
     setSelectedImg({ file: null, preview: null });
   };
+
+  const submitHandler = () => {};
   return (
     <Modal
       size="lg"
@@ -73,7 +79,7 @@ const StatisticsModal = ({
       </Modal.Header>
 
       <Modal.Body>
-        <form>
+        <form onSubmit={submitHandler}>
           <Row>
             <UploadImg
               handleImageChange={handleImageChange}
@@ -83,14 +89,14 @@ const StatisticsModal = ({
               errors={errors}
               name="image"
             />
-            <Col xs={12} md={6}>
+            <Col xs={12}>
               <div className="input-wrapper">
                 <label className="label" htmlFor="title">
                   {formatMessage({ id: "title" })} :
                 </label>
                 <input
                   id="title"
-                  {...register("items[index].title", {
+                  {...register(`items.${index}.title`, {
                     required: formatMessage({ id: "required" }),
                     minLength: {
                       value: 5,
@@ -120,15 +126,15 @@ const StatisticsModal = ({
                 <input
                   id="subTitleAr"
                   dir="rtl"
-                  {...register("subTitle.ar", {
+                  {...register(`items.${index}.subTitle.ar`, {
                     required: formatMessage({ id: "required" }),
                   })}
                   className="special-input"
                 />
-                {errors.subTitle?.ar && (
+                {`${errors}.items.${index}.subTitle.ar` && (
                   <p className="error">
                     <IcError />
-                    {errors.subTitle?.ar.message}
+                    {`${errors}.items.${index}.subTitle.ar.message`}
                   </p>
                 )}
               </div>
@@ -141,15 +147,15 @@ const StatisticsModal = ({
                 <input
                   id="subTitleEn"
                   dir="ltr"
-                  {...register("subTitle.en", {
+                  {...register(`items.${index}.subTitle.en`, {
                     required: formatMessage({ id: "required" }),
                   })}
                   className="special-input"
                 />
-                {errors.subTitle?.en && (
+                {`${errors}.items.${index}.subTitle.en` && (
                   <p className="error">
                     <IcError />
-                    {errors.subTitle?.en.message}
+                    {`${errors}.items.${index}.subTitle.en.message`}
                   </p>
                 )}
               </div>

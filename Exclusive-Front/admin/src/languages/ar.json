@@ -121,5 +121,6 @@
   "subTitleEn": "العنوان الفرعي بالانجليزية",
   "addNewStatistic": "اضافة احصائية جديدة",
   "allStatistics": "جميع الاحصاءات",
-  "editStatistic": "تعديل الاحصائية"
+  "editStatistic": "تعديل الاحصائية",
+  "deleteStatisicMessage": "هل تريد حذف هذه الاحصائية ؟"
 }

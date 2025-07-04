@@ -34,7 +34,6 @@ const OurStory = () => {
   useEffect(() => {
     dispatch(fetchPageSection({ pageSlug: "about", sectionSlug: "our-story" }));
   }, []);
-  console.log("section", section);
 
   useEffect(() => {
     if (section) {
