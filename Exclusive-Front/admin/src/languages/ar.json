@@ -116,5 +116,10 @@
   "descriptionAr": "الوصف بالعربية",
   "descriptionEn": "الوصف بالانجليزية",
   "descriptionPlaceholderAr": "ادخل الوصف بالعربية",
-  "descriptionPlaceholderEn": "ادخل الوصف بالانجليزية"
+  "descriptionPlaceholderEn": "ادخل الوصف بالانجليزية",
+  "subTitleAr": "العنوان الفرعي بالعربية",
+  "subTitleEn": "العنوان الفرعي بالانجليزية",
+  "addNewStatistic": "اضافة احصائية جديدة",
+  "allStatistics": "جميع الاحصاءات",
+  "editStatistic": "تعديل الاحصائية"
 }
