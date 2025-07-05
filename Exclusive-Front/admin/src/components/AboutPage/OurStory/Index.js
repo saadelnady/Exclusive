@@ -199,6 +199,7 @@ const OurStory = () => {
                 render={({ field }) => (
                   <ReactQuill
                     theme="snow"
+                    className="special-quill"
                     modules={quillModules}
                     direction="rtl"
                     dir="rtl"
@@ -233,6 +234,7 @@ const OurStory = () => {
                 render={({ field }) => (
                   <ReactQuill
                     theme="snow"
+                    className="special-quill"
                     value={field.value}
                     modules={quillModules}
                     onChange={field.onChange}

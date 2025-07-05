@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const { roles } = require("../utils/constants");
+const { sellerStatus } = require("../utils/constants");
 
 const sellerSchema = new mongoose.Schema(
   {
@@ -24,6 +25,28 @@ const sellerSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    status: {
+      type: String,
+      default: sellerStatus.NOTVERIFIED,
+      enum: [
+        sellerStatus.NOTVERIFIED,
+        sellerStatus.VERIFIED,
+        sellerStatus.BLOCKED,
+      ],
+    },
+    blockReason: {
+      type: String,
+      default: null,
+      validate: {
+        validator: function (value) {
+          if (value && this.status !== sellerStatus.BLOCKED) {
+            return false;
+          }
+          return true;
+        },
+        message: "blockReason can only be set when status is BLOCKED",
+      },
     },
     token: { type: String },
     role: { type: String, default: roles.SELLER },

@@ -22,5 +22,16 @@ const userStatus = {
   NOTVERIFIED: "NOTVERIFIED",
   BLOCKED: "BLOCKED",
 };
+const sellerStatus = {
+  VERIFIED: "VERIFIED",
+  NOTVERIFIED: "NOTVERIFIED",
+  BLOCKED: "BLOCKED",
+};
 
-module.exports = { httpStatusText, productStatus, roles, userStatus };
+module.exports = {
+  httpStatusText,
+  productStatus,
+  roles,
+  userStatus,
+  sellerStatus,
+};

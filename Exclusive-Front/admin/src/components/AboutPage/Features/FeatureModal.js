@@ -7,13 +7,13 @@ import IcClose from "./assets/images/svgs/ic-close.svg";
 import styles from "./styles/styles.module.scss";
 import { isObjectNotEmpty } from "@/helpers/checkers";
 import IcError from "./assets/images/svgs/ic-error.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-const StatisticsModal = ({
+const FeatureModal = ({
   show,
   handleShow,
   append,
-  selectedStatistic,
+  selectedFeature,
   update,
   index,
 }) => {
@@ -47,25 +47,26 @@ const StatisticsModal = ({
   };
 
   useEffect(() => {
-    if (isObjectNotEmpty(selectedStatistic)) {
+    if (isObjectNotEmpty(selectedFeature)) {
       clearErrors();
-      setSelectedImg({ file: null, preview: selectedStatistic?.image });
-      setValue("image", selectedStatistic?.image);
+      setSelectedImg({ file: null, preview: selectedFeature?.image });
+      setValue("image", selectedFeature?.image);
 
-      setValue("title", selectedStatistic?.title);
+      setValue("title.ar", selectedFeature?.title?.ar);
+      setValue("title.en", selectedFeature?.title?.en);
 
-      setValue("subTitle.ar", selectedStatistic?.subTitle?.ar);
-      setValue("subTitle.en", selectedStatistic?.subTitle?.en);
+      setValue("subTitle.ar", selectedFeature?.subTitle?.ar);
+      setValue("subTitle.en", selectedFeature?.subTitle?.en);
     } else {
       reset();
       setSelectedImg({ file: null, preview: null });
     }
-  }, [selectedStatistic]);
+  }, [selectedFeature]);
 
   const submitHandler = (data) => {
     data.image = selectedImg?.preview ? selectedImg?.preview : null;
 
-    if (isObjectNotEmpty(selectedStatistic)) {
+    if (isObjectNotEmpty(selectedFeature)) {
       update(index, data);
     } else {
       append(data);
@@ -82,12 +83,12 @@ const StatisticsModal = ({
         handleShow();
       }}
       centered
-      className={styles.statisticsModal}
+      className={styles.modal}
     >
       <Modal.Header>
         <Modal.Title>
           <FormattedMessage
-            id={selectedStatistic ? "editStatistic" : "addNewStatistic"}
+            id={selectedFeature ? "editFeature" : "addFeature"}
           />
         </Modal.Title>
         <button
@@ -110,22 +111,43 @@ const StatisticsModal = ({
               errors={errors}
               name="image"
             />
-            <Col xs={12}>
+            <Col xs={12} md={6}>
               <div className="input-wrapper">
-                <label className="label" htmlFor="title">
-                  {formatMessage({ id: "title" })} :
+                <label className="label" htmlFor="titleAr">
+                  {formatMessage({ id: "titleAr" })} :
                 </label>
                 <input
-                  id="title"
-                  {...register(`title`, {
+                  id="titleAr"
+                  {...register(`title.ar`, {
                     required: formatMessage({ id: "required" }),
                   })}
                   className="special-input"
                 />
-                {errors.title && (
+                {errors?.title?.ar && (
                   <p className="error">
                     <IcError />
-                    {errors.title.message}
+                    {errors?.title?.ar.message}
+                  </p>
+                )}
+              </div>
+            </Col>
+            <Col xs={12} md={6}>
+              <div className="input-wrapper">
+                <label className="label" htmlFor="titleAr">
+                  {formatMessage({ id: "titleAr" })} :
+                </label>
+                <input
+                  dir="ltr"
+                  id="titleAr"
+                  {...register(`title.en`, {
+                    required: formatMessage({ id: "required" }),
+                  })}
+                  className="special-input"
+                />
+                {errors?.title?.en && (
+                  <p className="error">
+                    <IcError />
+                    {errors?.title?.en?.message}
                   </p>
                 )}
               </div>
@@ -187,7 +209,7 @@ const StatisticsModal = ({
               <FormattedMessage id="cancel" />
             </button>
             <button type="submit" className="btn submit">
-              <FormattedMessage id={selectedStatistic ? "edit" : "add"} />
+              <FormattedMessage id={selectedFeature ? "edit" : "add"} />
             </button>
           </Modal.Footer>
         </form>
@@ -196,4 +218,4 @@ const StatisticsModal = ({
   );
 };
 
-export default StatisticsModal;
+export default FeatureModal;

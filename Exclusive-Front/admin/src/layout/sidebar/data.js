@@ -60,6 +60,23 @@ export const adminLinks = [
       </svg>
     ),
   },
+  {
+    id: v4(),
+    title: "sellers",
+    to: "/sellers",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={20}
+        height={20}
+        fill="currentColor"
+        className={"me-2"}
+        viewBox="0 0 16 16"
+      >
+        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 14s-1 0-1-1 1-4 7-4 7 3 7 4-1 1-1 1H2z" />
+      </svg>
+    ),
+  },
   // {
   //   id: v4(),
   //   title: "profile",

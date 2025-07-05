@@ -4,28 +4,38 @@ import Product from "../components/Product/Index.jsx";
 import PendingProducts from "../components/Products/PendingProducts.jsx";
 import AcceptedProducts from "../components/Products/AcceptedProducts.jsx";
 import BlockedProducts from "../components/Products/BlockedProducts.jsx";
+
 import Categories from "../components/Categories/Index.js";
 import AddCategory from "../components/Categories/addNewCategory.js";
 import ShowCategory from "@/components/Categories/showCategory.js";
+
 import AddSubCategory from "../components/Subcategories/addNewSubCategory.js";
 import SubCategories from "../components/Subcategories/Index.js";
 import ShowSubCategory from "../components/Subcategories/showSubCategory.js";
-import Seller from "../components/Seller/Index.jsx";
-import NotFoundPage from "../components/Shared/NotFoundPage.jsx";
+
 import AllAdmins from "@/components/admins/Index.js";
 import AddNewAdmin from "@/components/admins/addNewAdmin.js";
 import ShowAdmin from "@/components/admins/showAdmin.js";
+
 import Home from "@/components/Home/Index.js";
 import Profile from "@/components/Profile/Index.js";
+
+import NotFoundPage from "../components/Shared/NotFoundPage.jsx";
 import ProtectedRoute from "./ProtectedRoute.js";
 import Unauthorized from "@/components/Shared/UnAuthorized/Index.js";
+
+import AllUsers from "@/components/users/Index.js";
 import ShowUser from "@/components/users/showUser.js";
-import AllUsers from "@/components/users";
+
+import AllSellers from "@/components/sellers/Index.js";
+import ShowSeller from "@/components/sellers/showSeller.js";
 import Settings from "@/components/Settings/Index.js";
+
 import OurStory from "@/components/AboutPage/OurStory/Index.js";
 import Features from "@/components/AboutPage/Features/Index.js";
 import Statistics from "@/components/AboutPage/Statistics/Index.js";
 import TeamMembers from "@/components/AboutPage/TeamMembers/Index.js";
+
 const allRoutes = (isWarning, handleShowWarning) => [
   { path: "/", element: <Home /> },
   {
@@ -63,6 +73,29 @@ const allRoutes = (isWarning, handleShowWarning) => [
       </ProtectedRoute>
     ),
   },
+  {
+    path: "/sellers",
+    element: (
+      <ProtectedRoute>
+        <AllSellers
+          isWarning={isWarning}
+          handleShowWarning={handleShowWarning}
+        />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/sellers/show/:sellerId",
+    element: (
+      <ProtectedRoute>
+        <ShowSeller
+          isWarning={isWarning}
+          handleShowWarning={handleShowWarning}
+        />
+      </ProtectedRoute>
+    ),
+  },
+
   {
     path: "/users",
     element: (
@@ -179,12 +212,7 @@ const allRoutes = (isWarning, handleShowWarning) => [
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/seller/:sellerId",
-    element: (
-      <Seller isWarning={isWarning} handleShowWarning={handleShowWarning} />
-    ),
-  },
+
   {
     path: "/settings",
     element: (

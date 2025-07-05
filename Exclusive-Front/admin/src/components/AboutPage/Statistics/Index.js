@@ -17,7 +17,8 @@ import DeleteIcon from "./assets/images/svgs/ic-delete.svg";
 import Warning from "@/components/Shared/warning/Index";
 
 const OurStory = ({ isWarning, handleShowWarning }) => {
-  const [selectedStatisti, setSelectedStatistic] = useState(null);
+  const [selectedStatistic, setSelectedStatistic] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [show, setShow] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const { section, isLoading } = useSelector(
@@ -27,10 +28,14 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
   const dispatch = useDispatch();
   const menuRefs = useRef({});
 
-  const handleShow = () => setShow(!show);
+  const handleShow = () => {
+    setShow(!show);
+  };
 
-  const handleDeleteFeature = () => {
-    console.log("daad");
+  const handleDeleteStatistic = () => {
+    if (selectedIndex) {
+      remove(selectedIndex);
+    }
   };
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -65,16 +70,10 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
     defaultValues: {
       title: { ar: "", en: "" },
       subTitle: { ar: "", en: "" },
-      items: [
-        {
-          title: "",
-          subTitle: { ar: "", en: "" },
-          image: "",
-        },
-      ],
+      items: [],
     },
   });
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "items",
   });
@@ -120,7 +119,7 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
       label: "image",
       name: "image",
       render: (row, rowIdx) => (
-        <div className="admin-img">
+        <div className="img">
           <img src={row?.image} alt="admin-img" />
         </div>
       ),
@@ -139,17 +138,18 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
     {
       label: "actions",
       name: "actions",
-      render: (row) => (
+      render: (row, rowIdx) => (
         <div
           className="actions"
           ref={(el) => {
-            if (el) menuRefs.current[row._id] = el;
+            if (el) menuRefs.current[row.id] = el;
           }}
         >
           <button
             className="actions-btn"
+            type="button"
             onClick={() =>
-              setOpenMenuId((prev) => (prev === row._id ? null : row._id))
+              setOpenMenuId((prev) => (prev === row.id ? null : row.id))
             }
           >
             <svg
@@ -164,9 +164,16 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
               <circle cx="8" cy="13" r="1.5" />
             </svg>
           </button>
-          {openMenuId === row?._id && (
+          {openMenuId === row?.id && (
             <div className="custom-dropdown">
-              <button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleShow();
+                  setSelectedStatistic(row);
+                  setSelectedIndex(rowIdx);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -187,9 +194,11 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   handleShowWarning();
                   setSelectedStatistic(row);
+                  setSelectedIndex(rowIdx);
                 }}
               >
                 <DeleteIcon />
@@ -331,7 +340,11 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
                 <button
                   type="button"
                   className="btn submit"
-                  onClick={handleShow}
+                  onClick={() => {
+                    handleShow();
+                    setSelectedStatistic(null);
+                    setSelectedIndex(null);
+                  }}
                 >
                   + <FormattedMessage id="addNewStatistic" />
                 </button>
@@ -345,16 +358,17 @@ const OurStory = ({ isWarning, handleShowWarning }) => {
         </button>
       </form>
       <StatisticsModal
-        register={register}
-        errors={errors}
         show={show}
         handleShow={handleShow}
         append={append}
+        selectedStatistic={selectedStatistic}
+        update={update}
+        index={selectedIndex}
       />
       {isWarning && (
         <Warning
           handleShowWarning={handleShowWarning}
-          actionHandler={handleDeleteFeature}
+          actionHandler={handleDeleteStatistic}
           popupInfo={popupInfo}
         />
       )}

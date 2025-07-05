@@ -49,7 +49,9 @@ export const editUser = ({ userId, data, toast, locale, navigate }) => {
       const response = await putData(`/api/users/${userId}`, data);
       dispatch(actionCreators.putUserSuccess(response));
       showToast(toast, response?.message?.[locale], "success");
-      navigate("/users");
+      setTimeout(() => {
+        navigate("/users");
+      }, 2500);
     } catch (error) {
       dispatch(actionCreators.putUserFail(error));
       showToast(toast, error?.response?.data?.message?.[locale], "error");

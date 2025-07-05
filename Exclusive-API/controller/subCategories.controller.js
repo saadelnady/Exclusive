@@ -65,7 +65,6 @@ const addSubCategory = asyncWrapper(async (req, res, next) => {
   const { categoryId, title, image } = req.body;
 
   const targetCategory = await Category.findOne({ _id: categoryId });
-  console.log("targetCategory", targetCategory);
 
   if (!targetCategory) {
     return res.json({

@@ -8,6 +8,7 @@ const { generateToken } = require("../utils/utils");
 const { sendEmail } = require("../utils/utils");
 const fs = require("fs");
 const { productStatus, httpStatusText, roles } = require("../utils/constants");
+const mongoose = require("mongoose");
 
 const sellerRegister = asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
@@ -129,22 +130,28 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
 
 const getSeller = asyncWrapper(async (req, res, next) => {
   const { sellerId } = req.params;
+
   const targetSeller = await Seller.findById(sellerId, {
-    password: false,
-  });
+    password: 0,
+    __v: 0,
+  }).populate("products", "-__v");
 
   if (!targetSeller) {
     const error = appError.create(
-      "seller not found",
+      {
+        ar: "البائع غير موجود",
+        en: "seller not found",
+      },
       400,
-      httpStatusText.ERROR
+      httpStatusText.FAIL
     );
     return next(error);
   }
 
-  res
-    .status(200)
-    .json({ status: httpStatusText.SUCCESS, data: { seller: targetSeller } });
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { seller: targetSeller },
+  });
 });
 
 const getSellerProducts = asyncWrapper(async (req, res, next) => {
@@ -182,24 +189,51 @@ const getSellerProducts = asyncWrapper(async (req, res, next) => {
 });
 
 const getAllSellers = asyncWrapper(async (req, res, next) => {
-  const query = req.query;
-
-  const limit = query.limit;
-  const page = query.page;
+  const limit = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const text = req.query.text;
   const skip = (page - 1) * limit;
-  let sellers = await Seller.find({}, { __v: false, password: false })
-    .limit(limit)
-    .skip(skip);
-  if (!sellers) {
-    const error = appError.create(
-      "sellers not found",
-      400,
-      httpStatusText.ERROR
-    );
-    return next(error);
+
+  const searchQuery = {};
+
+  // Escape special characters in regex
+  const escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
+  if (text) {
+    const safeText = escapeRegex(text);
+    const regex = { $regex: safeText, $options: "i" };
+
+    searchQuery.$or = [
+      { firstName: regex },
+      { lastName: regex },
+      { email: regex },
+      { mobilePhone: regex },
+      { address: regex },
+      {
+        _id: mongoose.Types.ObjectId.isValid(text)
+          ? new mongoose.Types.ObjectId(text)
+          : undefined,
+      },
+    ].filter(Boolean);
   }
 
-  res.status(200).json({ status: httpStatusText.SUCCESS, data: { sellers } });
+  const [sellers, totalSellersCount] = await Promise.all([
+    Seller.find(searchQuery, { __v: 0, password: 0 }).limit(limit).skip(skip),
+    Seller.countDocuments(searchQuery),
+  ]);
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      sellers,
+      total: totalSellersCount,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalSellersCount / limit),
+    },
+  });
 });
 
 const deleteSeller = asyncWrapper(async (req, res, next) => {

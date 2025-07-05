@@ -4,11 +4,14 @@ import {
 } from "../../actions/actionTypes";
 
 const initialState = {
-  isLoggedIn: false,
   isLoading: false,
   error: null,
   seller: {},
   sellers: [],
+  total: 0,
+  currentPage: 1,
+  pageSize: 10,
+  totalPages: 0,
   message: "",
 };
 
@@ -118,8 +121,12 @@ const sellerReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        sellers: action.payLoad,
+        sellers: action?.payLoad?.sellers,
         error: null,
+        total: action?.payLoad?.total,
+        currentPage: action?.payLoad?.currentPage,
+        pageSize: action?.payLoad?.pageSize,
+        totalPages: action?.payLoad?.totalPages,
       };
     case SELLERS_ACTIONS_TYPES.GET_SELLERS_FAIL:
       return {

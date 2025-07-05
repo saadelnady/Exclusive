@@ -5,14 +5,14 @@ import Loading from "../Shared/loading";
 import { FormattedMessage, useIntl } from "react-intl";
 import styles from "./styles/styles.module.scss";
 
-import { editUser, fetchUser } from "@/store/actions/user/userActions";
-import { userStatus } from "@/helpers/roles";
+import { sellerStatus } from "@/helpers/roles";
 import { handleImageLink } from "@/helpers/checkers";
 import { toast } from "react-toastify";
 import BlockUserModal from "./blockUserModal";
-const ShowUser = () => {
-  const { userId } = useParams();
-  const { user, isLoading } = useSelector((state) => state.userReducer);
+import { fetchSeller } from "@/store/actions/seller/sellerActions";
+const ShowSeller = () => {
+  const { sellerId } = useParams();
+  const { seller, isLoading } = useSelector((state) => state.sellerReducer);
   const { locale } = useIntl();
   const navigate = useNavigate();
 
@@ -21,18 +21,18 @@ const ShowUser = () => {
   const handleClose = () => setShow(false);
 
   useEffect(() => {
-    dispatch(fetchUser({ userId }));
-  }, [userId, dispatch]);
+    dispatch(fetchSeller({ sellerId }));
+  }, [sellerId, dispatch]);
 
-  const handleBlockUser = (status) => {
-    if (status == "block") {
+  const handleBlockSeller = (status) => {
+    if (status === "block") {
       setShow(true);
     } else {
       dispatch(
-        editUser({
-          userId,
+        editS({
+          sellerId,
           data: {
-            status: userStatus?.VERIFIED,
+            status: sellerStatus?.VERIFIED,
             blockReason: "",
           },
           toast,
@@ -40,14 +40,14 @@ const ShowUser = () => {
           navigate,
         })
       );
-     }
+    }
   };
   const onSubmit = (data) => {
     dispatch(
       editUser({
-        userId,
+        sellerId,
         data: {
-          status: userStatus?.BLOCKED,
+          status: sellerStatus?.BLOCKED,
           blockReason: data?.blockReason,
         },
         toast,
@@ -58,14 +58,14 @@ const ShowUser = () => {
   };
   if (isLoading) return <Loading />;
   return (
-    <div className={`page ${styles.user}`}>
+    <div className={`page ${styles.seller}`}>
       <div className="page-header">
         <div className="text">
           <h4 className="page-title">
-            <FormattedMessage id="userDetailsTitle" />
+            <FormattedMessage id="sellerDetailsTitle" />
           </h4>
           <p className="page-description">
-            <FormattedMessage id="userDetailsDescription" />
+            <FormattedMessage id="sellerDetailsDescription" />
           </p>
         </div>
       </div>
@@ -77,37 +77,39 @@ const ShowUser = () => {
                 <FormattedMessage id="image" />
               </th>
               <td>
-                <img
-                  src={handleImageLink(user?.image || "")}
-                  alt="User"
-                  width="80"
-                />
+                <div className="seller-img">
+                  <img
+                    src={handleImageLink(seller?.image || "")}
+                    alt="User"
+                    width="80"
+                  />
+                </div>
               </td>
             </tr>
             <tr>
               <th>
                 <FormattedMessage id="name" />
               </th>
-              <td>{`${user?.firstName} ${user?.lastName}`} </td>
+              <td>{`${seller?.firstName} ${seller?.lastName}`} </td>
             </tr>
 
             <tr>
               <th>
                 <FormattedMessage id="email" />
               </th>
-              <td>{user?.email}</td>
+              <td>{seller?.email}</td>
             </tr>
             <tr>
               <th>
                 <FormattedMessage id="phone" />
               </th>
-              <td>{user?.mobilePhone}</td>
+              <td>{seller?.mobilePhone}</td>
             </tr>
             <tr>
               <th>
                 <FormattedMessage id="address" />
               </th>
-              <td>{user?.address || "-"}</td>
+              <td>{seller?.address || "-"}</td>
             </tr>
 
             <tr>
@@ -115,13 +117,13 @@ const ShowUser = () => {
                 <FormattedMessage id="isBlocked" />
               </th>
               <td>
-                {user?.status === userStatus.BLOCKED ? (
+                {seller?.status === sellerStatus.BLOCKED ? (
                   <div className="d-flex align-items-center gap-5">
                     <FormattedMessage id="yes" />
                     <button
                       className="btn block-btn"
                       type="button"
-                      onClick={() => handleBlockUser("unblock")}
+                      onClick={() => handleBlockSeller("unblock")}
                     >
                       <FormattedMessage id="unblock" />
                     </button>
@@ -133,7 +135,7 @@ const ShowUser = () => {
                       className="btn block-btn"
                       type="button"
                       onClick={() => {
-                        handleBlockUser("block");
+                        handleBlockSeller("block");
                       }}
                     >
                       <FormattedMessage id="block" />
@@ -142,12 +144,12 @@ const ShowUser = () => {
                 )}
               </td>
             </tr>
-            {user?.blockReason && user?.status === userStatus.BLOCKED && (
+            {seller?.blockReason && seller?.status === sellerStatus.BLOCKED && (
               <tr>
                 <th>
                   <FormattedMessage id="blockReason" />
                 </th>
-                <td>{user?.blockReason || "-"}</td>
+                <td>{seller?.blockReason || "-"}</td>
               </tr>
             )}
             <tr>
@@ -155,13 +157,13 @@ const ShowUser = () => {
                 <FormattedMessage id="createdAt" />
               </th>
               <td>
-                {new Date(user?.createdAt).toLocaleDateString("ar-EG", {
+                {new Date(seller?.createdAt).toLocaleDateString("ar-EG", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
                 {" - "}
-                {new Date(user?.createdAt).toLocaleTimeString("ar-EG", {
+                {new Date(seller?.createdAt).toLocaleTimeString("ar-EG", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
@@ -172,13 +174,13 @@ const ShowUser = () => {
                 <FormattedMessage id="updatedAt" />
               </th>
               <td>
-                {new Date(user?.updatedAt).toLocaleDateString("ar-EG", {
+                {new Date(seller?.updatedAt).toLocaleDateString("ar-EG", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
                 {" - "}
-                {new Date(user?.updatedAt).toLocaleTimeString("ar-EG", {
+                {new Date(seller?.updatedAt).toLocaleTimeString("ar-EG", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
@@ -196,4 +198,4 @@ const ShowUser = () => {
   );
 };
 
-export default ShowUser;
+export default ShowSeller;

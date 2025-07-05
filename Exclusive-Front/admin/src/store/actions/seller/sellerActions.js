@@ -2,7 +2,7 @@ import { getData, postData, putData } from "../../../API/API";
 import { showToast } from "../../../helpers/toast_helper";
 import * as actionCreators from "./sellerActionsCreators";
 
-export const fetchSeller = (sellerId) => {
+export const fetchSeller = ({ sellerId }) => {
   return async (dispatch) => {
     dispatch(actionCreators.getSeller(sellerId));
     try {
@@ -105,12 +105,19 @@ export const sellerRegister = ({ values, toast, navigate }) => {
 };
 
 // =========================================================================================
-export const fetchSellers = () => {
+export const fetchSellers = ({ limit = "", page = "", text = "" }) => {
   return async (dispatch) => {
     dispatch(actionCreators.getSellers());
     try {
-      const response = await getData(`/api/sellers`);
-      dispatch(actionCreators.getSellersSuccess(response?.data?.sellers));
+      let response;
+      if (text) {
+        response = await getData(
+          `/api/sellers?limit=${limit}&page=${page}&text=${text}`
+        );
+      } else {
+        response = await getData(`/api/sellers?limit=${limit}&page=${page}`);
+      }
+      dispatch(actionCreators.getSellersSuccess(response?.data));
     } catch (error) {
       dispatch(actionCreators.getSellersFail(error));
     }

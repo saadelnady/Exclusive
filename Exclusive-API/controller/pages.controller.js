@@ -334,7 +334,6 @@ const editPageSection = asyncWrapper(async (req, res, next) => {
   const targetSection = updatedPage.sections.find(
     (section) => section.slug === sectionSlug
   );
-  console.log("saaaaad ==>", targetSection);
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,

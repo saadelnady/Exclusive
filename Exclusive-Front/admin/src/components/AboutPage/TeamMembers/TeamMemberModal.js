@@ -7,13 +7,13 @@ import IcClose from "./assets/images/svgs/ic-close.svg";
 import styles from "./styles/styles.module.scss";
 import { isObjectNotEmpty } from "@/helpers/checkers";
 import IcError from "./assets/images/svgs/ic-error.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-const StatisticsModal = ({
+const TeamMemberModal = ({
   show,
   handleShow,
   append,
-  selectedStatistic,
+  selectedTeamMember,
   update,
   index,
 }) => {
@@ -47,25 +47,26 @@ const StatisticsModal = ({
   };
 
   useEffect(() => {
-    if (isObjectNotEmpty(selectedStatistic)) {
+    if (isObjectNotEmpty(selectedTeamMember)) {
       clearErrors();
-      setSelectedImg({ file: null, preview: selectedStatistic?.image });
-      setValue("image", selectedStatistic?.image);
+      setSelectedImg({ file: null, preview: selectedTeamMember?.image });
+      setValue("image", selectedTeamMember?.image);
 
-      setValue("title", selectedStatistic?.title);
+      setValue("title.ar", selectedTeamMember?.title?.ar);
+      setValue("title.en", selectedTeamMember?.title?.en);
 
-      setValue("subTitle.ar", selectedStatistic?.subTitle?.ar);
-      setValue("subTitle.en", selectedStatistic?.subTitle?.en);
+      setValue("subTitle.ar", selectedTeamMember?.subTitle?.ar);
+      setValue("subTitle.en", selectedTeamMember?.subTitle?.en);
     } else {
       reset();
       setSelectedImg({ file: null, preview: null });
     }
-  }, [selectedStatistic]);
+  }, [selectedTeamMember]);
 
   const submitHandler = (data) => {
     data.image = selectedImg?.preview ? selectedImg?.preview : null;
 
-    if (isObjectNotEmpty(selectedStatistic)) {
+    if (isObjectNotEmpty(selectedTeamMember)) {
       update(index, data);
     } else {
       append(data);
@@ -82,12 +83,12 @@ const StatisticsModal = ({
         handleShow();
       }}
       centered
-      className={styles.statisticsModal}
+      className={styles.modal}
     >
       <Modal.Header>
         <Modal.Title>
           <FormattedMessage
-            id={selectedStatistic ? "editStatistic" : "addNewStatistic"}
+            id={selectedTeamMember ? "editMember" : "addNewMember"}
           />
         </Modal.Title>
         <button
@@ -110,22 +111,43 @@ const StatisticsModal = ({
               errors={errors}
               name="image"
             />
-            <Col xs={12}>
+            <Col xs={12} md={6}>
               <div className="input-wrapper">
                 <label className="label" htmlFor="title">
-                  {formatMessage({ id: "title" })} :
+                  {formatMessage({ id: "nameAr" })} :
                 </label>
                 <input
                   id="title"
-                  {...register(`title`, {
+                  {...register(`title.ar`, {
                     required: formatMessage({ id: "required" }),
                   })}
                   className="special-input"
                 />
-                {errors.title && (
+                {errors?.title?.ar && (
                   <p className="error">
                     <IcError />
-                    {errors.title.message}
+                    {errors?.title?.ar.message}
+                  </p>
+                )}
+              </div>
+            </Col>
+            <Col xs={12} md={6}>
+              <div className="input-wrapper">
+                <label className="label" htmlFor="nameEn">
+                  {formatMessage({ id: "nameEn" })} :
+                </label>
+                <input
+                  dir="ltr"
+                  id="nameEn"
+                  {...register(`title.en`, {
+                    required: formatMessage({ id: "required" }),
+                  })}
+                  className="special-input"
+                />
+                {errors?.title?.en && (
+                  <p className="error">
+                    <IcError />
+                    {errors?.title?.en?.message}
                   </p>
                 )}
               </div>
@@ -134,7 +156,7 @@ const StatisticsModal = ({
             <Col xs={12} md={6}>
               <div className="input-wrapper">
                 <label className="label" htmlFor="subTitleAr">
-                  {formatMessage({ id: "subTitleAr" })} :
+                  {formatMessage({ id: "positionAr" })} :
                 </label>
                 <input
                   id="subTitleAr"
@@ -155,7 +177,7 @@ const StatisticsModal = ({
             <Col xs={12} md={6}>
               <div className="input-wrapper">
                 <label className="label" htmlFor="subTitleEn">
-                  {formatMessage({ id: "subTitleEn" })} :
+                  {formatMessage({ id: "positionEn" })} :
                 </label>
                 <input
                   id="subTitleEn"
@@ -187,7 +209,7 @@ const StatisticsModal = ({
               <FormattedMessage id="cancel" />
             </button>
             <button type="submit" className="btn submit">
-              <FormattedMessage id={selectedStatistic ? "edit" : "add"} />
+              <FormattedMessage id={selectedTeamMember ? "edit" : "add"} />
             </button>
           </Modal.Footer>
         </form>
@@ -196,4 +218,4 @@ const StatisticsModal = ({
   );
 };
 
-export default StatisticsModal;
+export default TeamMemberModal;

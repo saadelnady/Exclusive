@@ -12,7 +12,6 @@ export const fetchPageSection = ({ pageSlug, sectionSlug }) => {
       const response = await getData(
         `/api/pages/${pageSlug}/sections/${sectionSlug}`
       );
-      console.log("response", response);
 
       dispatch(actionCreators.getPageSectionSuccess(response?.data?.section));
     } catch (error) {

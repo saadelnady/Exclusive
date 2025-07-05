@@ -6,3 +6,8 @@ export const userStatus = Object.freeze({
   NOTVERIFIED: "NOTVERIFIED",
   BLOCKED: "BLOCKED",
 });
+export const sellerStatus = Object.freeze({
+  VERIFIED: "VERIFIED",
+  NOTVERIFIED: "NOTVERIFIED",
+  BLOCKED: "BLOCKED",
+});
