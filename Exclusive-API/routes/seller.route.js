@@ -5,7 +5,6 @@ const {
 } = require("../middlewares/authValidation");
 const {
   sellerRegister,
-  activateSeller,
   sellerLogin,
   getSeller,
   editSeller,
@@ -13,6 +12,9 @@ const {
   getAllSellers,
   deleteSeller,
   getSellerProfile,
+  verifySeller,
+  resendVerificationCode,
+  getSellerStatistics,
 } = require("../controller/seller.controller.js");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -27,13 +29,11 @@ const router = express.Router();
 router
   .route("/")
   .get(verifyToken, alloewdTo(roles.ADMIN, roles.SUPER_ADMIN), getAllSellers);
-router.route("/register").post(registerValidation(), sellerRegister);
-router.route("/login").post(loginValidation(), sellerLogin);
-router.route("/activation").post(verifyToken, activateSeller);
-
-router.route("/getSellerProfile").get(verifyToken, getSellerProfile);
+router.route("/verify").post(verifySeller);
+router.route("/resendVerification").post(resendVerificationCode);
 
 router.route("/getSellerProducts").get(getSellerProducts);
+router.route("/statistics").get(verifyToken, getSellerStatistics);
 
 router
   .route("/:sellerId")
@@ -43,4 +43,8 @@ router
 router
   .route("/:sellerId")
   .put(verifyToken, editProfileValidation(), editSeller);
+
+router.route("/getSellerProfile").get(verifyToken, getSellerProfile);
+router.route("/register").post(registerValidation(), sellerRegister);
+router.route("/login").post(loginValidation(), sellerLogin);
 module.exports = router;

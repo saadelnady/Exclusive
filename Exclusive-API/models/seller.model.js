@@ -1,18 +1,14 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { roles } = require("../utils/constants");
 const { sellerStatus } = require("../utils/constants");
 
 const sellerSchema = new mongoose.Schema(
   {
-    firstName: {
+    name: {
       type: String,
       required: true,
     },
-    lastName: {
-      type: String,
-      required: true,
-    },
+
     image: { type: String, default: "uploads/seller-default.png" },
     mobilePhone: { type: String, unique: true, required: true },
     address: { type: String },
@@ -49,7 +45,12 @@ const sellerSchema = new mongoose.Schema(
       },
     },
     token: { type: String },
-    role: { type: String, default: roles.SELLER },
+    verificationCode: {
+      type: String,
+    },
+    verificationCodeExpires: {
+      type: Date,
+    },
     products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
   },
   {

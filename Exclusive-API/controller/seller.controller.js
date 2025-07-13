@@ -3,11 +3,17 @@ const bcrypt = require("bcrypt");
 
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const Seller = require("../models/seller.model");
+const Product = require("../models/product.model");
+const Order = require("../models/order.model");
 const appError = require("../utils/appError");
-const { generateToken } = require("../utils/utils");
+const { generateToken, generateVerificationCode } = require("../utils/utils");
 const { sendEmail } = require("../utils/utils");
 const fs = require("fs");
-const { productStatus, httpStatusText, roles } = require("../utils/constants");
+const {
+  productStatus,
+  httpStatusText,
+  sellerStatus,
+} = require("../utils/constants");
 const mongoose = require("mongoose");
 
 const sellerRegister = asyncWrapper(async (req, res, next) => {
@@ -16,14 +22,17 @@ const sellerRegister = asyncWrapper(async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const { firstName, lastName, email, mobilePhone, password } = req.body;
+  const { name, email, mobilePhone, password } = req.body;
 
   const emailExist = await Seller.findOne({ email: email });
   const mobilePhoneExist = await Seller.findOne({ mobilePhone: mobilePhone });
 
   if (emailExist) {
     const error = appError.create(
-      "user already exists",
+      {
+        ar: "البريد الالكتروني موجود بالفعل",
+        en: "Email is Already Exist",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -32,65 +41,169 @@ const sellerRegister = asyncWrapper(async (req, res, next) => {
 
   if (mobilePhoneExist) {
     const error = appError.create(
-      "Mobile Phone is Already Exist",
+      {
+        ar: "رقم الهاتف موجود بالفعل",
+        en: "Mobile Phone is Already Exist",
+      },
       400,
       httpStatusText.FAIL
     );
     return next(error);
   }
 
-  //genereate token
-  const seller = {
-    firstName,
-    lastName,
-    email,
-    mobilePhone,
-    password,
-    role: roles.SELLER,
-  };
-  const token = generateToken(seller);
+  const verificationCode = generateVerificationCode();
+  const verificationCodeExpires = Date.now() + 10 * 60 * 1000;
 
-  const activationUrl = `${process.env.BASE_URL}/sellerActivation/${token}`;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   await sendEmail({
-    email: seller.email,
-    subject: "Activate your seller account",
-    message: `Hello ${seller.firstName}, please click on the link to activate your seller account: ${activationUrl}`,
+    email,
+    subject: "Your Verification Code",
+    message: `Your verification code is: ${verificationCode} Please use this code to activate your account.`,
+  });
+
+  await Seller.create({
+    name,
+    email,
+    password: hashedPassword,
+    mobilePhone,
+    verificationCode,
+    verificationCodeExpires,
+    status: sellerStatus.NOTVERIFIED,
   });
 
   return res.status(201).json({
     status: httpStatusText.SUCCESS,
-    data: { token },
-    message: `please cheack your email:-${seller.email} to activate your account`,
+    message: `تم تسجيل الحساب بنجاح. برجاء التحقق من بريدك الإلكتروني ${email} لتفعيل الحساب.`,
   });
 });
 
-const activateSeller = asyncWrapper(async (req, res, next) => {
-  const { current } = req;
-  const hashedPassword = await bcrypt.hash(current?.password, 10);
+const verifySeller = asyncWrapper(async (req, res, next) => {
+  const { email, verificationCode } = req.body;
 
-  current.password = hashedPassword;
-  const oldSeller = await Seller.findOne({ email: current.email });
-
-  const mobilePhoneExist = await Seller.findOne({
-    mobilePhone: current.mobilePhone,
-  });
-
-  if (mobilePhoneExist || oldSeller) {
-    const error = appError.create(
-      "your account already activated ",
-      400,
-      httpStatusText.FAIL
+  if (!email || !verificationCode) {
+    return next(
+      appError.create(
+        {
+          ar: "يجب إدخال البريد الإلكتروني وكود التحقق",
+          en: "Email and verification code are required",
+        },
+        400,
+        httpStatusText.FAIL
+      )
     );
-    return next(error);
   }
 
-  const seller = await Seller.create(current);
+  const seller = await Seller.findOne({ email });
 
-  // sendToken(current, 201, res);
+  if (!seller) {
+    return next(
+      appError.create(
+        { ar: "المستخدم غير موجود", en: "User not found" },
+        404,
+        httpStatusText.FAIL
+      )
+    );
+  }
 
-  res.status(200).json({ data: { currentSeller: seller } });
+  if (seller.status === sellerStatus.VERIFIED) {
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      message: {
+        ar: "الحساب مفعل بالفعل",
+        en: "Account is already active",
+      },
+    });
+  }
+
+  if (
+    seller.verificationCode !== verificationCode ||
+    seller.verificationCodeExpires < Date.now()
+  ) {
+    return next(
+      appError.create(
+        {
+          ar: "كود التحقق غير صالح أو منتهي الصلاحية",
+          en: "Invalid or expired verification code",
+        },
+        400,
+        httpStatusText.FAIL
+      )
+    );
+  }
+
+  // تحديث حالة المستخدم
+  seller.status = sellerStatus.VERIFIED;
+  seller.verificationCode = "";
+  seller.verificationCodeExpires = "";
+  await seller.save();
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    message: {
+      ar: "تم التحقق من الحساب بنجاح",
+      en: "Account verified successfully",
+    },
+  });
 });
+
+const resendVerificationCode = asyncWrapper(async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return next(
+      appError.create(
+        { ar: "يرجى إدخال البريد الإلكتروني", en: "Email is required" },
+        400,
+        httpStatusText.FAIL
+      )
+    );
+  }
+
+  const seller = await Seller.findOne({ email });
+
+  if (!seller) {
+    return next(
+      appError.create(
+        { ar: "البائع غير موجود", en: "Seller not found" },
+        404,
+        httpStatusText.FAIL
+      )
+    );
+  }
+
+  if (seller.status === sellerStatus.VERIFIED) {
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      message: {
+        ar: "الحساب مفعل بالفعل",
+        en: "Account is already verified",
+      },
+    });
+  }
+
+  const verificationCode = generateVerificationCode();
+  const verificationCodeExpires = Date.now() + 10 * 60 * 1000;
+
+  await sendEmail({
+    email: seller.email,
+    subject: "Your Verification Code",
+    message: `Your verification code is: ${verificationCode} Please use this code to activate your account.`,
+  });
+
+  seller.verificationCode = verificationCode;
+  seller.verificationCodeExpires = verificationCodeExpires;
+  await seller.save();
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    message: {
+      ar: "تم ارسال كود التحقق  مرة أخرى",
+      en: "Verification code sent again successfully",
+    },
+  });
+});
+
 const sellerLogin = asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
   const { email, password } = req.body;
@@ -102,7 +215,14 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
   const targetSeller = await Seller.findOne({ email });
 
   if (!targetSeller) {
-    const error = appError.create("email not found", 500, httpStatusText.FAIL);
+    const error = appError.create(
+      {
+        ar: "البائع غير موجود",
+        en: "seller not found",
+      },
+      500,
+      httpStatusText.FAIL
+    );
     return next(error);
   }
   const matchedPassword = await bcrypt.compare(password, targetSeller.password);
@@ -116,11 +236,17 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: { token: targetSeller.token },
-      message: "logged in successfully",
+      message: {
+        ar: "تم تسجيل الدخول بنجاح",
+        en: "Login successful",
+      },
     });
   } else {
     const error = appError.create(
-      "something wrong email or password is not correct",
+      {
+        ar: "اسم المستخدم او كلمة المرور غير صحيحة",
+        en: "Invalid username or password",
+      },
       400,
       httpStatusText.ERROR
     );
@@ -155,35 +281,85 @@ const getSeller = asyncWrapper(async (req, res, next) => {
 });
 
 const getSellerProducts = asyncWrapper(async (req, res, next) => {
-  const { sellerId, status } = req.query;
+  const limit = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * limit;
 
-  const targetStatus = [
+  const { sellerId, status, text } = req.query;
+
+  const validStatuses = [
     productStatus.ACCEPTED,
     productStatus.BLOCKED,
     productStatus.PENDING,
-  ].includes(status);
+  ];
 
-  const targetSeller = await Seller.findById(sellerId, {
-    password: false,
-  }).populate({
-    path: "products",
-    match: { status: { $in: status } }, // Filter products by status
-  });
-
-  if (!targetSeller) {
-    const error = appError.create("Seller not found", 404, NOT_FOUND);
-    return next(error);
-  }
-  if (!targetStatus) {
-    const error = appError.create("target status not found", 404, NOT_FOUND);
+  // التحقق من حالة المنتج
+  if (status && !validStatuses.includes(status)) {
+    const error = appError.create(
+      {
+        ar: "حالة المنتج غير صحيحة",
+        en: "Invalid product status",
+      },
+      400,
+      httpStatusText.FAIL
+    );
     return next(error);
   }
 
-  res.status(200).json({
+  // التحقق من وجود البائع
+  const sellerExists = await Seller.findById(sellerId);
+  if (!sellerExists) {
+    const error = appError.create(
+      {
+        ar: "البائع غير موجود",
+        en: "Seller not found",
+      },
+      404,
+      NOT_FOUND
+    );
+    return next(error);
+  }
+
+  // تجهيز شرط البحث
+  const searchQuery = { seller: sellerId };
+
+  const escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
+  if (status) {
+    searchQuery.status = status;
+  }
+
+  if (text) {
+    const safeText = escapeRegex(text);
+    const regex = { $regex: safeText, $options: "i" };
+
+    searchQuery.$or = [
+      { "title.ar": regex },
+      { "title.en": regex },
+      {
+        _id: mongoose.Types.ObjectId.isValid(text)
+          ? new mongoose.Types.ObjectId(text)
+          : undefined,
+      },
+    ].filter(Boolean);
+  }
+
+  // جلب المنتجات وعددها
+  const [products, total] = await Promise.all([
+    Product.find(searchQuery, { __v: 0 }).limit(limit).skip(skip),
+    Product.countDocuments(searchQuery),
+  ]);
+
+  return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
-      products: targetSeller.products,
-      total: targetSeller.products.length,
+      products,
+      total,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
     },
   });
 });
@@ -339,7 +515,10 @@ const getSellerProfile = asyncWrapper(async (req, res, next) => {
 
   if (!targetSeller) {
     const error = appError.create(
-      "seller not found",
+      {
+        ar: "البائع غير موجود",
+        en: "seller not found",
+      },
       400,
       httpStatusText.ERROR
     );
@@ -351,6 +530,100 @@ const getSellerProfile = asyncWrapper(async (req, res, next) => {
     .json({ status: httpStatusText.SUCCESS, data: { seller: targetSeller } });
 });
 
+const getSellerStatistics = asyncWrapper(async (req, res, next) => {
+  const { sellerId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+    return next(
+      appError.create(
+        { ar: "معرّف البائع غير صالح", en: "Invalid seller ID" },
+        400,
+        httpStatusText.FAIL
+      )
+    );
+  }
+
+  const [seller, products, orders] = await Promise.all([
+    Seller.findById(sellerId, { __v: 0 }),
+    Product.find({ seller: sellerId }, { __v: 0 }),
+    Order.find({ "items.seller": sellerId }, { __v: 0 }),
+  ]);
+
+  if (!seller) {
+    return next(
+      appError.create(
+        { ar: "البائع غير موجود", en: "Seller not found" },
+        404,
+        httpStatusText.FAIL
+      )
+    );
+  }
+
+  const now = moment();
+  const salesData = [];
+
+  for (let i = 5; i >= 0; i--) {
+    const start = moment(now).subtract(i, "months").startOf("month").toDate();
+    const end = moment(now).subtract(i, "months").endOf("month").toDate();
+
+    const monthlySales = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+          "items.seller": mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $unwind: "$items",
+      },
+      {
+        $match: {
+          "items.seller": mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$items.totalPrice" },
+        },
+      },
+    ]);
+
+    const monthEn = moment(start).locale("en").format("MMMM");
+    const monthAr = moment(start).locale("ar").format("MMMM");
+
+    salesData.push({
+      name: { ar: monthAr, en: monthEn },
+      sales: monthlySales[0]?.total || 0,
+    });
+  }
+
+  const statistics = {
+    statisticsData: [
+      {
+        title: { ar: "المنتجات", en: "Products" },
+        total: products.length,
+      },
+      {
+        title: { ar: "الطلبات", en: "Orders" },
+        total: orders.length,
+      },
+    ],
+    salesData: {
+      title: {
+        ar: "مبيعات آخر 6 أشهر",
+        en: "Sales of the last 6 months",
+      },
+      data: salesData,
+    },
+  };
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { statistics },
+  });
+});
+
 module.exports = {
   sellerRegister,
   sellerLogin,
@@ -360,5 +633,7 @@ module.exports = {
   deleteSeller,
   getSellerProfile,
   getSellerProducts,
-  activateSeller,
+  resendVerificationCode,
+  verifySeller,
+  getSellerStatistics,
 };

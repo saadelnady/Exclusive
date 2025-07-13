@@ -1,0 +1,23 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loading {
+  width: 30px;
+  height: 30px;
+  border: 5px solid #fbfbfb;
+  border-bottom-color: $primary-color;
+  border-radius: 50%;
+  animation: spinning 1s ease-in infinite;
+  /* -webkit-animation: spinning 1s ease-in infinite; */
+}
+
+@keyframes spinning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

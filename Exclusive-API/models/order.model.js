@@ -14,12 +14,21 @@ const orderSchema = new mongoose.Schema(
           ref: "Product",
           required: true,
         },
+        seller: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Seller",
+          required: true,
+        },
         quantity: {
           type: Number,
           required: true,
           min: 1,
         },
         price: {
+          type: Number,
+          required: true,
+        },
+        totalPrice: {
           type: Number,
           required: true,
         },

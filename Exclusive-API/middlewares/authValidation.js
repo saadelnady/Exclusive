@@ -12,18 +12,11 @@ const loginValidation = () => {
   ];
 };
 
- 
 const registerValidation = () => {
   return [
-    body("firstName")
+    body("name")
       .notEmpty()
-      .withMessage("first name is required")
-      .isLength({ min: 3, max: 20 })
-      .withMessage("name must be  at least 3 chars or 20 chars maximum"),
-
-    body("lastName")
-      .notEmpty()
-      .withMessage("last name is required")
+      .withMessage("name is required")
       .isLength({ min: 3, max: 20 })
       .withMessage("name must be  at least 3 chars or 20 chars maximum"),
 
@@ -47,4 +40,4 @@ const registerValidation = () => {
   ];
 };
 
-module.exports ={ registerValidation,loginValidation};
+module.exports = { registerValidation, loginValidation };

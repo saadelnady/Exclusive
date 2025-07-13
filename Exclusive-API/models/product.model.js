@@ -3,29 +3,46 @@ const { productStatus } = require("../utils/constants");
 
 const productSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    images: { type: [String] },
+    title: {
+      ar: { type: String, required: true },
+      en: { type: String, required: true },
+    },
+    description: {
+      ar: { type: String, required: true },
+      en: { type: String, required: true },
+    },
+
     category: { type: mongoose.Types.ObjectId, ref: "Category" },
     subCategory: { type: mongoose.Types.ObjectId, ref: "Subcategory" },
-    productOwner: { type: mongoose.Types.ObjectId, ref: "Seller" },
+    seller: { type: mongoose.Types.ObjectId, ref: "Seller" },
+
     options: [
       {
-        size: { type: String, required: true },
-        color: { type: String, required: true },
+        images: { type: [String], default: [] },
+        attributes: [
+          {
+            title: {
+              ar: { type: String, required: true },
+              en: { type: String, required: true },
+            },
+            value: { type: String, required: true },
+          },
+        ],
         stockCount: {
           type: Number,
-          required: [true, "Please enter your product stock count"],
+          required: true,
+          min: [0, "Stock cannot be negative"],
         },
         price: {
-          priceBeforeDiscount: { type: Number, required: true },
+          priceBeforeDiscount: { type: Number, required: true, min: 0 },
           discountPercentage: { type: Number, default: 0 },
           discountValue: { type: Number, default: 0 },
-          finalPrice: { type: Number, required: true },
+          finalPrice: { type: Number, required: true, min: 0 },
         },
         soldOut: { type: Number, default: 0 },
       },
     ],
+
     status: {
       type: String,
       enum: [
@@ -35,22 +52,8 @@ const productSchema = new mongoose.Schema(
       ],
       default: productStatus.PENDING,
     },
-    isFlashSale: { type: Boolean, default: false },
-    flashSaleStatus: {
-      type: String,
-      enum: ["upcoming", "Running", "ended"],
-    },
-    flashSaleStartDate: { type: Date },
-    flashSaleEndDate: { type: Date },
   },
   { timestamps: true }
 );
 
-// Pre-save hook to set default value for flashSaleStatus
-productSchema.pre("save", function (next) {
-  if (this.isFlashSale && !this.flashSaleStatus) {
-    this.flashSaleStatus = "Running"; // Set default value if isFlashSale is true and flashSaleStatus is not set
-  }
-  next();
-});
 module.exports = mongoose.model("Product", productSchema);
