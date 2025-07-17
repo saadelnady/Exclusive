@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import { toast } from "react-toastify";
@@ -11,10 +11,7 @@ import Loading from "../Shared/loading";
 import styles from "./styles/styles.module.scss";
 import { fetchSettings } from "@/store/actions/settings/settingsActions";
 import { Col, Row } from "react-bootstrap";
-import {
-  postOtp,
-  postOtpFail,
-} from "@/store/actions/seller/sellerActionsCreators";
+
 import { sellrOtp, sellrResendOtp } from "@/store/actions/seller/sellerActions";
 
 const Index = () => {

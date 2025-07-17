@@ -6,6 +6,7 @@ import IcClose from "./assets/images/svgs/ic-close.svg";
 import IcError from "./assets/images/svgs/ic-error.svg";
 
 import { useIntl } from "react-intl";
+import { handleImageLink } from "@/helpers/checkers";
 const UploadImg = ({
   handleImageChange,
   selectedImg = {},
@@ -22,7 +23,11 @@ const UploadImg = ({
       <div className={styles["upload-img-container"]}>
         <label htmlFor={inputId} className="label">
           <img
-            src={selectedImg?.preview ? selectedImg?.preview : ImgPlaceholder}
+            src={
+              selectedImg?.preview
+                ? handleImageLink(selectedImg?.preview)
+                : ImgPlaceholder
+            }
             alt="profile-img"
             className="admin-img"
           />

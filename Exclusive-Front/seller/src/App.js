@@ -30,7 +30,7 @@ const languages = {
 function App() {
   const { locale } = useSelector((state) => state.localeReducer);
   const messages = languages[locale];
-  const { settings, isLoading } = useSelector((state) => state.settingsReducer);
+  const { settings } = useSelector((state) => state.settingsReducer);
   const dispatch = useDispatch();
   useEffect(() => {
     document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";

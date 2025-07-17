@@ -2,14 +2,9 @@ const { body } = require("express-validator");
 
 const editProfileValidation = () => {
   return [
-    body("firstName").optional().isLength({ min: 3, max: 20 }).withMessage({
-      ar: "يجب أن يكون الاسم الأول بين 3 و 20 حرفًا",
-      en: "First name must be between 3 and 20 characters",
-    }),
-
-    body("lastName").optional().isLength({ min: 3, max: 20 }).withMessage({
-      ar: "يجب أن يكون اسم العائلة بين 3 و 20 حرفًا",
-      en: "Last name must be between 3 and 20 characters",
+    body("name").optional().isLength({ min: 3, max: 20 }).withMessage({
+      ar: "يجب أن يكون الاسم  بين 3 و 20 حرفًا",
+      en: "Name must be between 3 and 20 characters",
     }),
 
     body("email").optional().isEmail().withMessage({

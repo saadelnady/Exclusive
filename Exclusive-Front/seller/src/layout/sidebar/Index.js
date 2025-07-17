@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { adminLogout } from "../../store/actions/admin/adminActions";
+import { sellerLogout } from "../../store/actions/seller/sellerActions";
 import IcPower from "./assets/images/svgs/ic-power.svg";
 import IcCircle from "./assets/images/svgs/ic-circle.svg";
 import IcSettings from "./assets/images/svgs/ic-settings.svg";
@@ -11,7 +11,7 @@ import styles from "./styles/styles.module.scss";
 import { FormattedMessage, useIntl } from "react-intl";
 import { fetchSettings } from "@/store/actions/settings/settingsActions";
 
-const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
+const SideBar = ({ isActive, handleSidebarActivation }) => {
   const { settings } = useSelector((state) => state.settingsReducer);
   const { locale } = useIntl();
   const intl = useIntl();
@@ -31,7 +31,7 @@ const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
 
   const handleLogOut = () => {
     const payLoad = { toast, navigate, intl };
-    dispatch(adminLogout(payLoad));
+    dispatch(sellerLogout(payLoad));
   };
 
   return (
@@ -114,4 +114,4 @@ const AdminSideBar = ({ isActive, handleSidebarActivation }) => {
   );
 };
 
-export default AdminSideBar;
+export default SideBar;

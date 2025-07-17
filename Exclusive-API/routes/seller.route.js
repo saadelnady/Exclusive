@@ -31,20 +31,18 @@ router
   .get(verifyToken, alloewdTo(roles.ADMIN, roles.SUPER_ADMIN), getAllSellers);
 
 router.route("/getSellerProducts").get(getSellerProducts);
-router.route("/statistics").get(verifyToken, getSellerStatistics);
 
-router
-  .route("/:sellerId")
-  .get(getSeller)
-  .delete(verifyToken, alloewdTo(roles.ADMIN, roles.SUPER_ADMIN), deleteSeller);
-
-router
-  .route("/:sellerId")
-  .put(verifyToken, editProfileValidation(), editSeller);
-
-router.route("/getSellerProfile").get(verifyToken, getSellerProfile);
+router.route("/getProfile").get(verifyToken, getSellerProfile);
 router.route("/register").post(registerValidation(), sellerRegister);
 router.route("/login").post(loginValidation(), sellerLogin);
 router.route("/otp").post(verifySeller);
 router.route("/resendVerification").post(resendVerificationCode);
+
+router.route("/statistics/:sellerId").get(verifyToken, getSellerStatistics);
+router
+  .route("/:sellerId")
+  .get(getSeller)
+  .put(verifyToken, editProfileValidation(), editSeller)
+  .delete(verifyToken, alloewdTo(roles.ADMIN, roles.SUPER_ADMIN), deleteSeller);
+
 module.exports = router;

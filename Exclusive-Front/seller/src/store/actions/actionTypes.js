@@ -1,4 +1,3 @@
-// ===============================================================
 const PRODUCT_ACTIONS_TYPES = {
   GET_PRODUCT: "GET_PRODUCT",
   GET_PRODUCT_SUCCESS: "GET_PRODUCT_SUCCESS",
@@ -55,9 +54,6 @@ const PRODUCTS_ACTIONS_TYPES = {
   GET_FLASH_SALES_PRODUCTS_SUCCESS: "GET_FLASH_SALES_PRODUCTS_SUCCESS",
   GET_FLASH_SALES_PRODUCTS_FAIL: "GET_FLASH_SALES_PRODUCTS_FAIL",
 };
-// ===============================================================
-
-// ======================================================
 
 // ======================================================
 const COUPON_CODE_ACTIONS_TYPES = {

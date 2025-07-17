@@ -18,11 +18,12 @@ import Sunicon from "./assets/svg/sun.svg";
 import { parseCookies, setCookie } from "nookies";
 import { NavLink } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
-import { fetchAdminProfile } from "@/store/actions/admin/adminActions";
+import { fetchSellerProfile } from "@/store/actions/seller/sellerActions";
+import { handleImageLink } from "@/helpers/checkers";
 
-const AdminHeader = ({ handleSidebarActivation }) => {
+const Header = ({ handleSidebarActivation }) => {
   const dispatch = useDispatch();
-  const { admin } = useSelector((state) => state.adminReducer);
+  const { seller } = useSelector((state) => state.sellerReducer);
   const { locale } = useSelector((state) => state.localeReducer);
 
   const [notifOpen, setNotifOpen] = useState(false);
@@ -37,7 +38,7 @@ const AdminHeader = ({ handleSidebarActivation }) => {
   const langRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchAdminProfile());
+    dispatch(fetchSellerProfile());
   }, [dispatch]);
   useEffect(() => {
     const savedTheme = cookies["data-theme"];
@@ -190,9 +191,9 @@ const AdminHeader = ({ handleSidebarActivation }) => {
         <div className="profile-wrapper" ref={profileRef}>
           <div className="img-wrapper">
             <img
-              src={admin?.image}
-              alt="Admin"
-              className="admin-image"
+              src={handleImageLink(seller?.image)}
+              alt="seller"
+              className="image"
               onClick={() => setProfileOpen(!profileOpen)}
             />
           </div>
@@ -200,7 +201,10 @@ const AdminHeader = ({ handleSidebarActivation }) => {
           {profileOpen && (
             <ul className="profile">
               <li>
-                <NavLink to={`/profile/${admin._id}`} className="dropdown-item">
+                <NavLink
+                  to={`/profile/${seller?._id}`}
+                  className="dropdown-item"
+                >
                   <IcUser />
                   <FormattedMessage id="profile" />
                 </NavLink>
@@ -216,4 +220,4 @@ const AdminHeader = ({ handleSidebarActivation }) => {
   );
 };
 
-export default AdminHeader;
+export default Header;

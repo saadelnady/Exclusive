@@ -5,7 +5,6 @@ const GuestRoute = ({ children }) => {
   const token = localStorage.getItem("TOKEN");
 
   if (token) {
-    // لو موجود توكن، يحوله للدashboard (أو أي صفحة تريد)
     return <Navigate to="/" replace />;
   }
 

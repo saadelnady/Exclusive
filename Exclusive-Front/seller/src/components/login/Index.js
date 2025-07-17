@@ -8,7 +8,6 @@ import IcError from "./assets/images/svgs/ic-error.svg";
 import { toast } from "react-toastify";
 
 import { useDispatch, useSelector } from "react-redux";
-import { adminLogin } from "../../store/actions/admin/adminActions.js";
 import { useForm } from "react-hook-form";
 import { FormattedMessage, useIntl } from "react-intl";
 

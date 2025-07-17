@@ -24,5 +24,16 @@
   "enter-code": "ادخل الرقم المرسل إليك عبر البريد الالكترونى {email}",
   "send-code": "أرسل الكود ؟",
   "resend-code": "أرسل الكود مرة اخرى",
-  "activate": "تفعيل"
+  "activate": "تفعيل",
+  "currentPassword": "كلمة المرور الحالية",
+  "newPassword": "كلمة المرور الجديدة",
+  "editProfile": "تعديل الملف الشخصي",
+  "editProfileDescription": "قم بملء الحقول لتعديل الملف الشخصي",
+  "mobilePhone": "الهاتف",
+  "invalidMobilePhone": "الرقم المحمول غير صالح",
+  "nameMinLength": "الاسم يجب ان يكون على الاقل 3 حروف",
+  "nameMaxLength": "الاسم يجب ان يكون على الاقل 20 حروف",
+  "passwordLength": "يجب أن تتكون كلمة المرور من 9 إلى 25 حرفًا أو رقمًا",
+  "passwordNotMatch": "كلمة المرور غير متطابقة",
+  "edit": "تعديل"
 }

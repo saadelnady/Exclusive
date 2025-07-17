@@ -128,11 +128,11 @@ html {
     gap: 10px;
     width: fit-content;
     svg {
-      fill: #fff;
       width: 20px;
       height: 20px;
       [data-theme="dark"] & {
-        fill: $secondary-color;
+        fill: #ffff !important;
+        stroke: #ffff !important;
       }
     }
   }

@@ -8,12 +8,15 @@ const Order = require("../models/order.model");
 const appError = require("../utils/appError");
 const { generateToken, generateVerificationCode } = require("../utils/utils");
 const { sendEmail } = require("../utils/utils");
-const fs = require("fs");
 const {
   productStatus,
   httpStatusText,
   sellerStatus,
 } = require("../utils/constants");
+
+const moment = require("moment");
+require("moment/locale/ar");
+
 const mongoose = require("mongoose");
 
 const sellerRegister = asyncWrapper(async (req, res, next) => {
@@ -236,6 +239,7 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
       role: targetSeller.role,
     });
     targetSeller.token = token;
+    await targetSeller.save();
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: { token: targetSeller.token },
@@ -436,36 +440,36 @@ const deleteSeller = asyncWrapper(async (req, res, next) => {
 
 const editSeller = asyncWrapper(async (req, res, next) => {
   const { sellerId } = req.params;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
   const targetSeller = await Seller.findById(sellerId);
   if (!targetSeller) {
-    const error = appError.create("Seller not found", 404, httpStatusText.FAIL);
+    const error = appError.create(
+      { ar: "هذا الحساب غير موجود", en: "This account does not exist" },
+      404,
+      httpStatusText.FAIL
+    );
     return next(error);
   }
 
   const { email, mobilePhone, newPassword, currentPassword } = req.body;
 
-  // Check if the provided email or mobilePhone already exists in the database
+  // Check if email or mobile already exists for another seller
   const existingSeller = await Seller.findOne({
-    $or: [{ email: email }, { mobilePhone: mobilePhone }],
-    _id: { $ne: sellerId }, // Exclude the current Seller from the check
+    $or: [{ email }, { mobilePhone }],
+    _id: { $ne: sellerId }, // Exclude current seller
   });
 
   if (existingSeller) {
-    const fileName = req?.file?.filename;
-    const filePath = `uploads/${fileName}`;
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        res.status(500).json({
-          message: "error deleting file",
-        });
-      }
-    });
     const error = appError.create(
-      "Email or mobile phone already exists",
+      {
+        ar: "البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل",
+        en: "Email or mobile phone already exists",
+      },
       400,
       httpStatusText.FAIL
     );
@@ -474,20 +478,40 @@ const editSeller = asyncWrapper(async (req, res, next) => {
 
   const options = { new: true };
 
+  // Remove password fields temporarily to avoid saving unverified password
+  const updateFields = { ...req.body };
+  delete updateFields.newPassword;
+  delete updateFields.currentPassword;
+
   const updatedSeller = await Seller.findByIdAndUpdate(
     sellerId,
-    { $set: { ...req.body } },
+    { $set: updateFields },
     options
   );
 
-  if (newPassword && currentPassword) {
+  if (newPassword) {
+    if (!currentPassword) {
+      const error = appError.create(
+        {
+          ar: "برجاء إدخال كلمة المرور الحالية",
+          en: "Please enter your current password",
+        },
+        400,
+        httpStatusText.FAIL
+      );
+      return next(error);
+    }
+
     const matchedPassword = await bcrypt.compare(
       currentPassword,
       targetSeller.password
     );
     if (!matchedPassword) {
       const error = appError.create(
-        "current password is not correct ",
+        {
+          ar: "كلمة المرور الحالية غير صحيحة",
+          en: "Current password is incorrect",
+        },
         400,
         httpStatusText.FAIL
       );
@@ -496,45 +520,43 @@ const editSeller = asyncWrapper(async (req, res, next) => {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     updatedSeller.password = hashedNewPassword;
+    await updatedSeller.save(); // Save after password change
   }
 
-  if (req?.file?.filename) {
-    updatedSeller.image = `uploads/${req?.file?.filename}`;
-  }
-  await updatedSeller.save();
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: { seller: updatedSeller },
-    message: "Profile updated successfully",
+    message: {
+      ar: "تم تعديل الحساب بنجاح",
+      en: "Profile updated successfully",
+    },
   });
 });
 
 const getSellerProfile = asyncWrapper(async (req, res, next) => {
-  const sellerId = req.current.id;
+  const token = req?.current?.token;
 
-  const targetSeller = await Seller.findById(sellerId, {
-    password: false,
-  });
+  // exclude password and token from the response
+  const targetSeller = await Seller.findOne({ token }).select(
+    "-password -token"
+  );
 
   if (!targetSeller) {
     const error = appError.create(
-      {
-        ar: "البائع غير موجود",
-        en: "seller not found",
-      },
-      400,
-      httpStatusText.ERROR
+      { ar: "هذا الحساب  غير موجود", en: "This account does not exist" },
+      404,
+      httpStatusText.FAIL
     );
     return next(error);
   }
 
-  res
+  return res
     .status(200)
     .json({ status: httpStatusText.SUCCESS, data: { seller: targetSeller } });
 });
 
 const getSellerStatistics = asyncWrapper(async (req, res, next) => {
-  const { sellerId } = req.body;
+  const { sellerId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(sellerId)) {
     return next(
@@ -573,7 +595,7 @@ const getSellerStatistics = asyncWrapper(async (req, res, next) => {
       {
         $match: {
           createdAt: { $gte: start, $lte: end },
-          "items.seller": mongoose.Types.ObjectId(sellerId),
+          "items.seller": new mongoose.Types.ObjectId(sellerId),
         },
       },
       {
@@ -581,7 +603,7 @@ const getSellerStatistics = asyncWrapper(async (req, res, next) => {
       },
       {
         $match: {
-          "items.seller": mongoose.Types.ObjectId(sellerId),
+          "items.seller": new mongoose.Types.ObjectId(sellerId),
         },
       },
       {

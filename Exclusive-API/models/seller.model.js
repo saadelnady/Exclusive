@@ -9,7 +9,7 @@ const sellerSchema = new mongoose.Schema(
       required: true,
     },
 
-    image: { type: String, default: "uploads/seller-default.png" },
+    image: { type: String, default: "uploads/user-default.png" },
     mobilePhone: { type: String, unique: true, required: true },
     address: { type: String },
     email: {
@@ -48,10 +48,22 @@ const sellerSchema = new mongoose.Schema(
     verificationCode: {
       type: String,
     },
+
     verificationCodeExpires: {
       type: Date,
     },
+
     products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
+    officialDocuments: {
+      nationalId: { type: String },
+      taxCard: { type: String },
+      commercialRegister: { type: String },
+      otherDocs: [{ type: String }],
+    },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

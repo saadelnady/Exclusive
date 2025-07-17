@@ -15,17 +15,21 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStatistics } from "@/store/actions/statistics/statisticsActions";
 import Loading from "../Shared/loading";
+import { isObjectNotEmpty } from "@/helpers/checkers";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const { seller } = useSelector((state) => state.sellerReducer);
   const { statistics, isLoading } = useSelector(
     (state) => state.statisticsReducer
   );
   const { locale } = useIntl();
 
   useEffect(() => {
-    dispatch(fetchStatistics());
-  }, [dispatch]);
+    if (isObjectNotEmpty(seller)) {
+      dispatch(fetchStatistics(seller?._id));
+    }
+  }, [dispatch, seller?._id, seller]);
   const localizedData = statistics?.salesData?.data?.map((item) => ({
     ...item,
     name: item.name[locale],

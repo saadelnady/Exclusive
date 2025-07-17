@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Route, Routes } from "react-router-dom";
 
@@ -9,8 +9,10 @@ import Header from "./header";
 import styles from "./styles.module.scss";
 import allRoutes from "./routes.js";
 
-const Admin = () => {
+const Seller = () => {
   const [isWarning, setIsWarning] = useState(false);
+  const { seller } = useSelector((state) => state.sellerReducer);
+  console.log("seller", seller);
 
   const handleShowWarning = () => {
     setIsWarning(!isWarning);
@@ -22,9 +24,11 @@ const Admin = () => {
     setIsActive(!isActive);
   };
   // =================================================================================
-
+  // if (!seller.isProfileComplete) {
+  //   return <>hello</>;
+  // }
   return (
-    <div className={`${styles["admin-layout"]}`}>
+    <div className={`${styles.layout}`}>
       <SideBar
         isActive={isActive}
         handleSidebarActivation={handleSidebarActivation}
@@ -42,4 +46,4 @@ const Admin = () => {
     </div>
   );
 };
-export default Admin;
+export default Seller;

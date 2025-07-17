@@ -8,11 +8,11 @@ import {
 
 // ========================================================================================
 
-export const fetchStatistics = () => {
+export const fetchStatistics = (sellerId) => {
   return async (dispatch) => {
     dispatch(getAllStatistics());
     try {
-      const response = await getData(`/api/admin/statistics`);
+      const response = await getData(`/api/sellers/statistics/${sellerId}`);
       dispatch(getAllStatisticsSuccess(response?.data?.statistics));
     } catch (error) {
       dispatch(getAllStatisticsFail(error));

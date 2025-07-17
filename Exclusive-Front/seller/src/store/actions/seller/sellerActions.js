@@ -19,7 +19,7 @@ export const fetchSellerProfile = () => {
   return async (dispatch) => {
     dispatch(actionCreators.getSellerProfile());
     try {
-      const response = await getData(`/api/sellers/getSellerProfile`);
+      const response = await getData(`/api/sellers/getProfile`);
       dispatch(actionCreators.getSellerProfileSuccess(response?.data?.seller));
     } catch (error) {
       dispatch(actionCreators.getSellerProfileFail(error));
@@ -27,16 +27,16 @@ export const fetchSellerProfile = () => {
   };
 };
 // ========================================================================================
-export const editSellerProfile = ({ sellerId, values, toast }) => {
+export const editSellerProfile = ({ sellerId, values, toast, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.putSellerProfile());
     try {
       const response = await putData(`/api/sellers/${sellerId}`, values);
       dispatch(actionCreators.putSellerProfileSuccess(response));
-      showToast(toast, response?.message, "success");
+      showToast(toast, response?.message?.[locale], "success");
     } catch (error) {
       dispatch(actionCreators.putSellerProfileFail(error));
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };
