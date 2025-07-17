@@ -1,39 +1,67 @@
-import { SELLER_ACTIONS_TYPES, SELLERS_ACTIONS_TYPES } from "../actionTypes";
+import {
+  GET_SELLER,
+  GET_SELLER_FAIL,
+  GET_SELLER_PROFILE,
+  GET_SELLER_PROFILE_FAIL,
+  GET_SELLER_PROFILE_SUCCESS,
+  GET_SELLER_SUCCESS,
+  GET_SELLERS,
+  GET_SELLERS_FAIL,
+  GET_SELLERS_SUCCESS,
+  POST_SELLER_LOGIN,
+  POST_SELLER_LOGIN_FAIL,
+  POST_SELLER_LOGIN_SUCCESS,
+  POST_SELLER_LOGOUT,
+  POST_SELLER_LOGOUT_FAIL,
+  POST_SELLER_LOGOUT_SUCCESS,
+  POST_SELLER_OTP,
+  POST_SELLER_OTP_FAIL,
+  POST_SELLER_OTP_SUCCESS,
+  POST_SELLER_REGISTER,
+  POST_SELLER_REGISTER_FAIL,
+  POST_SELLER_REGISTER_SUCCESS,
+  POST_SELLER_RESEND_OTP,
+  POST_SELLER_RESEND_OTP_FAIL,
+  POST_SELLER_RESEND_OTP_SUCCESS,
+  PUT_SELLER_PROFILE,
+  PUT_SELLER_PROFILE_FAIL,
+  PUT_SELLER_PROFILE_SUCCESS,
+} from "./actionTypes";
 
 export const getSeller = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER,
+    type: GET_SELLER,
     payLoad,
   };
 };
 export const getSellerSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER_SUCCESS,
+    type: GET_SELLER_SUCCESS,
     payLoad,
   };
 };
 export const getSellerFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER_FAIL,
+    type: GET_SELLER_FAIL,
     payLoad,
   };
 };
 // =================================================================
 export const postSellerLogin = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN,
+    type: POST_SELLER_LOGIN,
     payLoad,
   };
 };
 export const postSellerLoginSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN_SUCCESS,
+    type: POST_SELLER_LOGIN_SUCCESS,
     payLoad,
   };
 };
 export const postSellerLoginFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN_FAIL,
+    type: POST_SELLER_LOGIN_FAIL,
     payLoad,
   };
 };
@@ -41,19 +69,57 @@ export const postSellerLoginFail = (payLoad) => {
 // =================================================================
 export const postSellerRegister = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER,
+    type: POST_SELLER_REGISTER,
     payLoad,
   };
 };
 export const postSellerRegisterSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER_SUCCESS,
+    type: POST_SELLER_REGISTER_SUCCESS,
     payLoad,
   };
 };
 export const postSellerRegisterFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER_FAIL,
+    type: POST_SELLER_REGISTER_FAIL,
+    payLoad,
+  };
+};
+// =================================================================
+export const postOtp = (payLoad) => {
+  return {
+    type: POST_SELLER_OTP,
+    payLoad,
+  };
+};
+export const postOtpSuccess = (payLoad) => {
+  return {
+    type: POST_SELLER_OTP_SUCCESS,
+    payLoad,
+  };
+};
+export const postOtpFail = (payLoad) => {
+  return {
+    type: POST_SELLER_OTP_FAIL,
+    payLoad,
+  };
+};
+// =================================================================
+export const postResendOtp = (payLoad) => {
+  return {
+    type: POST_SELLER_RESEND_OTP,
+    payLoad,
+  };
+};
+export const postResendOtpSuccess = (payLoad) => {
+  return {
+    type: POST_SELLER_RESEND_OTP_SUCCESS,
+    payLoad,
+  };
+};
+export const postResendOtpFail = (payLoad) => {
+  return {
+    type: POST_SELLER_RESEND_OTP_FAIL,
     payLoad,
   };
 };
@@ -61,19 +127,19 @@ export const postSellerRegisterFail = (payLoad) => {
 // =================================================================
 export const postSellerLogout = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT,
+    type: POST_SELLER_LOGOUT,
     payLoad,
   };
 };
 export const postSellerLogoutSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT_SUCCESS,
+    type: POST_SELLER_LOGOUT_SUCCESS,
     payLoad,
   };
 };
 export const postSellerLogoutFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT_FAIL,
+    type: POST_SELLER_LOGOUT_FAIL,
     payLoad,
   };
 };
@@ -82,19 +148,19 @@ export const postSellerLogoutFail = (payLoad) => {
 
 export const getSellerProfile = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE,
+    type: GET_SELLER_PROFILE,
     payLoad,
   };
 };
 export const getSellerProfileSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE_SUCCESS,
+    type: GET_SELLER_PROFILE_SUCCESS,
     payLoad,
   };
 };
 export const getSellerProfileFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE_FAIL,
+    type: GET_SELLER_PROFILE_FAIL,
     payLoad,
   };
 };
@@ -102,30 +168,30 @@ export const getSellerProfileFail = (payLoad) => {
 
 export const putSellerProfile = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE,
+    type: PUT_SELLER_PROFILE,
     payLoad,
   };
 };
 export const putSellerProfileSuccess = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE_SUCCESS,
+    type: PUT_SELLER_PROFILE_SUCCESS,
     payLoad,
   };
 };
 export const putSellerProfileFail = (payLoad) => {
   return {
-    type: SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE_FAIL,
+    type: PUT_SELLER_PROFILE_FAIL,
     payLoad,
   };
 };
 // // =================================================================
 
 export const getSellers = () => {
-  return { type: SELLERS_ACTIONS_TYPES.GET_SELLERS };
+  return { type: GET_SELLERS };
 };
 export const getSellersSuccess = (payLoad) => {
-  return { type: SELLERS_ACTIONS_TYPES.GET_SELLERS_SUCCESS, payLoad };
+  return { type: GET_SELLERS_SUCCESS, payLoad };
 };
 export const getSellersFail = (payLoad) => {
-  return { type: SELLERS_ACTIONS_TYPES.GET_SELLERS_FAIL, payLoad };
+  return { type: GET_SELLERS_FAIL, payLoad };
 };

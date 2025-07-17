@@ -1,7 +1,32 @@
 import {
-  SELLERS_ACTIONS_TYPES,
-  SELLER_ACTIONS_TYPES,
-} from "../../actions/actionTypes";
+  GET_SELLER,
+  GET_SELLER_FAIL,
+  GET_SELLER_PROFILE,
+  GET_SELLER_PROFILE_FAIL,
+  GET_SELLER_PROFILE_SUCCESS,
+  GET_SELLER_SUCCESS,
+  GET_SELLERS,
+  GET_SELLERS_FAIL,
+  GET_SELLERS_SUCCESS,
+  POST_SELLER_LOGIN,
+  POST_SELLER_LOGIN_FAIL,
+  POST_SELLER_LOGIN_SUCCESS,
+  POST_SELLER_LOGOUT,
+  POST_SELLER_LOGOUT_FAIL,
+  POST_SELLER_LOGOUT_SUCCESS,
+  POST_SELLER_OTP,
+  POST_SELLER_OTP_FAIL,
+  POST_SELLER_OTP_SUCCESS,
+  POST_SELLER_REGISTER,
+  POST_SELLER_REGISTER_FAIL,
+  POST_SELLER_REGISTER_SUCCESS,
+  POST_SELLER_RESEND_OTP,
+  POST_SELLER_RESEND_OTP_FAIL,
+  POST_SELLER_RESEND_OTP_SUCCESS,
+  PUT_SELLER_PROFILE,
+  PUT_SELLER_PROFILE_FAIL,
+  PUT_SELLER_PROFILE_SUCCESS,
+} from "@/store/actions/seller/actionTypes";
 
 const initialState = {
   isLoading: false,
@@ -17,10 +42,10 @@ const initialState = {
 
 const sellerReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SELLER_ACTIONS_TYPES.GET_SELLER:
+    case GET_SELLER:
       return { ...state, isLoading: true };
 
-    case SELLER_ACTIONS_TYPES.GET_SELLER_SUCCESS:
+    case GET_SELLER_SUCCESS:
       return {
         ...state,
         isLoggedIn: true,
@@ -29,13 +54,13 @@ const sellerReducer = (state = initialState, action) => {
         error: null,
       };
 
-    case SELLER_ACTIONS_TYPES.GET_SELLER_FAIL:
+    case GET_SELLER_FAIL:
       return { ...state, error: action.payLoad, isLoggedIn: false };
     // ======================================================================================
-    case SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE:
+    case GET_SELLER_PROFILE:
       return { ...state, isLoading: true };
 
-    case SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE_SUCCESS:
+    case GET_SELLER_PROFILE_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -44,7 +69,7 @@ const sellerReducer = (state = initialState, action) => {
         error: null,
       };
 
-    case SELLER_ACTIONS_TYPES.GET_SELLER_PROFILE_FAIL:
+    case GET_SELLER_PROFILE_FAIL:
       return {
         ...state,
         isLoading: false,
@@ -52,10 +77,10 @@ const sellerReducer = (state = initialState, action) => {
         error: action?.payLoad,
       };
     // ======================================================================================
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN:
+    case POST_SELLER_LOGIN:
       return { ...state, isLoading: true };
 
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN_SUCCESS:
+    case POST_SELLER_LOGIN_SUCCESS:
       return {
         ...state,
         isLoggedIn: true,
@@ -63,7 +88,7 @@ const sellerReducer = (state = initialState, action) => {
         error: null,
       };
 
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGIN_FAIL:
+    case POST_SELLER_LOGIN_FAIL:
       return {
         ...state,
         isLoading: false,
@@ -71,12 +96,46 @@ const sellerReducer = (state = initialState, action) => {
         error: action?.payLoad,
       };
     // ======================================================================================
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT:
+    case POST_SELLER_OTP:
+      return { ...state, isLoading: true };
+
+    case POST_SELLER_OTP_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+      };
+
+    case POST_SELLER_OTP_FAIL:
+      return {
+        ...state,
+        isLoading: false,
+        error: action?.payLoad,
+      };
+    // ======================================================================================
+    case POST_SELLER_RESEND_OTP:
+      return { ...state, isLoading: true };
+
+    case POST_SELLER_RESEND_OTP_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+      };
+
+    case POST_SELLER_RESEND_OTP_FAIL:
+      return {
+        ...state,
+        isLoading: false,
+        error: action?.payLoad,
+      };
+    // ======================================================================================
+    case POST_SELLER_LOGOUT:
       return {
         ...state,
         isLoading: true,
       };
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT_SUCCESS:
+    case POST_SELLER_LOGOUT_SUCCESS:
       return {
         ...state,
         isLoggedIn: false,
@@ -84,7 +143,7 @@ const sellerReducer = (state = initialState, action) => {
         seller: {},
         error: null,
       };
-    case SELLER_ACTIONS_TYPES.POST_SELLER_LOGOUT_FAIL:
+    case POST_SELLER_LOGOUT_FAIL:
       return {
         ...state,
         isLoading: false,
@@ -92,32 +151,31 @@ const sellerReducer = (state = initialState, action) => {
         error: action?.payLoad,
       };
     // ======================================================================================
-    case SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER:
+    case POST_SELLER_REGISTER:
       return {
         ...state,
+        isLoading: true,
       };
-    case SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER_SUCCESS:
+    case POST_SELLER_REGISTER_SUCCESS:
       return {
         ...state,
-        isLoggedIn: true,
-
+        isLoading: false,
         message: action?.payLoad?.message,
         error: null,
       };
 
-    case SELLER_ACTIONS_TYPES.POST_SELLER_REGISTER_FAIL:
+    case POST_SELLER_REGISTER_FAIL:
       return {
         ...state,
-        isLoggedIn: false,
         isLoading: false,
         error: action.payLoad,
       };
     // ======================================================================================
 
-    case SELLERS_ACTIONS_TYPES.GET_SELLERS:
+    case GET_SELLERS:
       return { ...state, isLoading: true };
 
-    case SELLERS_ACTIONS_TYPES.GET_SELLERS_SUCCESS:
+    case GET_SELLERS_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -128,17 +186,17 @@ const sellerReducer = (state = initialState, action) => {
         pageSize: action?.payLoad?.pageSize,
         totalPages: action?.payLoad?.totalPages,
       };
-    case SELLERS_ACTIONS_TYPES.GET_SELLERS_FAIL:
+    case GET_SELLERS_FAIL:
       return {
         ...state,
         isLoading: false,
         error: action.payLoad,
       };
     // ====================================================================================================
-    case SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE:
+    case PUT_SELLER_PROFILE:
       return { ...state, isLoading: true };
 
-    case SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE_SUCCESS:
+    case PUT_SELLER_PROFILE_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -147,7 +205,7 @@ const sellerReducer = (state = initialState, action) => {
         error: null,
       };
 
-    case SELLER_ACTIONS_TYPES.PUT_SELLER_PROFILE_FAIL:
+    case PUT_SELLER_PROFILE_FAIL:
       return {
         ...state,
         isLoading: false,

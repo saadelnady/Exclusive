@@ -7,11 +7,13 @@ import "react-quill/dist/quill.snow.css";
 
 import "./styles/app.scss";
 import { ToastContainer } from "react-toastify";
-import Admin from "./layout";
+import Seller from "./layout";
 
 import Login from "./components/login";
+import Register from "./components/Register";
+import Otp from "./components/Otp";
 
-import { IntlProvider, useIntl } from "react-intl";
+import { IntlProvider } from "react-intl";
 import ar from "@/languages/ar.json";
 import en from "@/languages/en.json";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,12 +59,28 @@ function App() {
               </GuestRoute>
             }
           />
+          <Route
+            path="/register"
+            element={
+              <GuestRoute>
+                <Register />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/otp"
+            element={
+              <GuestRoute>
+                <Otp />
+              </GuestRoute>
+            }
+          />
 
           <Route
             path="/*"
             element={
               <ProtectedRoute>
-                <Admin />
+                <Seller />
               </ProtectedRoute>
             }
           />

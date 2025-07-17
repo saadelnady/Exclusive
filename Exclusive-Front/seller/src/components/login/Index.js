@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import IcEye from "./assets/images/svgs/ic-eye.svg";
@@ -15,9 +15,11 @@ import { FormattedMessage, useIntl } from "react-intl";
 import Loading from "../Shared/loading";
 import styles from "./styles/styles.module.scss";
 import { fetchSettings } from "@/store/actions/settings/settingsActions";
+import { sellerLogin } from "@/store/actions/seller/sellerActions";
+import { Col, Row } from "react-bootstrap";
 
 const Index = () => {
-  const { isLoading } = useSelector((state) => state.adminReducer);
+  const { isLoading } = useSelector((state) => state.sellerReducer);
   const { locale } = useSelector((state) => state.localeReducer);
   const { settings } = useSelector((state) => state.settingsReducer);
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ const Index = () => {
 
   const handleLogin = (values) => {
     const payload = { values, toast, navigate, locale };
-    dispatch(adminLogin(payload));
+    dispatch(sellerLogin(payload));
   };
   useEffect(() => {
     dispatch(fetchSettings({ toast, locale }));
@@ -53,74 +55,88 @@ const Index = () => {
         </div>
 
         <form onSubmit={handleSubmit(handleLogin)}>
-          {/* Email Field */}
-          <div className="input-wrapper">
-            <input
-              type="email"
-              autoComplete="email"
-              placeholder={formatMessage({ id: "email" })}
-              className="special-input"
-              {...register("email", {
-                required: formatMessage({ id: "required" }),
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: formatMessage({ id: "invalidEmail" }),
-                },
-              })}
-            />
-            {errors.email && (
-              <p className="error">
-                <IcError />
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          {/* Password Field */}
-          <div className="input-wrapper">
-            <input
-              type={visible ? "text" : "password"}
-              autoComplete="current-password"
-              placeholder={formatMessage({ id: "password" })}
-              className="special-input"
-              {...register("password", {
-                required: formatMessage({ id: "required" }),
-              })}
-            />
-            {visible ? (
-              <button
-                className="icon"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setVisible(!visible);
-                }}
-              >
-                <IcEye />
-              </button>
-            ) : (
-              <button
-                className="icon"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setVisible(!visible);
-                }}
-              >
-                <IcEyeSlash />
-              </button>
-            )}
-            {errors.password && (
-              <p className="error">
-                <IcError />
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+          <Row>
+            <Col xs={12}>
+              {/* Email Field */}
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  autoComplete="email"
+                  placeholder={formatMessage({ id: "email" })}
+                  className="special-input"
+                  {...register("email", {
+                    required: formatMessage({ id: "required" }),
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: formatMessage({ id: "invalidEmail" }),
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <p className="error">
+                    <IcError />
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+            </Col>
+            <Col xs={12}>
+              {/* Password Field */}
+              <div className="input-wrapper">
+                <input
+                  type={visible ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder={formatMessage({ id: "password" })}
+                  className="special-input"
+                  {...register("password", {
+                    required: formatMessage({ id: "required" }),
+                  })}
+                />
+                {visible ? (
+                  <button
+                    className="icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setVisible(!visible);
+                    }}
+                  >
+                    <IcEyeSlash />
+                  </button>
+                ) : (
+                  <button
+                    className="icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setVisible(!visible);
+                    }}
+                  >
+                    <IcEye />
+                  </button>
+                )}
+                {errors.password && (
+                  <p className="error">
+                    <IcError />
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+            </Col>
+          </Row>
 
           {/* Submit Button */}
           <div className="d-flex justify-content-between align-items-center">
             <button className="btn submit" type="submit">
               {isLoading ? <Loading /> : <FormattedMessage id="enter" />}
             </button>
+          </div>
+
+          <div className="noAccount">
+            <p>
+              <FormattedMessage id="noAccount" />
+            </p>
+            <NavLink to="/register">
+              <FormattedMessage id="createNewAccount" />
+            </NavLink>
           </div>
         </form>
       </div>

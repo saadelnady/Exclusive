@@ -42,7 +42,7 @@ export const editSellerProfile = ({ sellerId, values, toast }) => {
 };
 // ========================================================================================
 
-export const sellerLogin = ({ values, toast, navigate }) => {
+export const sellerLogin = ({ values, toast, navigate, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.postSellerLogin(values));
     try {
@@ -50,15 +50,15 @@ export const sellerLogin = ({ values, toast, navigate }) => {
 
       dispatch(actionCreators.postSellerLoginSuccess(response?.data));
       localStorage.setItem("TOKEN", response?.data?.token);
-      showToast(toast, response?.message, "success");
+      showToast(toast, response?.message?.[locale], "success");
       setTimeout(() => {
         if (localStorage.getItem("TOKEN")) {
-          navigate("/seller");
+          navigate("/");
         }
       }, 2500);
     } catch (error) {
       dispatch(actionCreators.postSellerLoginFail(error));
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };
@@ -83,23 +83,55 @@ export const sellerLogout = ({ toast, navigate }) => {
   };
 };
 // ========================================================================================
-export const sellerRegister = ({ values, toast, navigate }) => {
+export const sellerRegister = ({ values, toast, navigate, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.postSellerRegister(values));
 
     try {
       const response = await postData("/api/sellers/register", values);
       dispatch(actionCreators.postSellerRegisterSuccess(response));
-      // localStorage.setItem("TOKEN", response?.data?.token);
-      navigate("/seller/login");
-      showToast(toast, response?.message, "success");
-      // setTimeout(() => {
-      //   if (localStorage.getItem("TOKEN")) {
-      //   }
-      // }, 2500);
+      navigate("/otp");
+      showToast(toast, response?.message?.[locale], "success");
+      localStorage.setItem("targetEmail", values.email);
     } catch (error) {
       dispatch(actionCreators.postSellerRegisterFail(error));
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
+    }
+  };
+};
+// ========================================================================================
+export const sellrOtp = ({ values, toast, navigate, locale }) => {
+  return async (dispatch) => {
+    dispatch(actionCreators.postOtp(values));
+
+    try {
+      const response = await postData("/api/sellers/otp", values);
+      dispatch(actionCreators.postOtpSuccess(response));
+      navigate("/login");
+      showToast(toast, response?.message?.[locale], "success");
+      localStorage.removeItem("targetEmail");
+    } catch (error) {
+      dispatch(actionCreators.postOtpFail(error));
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
+    }
+  };
+};
+// ========================================================================================
+export const sellrResendOtp = ({ values, toast, locale }) => {
+  return async (dispatch) => {
+    dispatch(actionCreators.postResendOtp(values));
+
+    try {
+      const response = await postData(
+        "/api/sellers/resendVerification",
+        values
+      );
+      dispatch(actionCreators.postResendOtpSuccess(response));
+
+      showToast(toast, response?.message?.[locale], "success");
+    } catch (error) {
+      dispatch(actionCreators.postResendOtpFail(error));
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };

@@ -29,8 +29,6 @@ const router = express.Router();
 router
   .route("/")
   .get(verifyToken, alloewdTo(roles.ADMIN, roles.SUPER_ADMIN), getAllSellers);
-router.route("/verify").post(verifySeller);
-router.route("/resendVerification").post(resendVerificationCode);
 
 router.route("/getSellerProducts").get(getSellerProducts);
 router.route("/statistics").get(verifyToken, getSellerStatistics);
@@ -47,4 +45,6 @@ router
 router.route("/getSellerProfile").get(verifyToken, getSellerProfile);
 router.route("/register").post(registerValidation(), sellerRegister);
 router.route("/login").post(loginValidation(), sellerLogin);
+router.route("/otp").post(verifySeller);
+router.route("/resendVerification").post(resendVerificationCode);
 module.exports = router;

@@ -74,7 +74,10 @@ const sellerRegister = asyncWrapper(async (req, res, next) => {
 
   return res.status(201).json({
     status: httpStatusText.SUCCESS,
-    message: `تم تسجيل الحساب بنجاح. برجاء التحقق من بريدك الإلكتروني ${email} لتفعيل الحساب.`,
+    message: {
+      ar: `تم تسجيل الحساب بنجاح. برجاء التحقق من بريدك الإلكتروني ${email} لتفعيل الحساب.`,
+      en: `Your account has been successfully registered. Please check your email ${email} to activate your account.`,
+    },
   });
 });
 
@@ -99,7 +102,7 @@ const verifySeller = asyncWrapper(async (req, res, next) => {
   if (!seller) {
     return next(
       appError.create(
-        { ar: "المستخدم غير موجود", en: "User not found" },
+        { ar: "البريد الالكترونى غير موجود", en: "Email not found" },
         404,
         httpStatusText.FAIL
       )
@@ -244,8 +247,8 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
   } else {
     const error = appError.create(
       {
-        ar: "اسم المستخدم او كلمة المرور غير صحيحة",
-        en: "Invalid username or password",
+        ar: " البريد الالكترونى أو كلمة المرور غير صحيحة",
+        en: "Invalid email or password",
       },
       400,
       httpStatusText.ERROR

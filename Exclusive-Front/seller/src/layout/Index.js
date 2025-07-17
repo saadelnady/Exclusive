@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 
 import { Route, Routes } from "react-router-dom";
 
-import AdminSideBar from "./sidebar";
-import AdminHeader from "./header";
+import SideBar from "./sidebar";
+import Header from "./header";
 
 import styles from "./styles.module.scss";
 import allRoutes from "./routes.js";
@@ -25,12 +25,12 @@ const Admin = () => {
 
   return (
     <div className={`${styles["admin-layout"]}`}>
-      <AdminSideBar
+      <SideBar
         isActive={isActive}
         handleSidebarActivation={handleSidebarActivation}
       />
       <div className="d-flex flex-column w-100">
-        <AdminHeader handleSidebarActivation={handleSidebarActivation} />
+        <Header handleSidebarActivation={handleSidebarActivation} />
         <div className="pages">
           <Routes>
             {allRoutes(isWarning, handleShowWarning).map((route, index) => (
