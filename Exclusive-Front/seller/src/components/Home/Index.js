@@ -23,6 +23,7 @@ const Home = () => {
   const { statistics, isLoading } = useSelector(
     (state) => state.statisticsReducer
   );
+
   const { locale } = useIntl();
 
   useEffect(() => {

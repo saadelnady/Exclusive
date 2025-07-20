@@ -1,0 +1,10 @@
+.completeProfile {
+  :global {
+    .page-title {
+      color: $text-dark;
+      [data-theme="dark"] & {
+        color: $text-light;
+      }
+    }
+  }
+}

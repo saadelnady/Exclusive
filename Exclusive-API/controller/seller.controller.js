@@ -483,6 +483,28 @@ const editSeller = asyncWrapper(async (req, res, next) => {
   delete updateFields.newPassword;
   delete updateFields.currentPassword;
 
+  if (updateFields.officialDocuments) {
+    const {
+      nationalId,
+      nationalIdFront,
+      nationalIdBack,
+      commercialRegister,
+      taxCard,
+    } = updateFields.officialDocuments;
+
+    const hasAllDocs =
+      nationalId &&
+      nationalIdFront &&
+      nationalIdBack &&
+      commercialRegister &&
+      taxCard;
+
+    if (hasAllDocs) {
+      updateFields.status = sellerStatus.PENDING_APPROVAL;
+      updateFields.isProfileComplete = true;
+    }
+  }
+
   const updatedSeller = await Seller.findByIdAndUpdate(
     sellerId,
     { $set: updateFields },

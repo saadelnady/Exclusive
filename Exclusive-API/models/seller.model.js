@@ -29,6 +29,8 @@ const sellerSchema = new mongoose.Schema(
         sellerStatus.NOTVERIFIED,
         sellerStatus.VERIFIED,
         sellerStatus.BLOCKED,
+        sellerStatus.REJECTED,
+        sellerStatus.PENDING_APPROVAL,
       ],
     },
     blockReason: {
@@ -54,10 +56,14 @@ const sellerSchema = new mongoose.Schema(
     },
 
     products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
+
     officialDocuments: {
-      nationalId: { type: String },
-      taxCard: { type: String },
-      commercialRegister: { type: String },
+      nationalId: {
+        front: { type: String, required: true },
+        back: { type: String, required: true },
+      },
+      taxCard: { type: String, required: true },
+      commercialRegister: { type: String, required: true },
       otherDocs: [{ type: String }],
     },
     isProfileComplete: {

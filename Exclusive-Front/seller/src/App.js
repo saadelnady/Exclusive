@@ -22,6 +22,7 @@ import GuestRoute from "./layout/GuestRoute";
 import ProtectedRoute from "./layout/ProtectedRoute";
 import { fetchSettings } from "./store/actions/settings/settingsActions";
 import { toast } from "react-toastify";
+import CompleteProfile from "./components/CompleteProfile/Index";
 const languages = {
   ar,
   en,
@@ -31,6 +32,7 @@ function App() {
   const { locale } = useSelector((state) => state.localeReducer);
   const messages = languages[locale];
   const { settings } = useSelector((state) => state.settingsReducer);
+  const { seller } = useSelector((state) => state.sellerReducer);
   const dispatch = useDispatch();
   useEffect(() => {
     document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
@@ -80,7 +82,7 @@ function App() {
             path="/*"
             element={
               <ProtectedRoute>
-                <Seller />
+                {seller?.isProfileComplete ? <Seller /> : <CompleteProfile />}
               </ProtectedRoute>
             }
           />
