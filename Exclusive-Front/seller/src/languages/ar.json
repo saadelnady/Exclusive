@@ -35,5 +35,15 @@
   "nameMaxLength": "الاسم يجب ان يكون على الاقل 20 حروف",
   "passwordLength": "يجب أن تتكون كلمة المرور من 9 إلى 25 حرفًا أو رقمًا",
   "passwordNotMatch": "كلمة المرور غير متطابقة",
-  "edit": "تعديل"
+  "edit": "تعديل",
+  "sellerInfo": "معلومات البائع",
+  "frontId": "صورة الهوية  (الوجه الامامى)",
+  "backId": "صورة الهوية (الوجه الخلفى)",
+  "completeProfile": " اكمل الملف الشخصي",
+  "completeProfileDescription": "قم بملء الحقول لاكمال الملف الشخصي",
+  "commercialRegister": "السجل االتجارى",
+  "taxCard": "البطاقة الضريبة",
+  "otherDocs": "مستندات اخرى",
+  "address": "العنوان",
+  "nationalId": "الرقم القومى"
 }

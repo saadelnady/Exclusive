@@ -6,7 +6,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { useForm } from "react-hook-form";
 import styles from "./styles/styles.module.scss";
 import { Col, Row } from "react-bootstrap";
-import UploadImg from "../Shared/uploadImg/Index";
 import IcEye from "./assets/images/svgs/ic-eye.svg";
 import IcEyeSlash from "./assets/images/svgs/ic-eyeslash.svg";
 import IcError from "./assets/images/svgs/ic-error.svg";
@@ -16,6 +15,7 @@ import {
   editSellerProfile,
   fetchSeller,
 } from "@/store/actions/seller/sellerActions";
+import UploadImg from "../Shared/UploadFile/UploadFile1/Index";
 
 const ShowSeller = () => {
   const { sellerId } = useParams();

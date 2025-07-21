@@ -56,15 +56,13 @@ const sellerSchema = new mongoose.Schema(
     },
 
     products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
-
+    nationalId: { type: String },
     officialDocuments: {
-      nationalId: {
-        front: { type: String, required: true },
-        back: { type: String, required: true },
-      },
+      frontId: { type: String, required: true },
+      backId: { type: String, required: true },
       taxCard: { type: String, required: true },
       commercialRegister: { type: String, required: true },
-      otherDocs: [{ type: String }],
+      otherDocs: { type: String, required: true },
     },
     isProfileComplete: {
       type: Boolean,

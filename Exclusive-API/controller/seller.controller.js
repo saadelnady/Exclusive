@@ -458,10 +458,10 @@ const editSeller = asyncWrapper(async (req, res, next) => {
 
   const { email, mobilePhone, newPassword, currentPassword } = req.body;
 
-  // Check if email or mobile already exists for another seller
+  // تحقق من عدم تكرار الإيميل أو الهاتف
   const existingSeller = await Seller.findOne({
     $or: [{ email }, { mobilePhone }],
-    _id: { $ne: sellerId }, // Exclude current seller
+    _id: { $ne: sellerId },
   });
 
   if (existingSeller) {
@@ -477,27 +477,18 @@ const editSeller = asyncWrapper(async (req, res, next) => {
   }
 
   const options = { new: true };
-
-  // Remove password fields temporarily to avoid saving unverified password
   const updateFields = { ...req.body };
   delete updateFields.newPassword;
   delete updateFields.currentPassword;
 
-  if (updateFields.officialDocuments) {
-    const {
-      nationalId,
-      nationalIdFront,
-      nationalIdBack,
-      commercialRegister,
-      taxCard,
-    } = updateFields.officialDocuments;
+  // التحقق من الوثائق الرسمية
+  const docs = updateFields.officialDocuments;
+
+  if (docs) {
+    const { frontId, backId, commercialRegister, taxCard, otherDocs } = docs;
 
     const hasAllDocs =
-      nationalId &&
-      nationalIdFront &&
-      nationalIdBack &&
-      commercialRegister &&
-      taxCard;
+      frontId && backId && commercialRegister && taxCard && otherDocs;
 
     if (hasAllDocs) {
       updateFields.status = sellerStatus.PENDING_APPROVAL;
@@ -511,6 +502,7 @@ const editSeller = asyncWrapper(async (req, res, next) => {
     options
   );
 
+  // تغيير كلمة السر لو طلب المستخدم
   if (newPassword) {
     if (!currentPassword) {
       const error = appError.create(
@@ -528,6 +520,7 @@ const editSeller = asyncWrapper(async (req, res, next) => {
       currentPassword,
       targetSeller.password
     );
+
     if (!matchedPassword) {
       const error = appError.create(
         {
@@ -542,7 +535,7 @@ const editSeller = asyncWrapper(async (req, res, next) => {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     updatedSeller.password = hashedNewPassword;
-    await updatedSeller.save(); // Save after password change
+    await updatedSeller.save();
   }
 
   return res.status(200).json({
