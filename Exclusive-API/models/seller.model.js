@@ -46,6 +46,7 @@ const sellerSchema = new mongoose.Schema(
         message: "blockReason can only be set when status is BLOCKED",
       },
     },
+    dateOfBirth: { type: Date },
     token: { type: String },
     verificationCode: {
       type: String,
@@ -67,6 +68,15 @@ const sellerSchema = new mongoose.Schema(
     isProfileComplete: {
       type: Boolean,
       default: false,
+    },
+
+    storeName: { type: String },
+
+    paymentInfo: {
+      cardHolderName: { type: String },
+      cardLast4Digits: { type: String },
+      cardBrand: { type: String },
+      expiryDate: { type: String },
     },
   },
   {

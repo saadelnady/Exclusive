@@ -45,6 +45,7 @@ const allowedExtensions = [
   ".odt",
   ".ods",
   ".odp",
+  "heic",
 ];
 
 const fileFilter = (req, file, cb) => {

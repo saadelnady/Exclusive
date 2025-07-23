@@ -12,7 +12,10 @@ import styles from "./styles/styles.module.scss";
 import { fetchSettings } from "@/store/actions/settings/settingsActions";
 import { Col, Row } from "react-bootstrap";
 
-import { sellrOtp, sellrResendOtp } from "@/store/actions/seller/sellerActions";
+import {
+  sellrOtp,
+  sellerResendOtp,
+} from "@/store/actions/seller/sellerActions";
 
 const Index = () => {
   const { isLoading } = useSelector((state) => state.sellerReducer);
@@ -59,7 +62,7 @@ const Index = () => {
       email: targetEmail,
     };
     const payload = { values, toast, locale };
-    dispatch(sellrResendOtp(payload));
+    dispatch(sellerResendOtp(payload));
   };
   useEffect(() => {
     dispatch(fetchSettings({ toast, locale }));

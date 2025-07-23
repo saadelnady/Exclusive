@@ -29,7 +29,6 @@ const UploadFile2 = ({
 
   const getFileIcon = (fileName) => {
     const ext = getFileExtension(fileName);
-    console.log("ext", ext);
 
     switch (ext) {
       case "pdf":
@@ -43,12 +42,16 @@ const UploadFile2 = ({
       case "ppt":
       case "pptx":
         return <PptIcon />;
-      default:
-        return <FileIcon />;
     }
   };
 
-  const isImage = selectedFile?.type?.startsWith("image");
+  const isImage =
+    selectedFile?.file?.type?.startsWith("image") ||
+    selectedFile?.preview?.endsWith(".png") ||
+    selectedFile?.preview?.endsWith(".jpg") ||
+    selectedFile?.preview?.endsWith(".jpeg") ||
+    selectedFile?.preview?.endsWith(".webp") ||
+    selectedFile?.preview?.endsWith(".gif");
   const hasPreview = selectedFile?.preview || selectedFile?.name;
 
   return (

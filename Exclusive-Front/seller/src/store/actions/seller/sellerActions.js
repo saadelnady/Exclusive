@@ -117,7 +117,7 @@ export const sellrOtp = ({ values, toast, navigate, locale }) => {
   };
 };
 // ========================================================================================
-export const sellrResendOtp = ({ values, toast, locale }) => {
+export const sellerResendOtp = ({ values, toast, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.postResendOtp(values));
 
