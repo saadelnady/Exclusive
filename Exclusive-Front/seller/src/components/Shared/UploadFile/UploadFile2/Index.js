@@ -27,8 +27,17 @@ const UploadFile2 = ({
     return fileName?.split(".").pop()?.toLowerCase();
   };
 
-  const getFileIcon = (fileName) => {
-    const ext = getFileExtension(fileName);
+  const getFileIcon = (selectedFile) => {
+    if (!selectedFile) return null;
+
+    const fileName =
+      selectedFile.name ||
+      selectedFile.file?.name ||
+      selectedFile.preview?.split("/").pop();
+
+    if (!fileName) return null;
+
+    const ext = getFileExtension(fileName)?.toLowerCase();
 
     switch (ext) {
       case "pdf":
@@ -42,6 +51,8 @@ const UploadFile2 = ({
       case "ppt":
       case "pptx":
         return <PptIcon />;
+      default:
+        return null; // أو حط أيقونة افتراضية هنا
     }
   };
 
@@ -76,9 +87,7 @@ const UploadFile2 = ({
                   className="img"
                 />
               ) : (
-                <div className="iconFile">
-                  {getFileIcon(selectedFile?.name)}
-                </div>
+                <div className="iconFile">{getFileIcon(selectedFile)}</div>
               ))}
 
             {hasPreview && (

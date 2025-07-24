@@ -76,7 +76,7 @@ const AllSellers = ({ isWarning, handleShowWarning }) => {
     {
       label: "name",
       name: "name",
-      render: (row) => <div>{`${row?.firstName} ${row?.lastName}`}</div>,
+      render: (row) => <div>{`${row?.name}`}</div>,
     },
     {
       label: "email",

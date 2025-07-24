@@ -42,16 +42,13 @@ export const fetchUser = ({ userId }) => {
 
 // ========================================================================================
 
-export const editUser = ({ userId, data, toast, locale, navigate }) => {
+export const editUser = ({ userId, data, toast, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.putUser());
     try {
       const response = await putData(`/api/users/${userId}`, data);
       dispatch(actionCreators.putUserSuccess(response));
       showToast(toast, response?.message?.[locale], "success");
-      setTimeout(() => {
-        navigate("/users");
-      }, 2500);
     } catch (error) {
       dispatch(actionCreators.putUserFail(error));
       showToast(toast, error?.response?.data?.message?.[locale], "error");

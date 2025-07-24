@@ -458,7 +458,6 @@ const editSeller = asyncWrapper(async (req, res, next) => {
 
   const { email, mobilePhone, newPassword, currentPassword } = req.body;
 
-  // تحقق من عدم تكرار الإيميل أو الهاتف
   const existingSeller = await Seller.findOne({
     $or: [{ email }, { mobilePhone }],
     _id: { $ne: sellerId },
@@ -476,14 +475,81 @@ const editSeller = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  const options = { new: true };
   const updateFields = { ...req.body };
   delete updateFields.newPassword;
   delete updateFields.currentPassword;
+  console.log("updateFields", updateFields);
+
+  const { paymentInfo } = updateFields;
+
+  if (paymentInfo) {
+    const { method } = paymentInfo;
+
+    if (!["card", "instapay", "vodafoneCash"].includes(method)) {
+      const error = appError.create(
+        {
+          ar: "نوع وسيلة الدفع غير مدعوم",
+          en: "Invalid payment method",
+        },
+        400,
+        httpStatusText.FAIL
+      );
+      return next(error);
+    }
+
+    if (method === "card") {
+      const card = paymentInfo.card || {};
+      if (
+        !card.cardHolderName ||
+        !card.cardLast4Digits ||
+        !card.cardBrand ||
+        !card.expiryDate
+      ) {
+        const error = appError.create(
+          {
+            ar: "برجاء ملء جميع بيانات البطاقة",
+            en: "Please fill in all card details",
+          },
+          400,
+          httpStatusText.FAIL
+        );
+        return next(error);
+      }
+    }
+
+    if (method === "instapay") {
+      const instapay = paymentInfo.instapay || {};
+      if (!instapay.phone) {
+        const error = appError.create(
+          {
+            ar: " برجاء إدخال رقم Instapay ",
+            en: "Please provide a valid Instapay  phone number",
+          },
+          400,
+          httpStatusText.FAIL
+        );
+        return next(error);
+      }
+    }
+
+    if (method === "vodafoneCash") {
+      const vfCash = paymentInfo.vodafoneCash || {};
+      if (!vfCash.phone) {
+        const error = appError.create(
+          {
+            ar: "برجاء إدخال رقم فودافون كاش",
+            en: "Please provide Vodafone Cash phone number",
+          },
+          400,
+          httpStatusText.FAIL
+        );
+        return next(error);
+      }
+    }
+  }
 
   // التحقق من الوثائق الرسمية
   const docs = updateFields.officialDocuments;
-
   if (docs) {
     const { frontId, backId, commercialRegister, taxCard, otherDocs } = docs;
 
@@ -499,7 +565,7 @@ const editSeller = asyncWrapper(async (req, res, next) => {
   const updatedSeller = await Seller.findByIdAndUpdate(
     sellerId,
     { $set: updateFields },
-    options
+    { new: true }
   );
 
   // تغيير كلمة السر لو طلب المستخدم

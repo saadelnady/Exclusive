@@ -8,11 +8,16 @@ import styles from "./styles/styles.module.scss";
 import { sellerStatus } from "@/helpers/roles";
 import { handleImageLink } from "@/helpers/checkers";
 import { toast } from "react-toastify";
-import BlockUserModal from "./blockUserModal";
-import { fetchSeller } from "@/store/actions/seller/sellerActions";
+import BlockUserModal from "./blockSellerModal";
+import {
+  editSellerProfile,
+  fetchSeller,
+} from "@/store/actions/seller/sellerActions";
+
 const ShowSeller = () => {
   const { sellerId } = useParams();
   const { seller, isLoading } = useSelector((state) => state.sellerReducer);
+
   const { locale } = useIntl();
   const navigate = useNavigate();
 
@@ -29,9 +34,9 @@ const ShowSeller = () => {
       setShow(true);
     } else {
       dispatch(
-        editS({
+        editSellerProfile({
           sellerId,
-          data: {
+          values: {
             status: sellerStatus?.VERIFIED,
             blockReason: "",
           },
@@ -44,9 +49,9 @@ const ShowSeller = () => {
   };
   const onSubmit = (data) => {
     dispatch(
-      editUser({
+      editSellerProfile({
         sellerId,
-        data: {
+        values: {
           status: sellerStatus?.BLOCKED,
           blockReason: data?.blockReason,
         },
@@ -55,6 +60,7 @@ const ShowSeller = () => {
         navigate,
       })
     );
+    handleClose();
   };
   if (isLoading) return <Loading />;
   return (
@@ -90,7 +96,7 @@ const ShowSeller = () => {
               <th>
                 <FormattedMessage id="name" />
               </th>
-              <td>{`${seller?.firstName} ${seller?.lastName}`} </td>
+              <td>{`${seller?.name}`} </td>
             </tr>
 
             <tr>
@@ -112,6 +118,38 @@ const ShowSeller = () => {
               <td>{seller?.address || "-"}</td>
             </tr>
 
+            <tr>
+              <th>
+                <FormattedMessage id="accepted" />
+              </th>
+              <td>
+                {seller?.status === sellerStatus.PENDING_APPROVAL ? (
+                  <div className="d-flex align-items-center gap-5">
+                    <FormattedMessage id="yes" />
+                    <button
+                      className="btn block-btn"
+                      type="button"
+                      onClick={() => handleBlockSeller("unblock")}
+                    >
+                      <FormattedMessage id="accept" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="d-flex align-items-center gap-5">
+                    <FormattedMessage id="no" />
+                    <button
+                      className="btn block-btn"
+                      type="button"
+                      onClick={() => {
+                        handleBlockSeller("block");
+                      }}
+                    >
+                      <FormattedMessage id="block" />
+                    </button>
+                  </div>
+                )}
+              </td>
+            </tr>
             <tr>
               <th>
                 <FormattedMessage id="isBlocked" />
@@ -184,6 +222,126 @@ const ShowSeller = () => {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <FormattedMessage id="dateOfBirth" />
+              </th>
+              <td>
+                {new Date(seller?.dateOfBirth).toLocaleDateString("ar-EG", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </td>
+            </tr>
+
+            <tr>
+              <th>
+                <FormattedMessage id="nationalId" />
+              </th>
+              <td>{seller?.nationalId || "-"}</td>
+            </tr>
+
+            <tr>
+              <th>
+                <FormattedMessage id="storeName" />
+              </th>
+              <td>{seller?.storeName || "-"}</td>
+            </tr>
+            {/* 
+            <tr>
+              <th>
+                <FormattedMessage id="paymentMethod" />
+              </th>
+              <td>{seller?.paymentInfo?.method || "-"}</td>
+            </tr>
+
+           {seller?.paymentInfo?.instapay && (
+              <>
+                <tr>
+                  <th>
+                    <FormattedMessage id="instapayAccountName" />
+                  </th>
+                  <td>{seller.paymentInfo.instapay.accountName || "-"}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <FormattedMessage id="instapayPhone" />
+                  </th>
+                  <td>{seller.paymentInfo.instapay.phone || "-"}</td>
+                </tr>
+              </>
+            )} */}
+
+            <tr>
+              <th>
+                <FormattedMessage id="officialDocuments" />
+              </th>
+              <td>
+                <ul className="list-unstyled d-flex flex-column gap-2">
+                  <li>
+                    <strong>
+                      <FormattedMessage id="frontId" />:
+                    </strong>{" "}
+                    <a
+                      href={seller?.officialDocuments?.frontId}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="view" />
+                    </a>
+                  </li>
+                  <li>
+                    <strong>
+                      <FormattedMessage id="backId" />:
+                    </strong>{" "}
+                    <a
+                      href={seller?.officialDocuments?.backId}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="view" />
+                    </a>
+                  </li>
+                  <li>
+                    <strong>
+                      <FormattedMessage id="commercialRegister" />:
+                    </strong>{" "}
+                    <a
+                      href={seller?.officialDocuments?.commercialRegister}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="view" />
+                    </a>
+                  </li>
+                  <li>
+                    <strong>
+                      <FormattedMessage id="taxCard" />:
+                    </strong>{" "}
+                    <a
+                      href={seller?.officialDocuments?.taxCard}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="view" />
+                    </a>
+                  </li>
+                  <li>
+                    <strong>
+                      <FormattedMessage id="otherDocs" />:
+                    </strong>{" "}
+                    <a
+                      href={seller?.officialDocuments?.otherDocs}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="view" />
+                    </a>
+                  </li>
+                </ul>
               </td>
             </tr>
           </tbody>

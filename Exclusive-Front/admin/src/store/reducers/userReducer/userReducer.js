@@ -124,7 +124,7 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        user: action?.payLoad?.user,
+        user: action?.payLoad?.data?.user,
         error: null,
       };
 

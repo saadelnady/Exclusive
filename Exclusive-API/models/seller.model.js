@@ -73,10 +73,26 @@ const sellerSchema = new mongoose.Schema(
     storeName: { type: String },
 
     paymentInfo: {
-      cardHolderName: { type: String },
-      cardLast4Digits: { type: String },
-      cardBrand: { type: String },
-      expiryDate: { type: String },
+      method: {
+        type: String,
+        enum: ["card", "instapay", "vodafoneCash"],
+        required: true,
+      },
+      card: {
+        cardHolderName: { type: String },
+        cardLast4Digits: { type: String },
+        cardBrand: {
+          type: String,
+          enum: ["Visa", "MasterCard", "Discover"],
+        },
+        expiryDate: { type: String },
+      },
+      instapay: {
+        phone: { type: String },
+      },
+      vodafoneCash: {
+        phone: { type: String },
+      },
     },
   },
   {

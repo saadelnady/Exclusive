@@ -37,10 +37,9 @@ const ShowUser = () => {
           },
           toast,
           locale,
-          navigate,
         })
       );
-     }
+    }
   };
   const onSubmit = (data) => {
     dispatch(
@@ -52,9 +51,9 @@ const ShowUser = () => {
         },
         toast,
         locale,
-        navigate,
       })
     );
+    handleClose();
   };
   if (isLoading) return <Loading />;
   return (

@@ -23,6 +23,10 @@ import ProtectedRoute from "./layout/ProtectedRoute";
 import { fetchSettings } from "./store/actions/settings/settingsActions";
 import { toast } from "react-toastify";
 import CompleteProfile from "./components/CompleteProfile/Index";
+import { sellerStatus } from "./helpers/roles";
+import PendingApproval from "./components/PendingApproval/Index";
+import BlockedAccount from "./components/BlockedAccount/Index.js";
+
 const languages = {
   ar,
   en,
@@ -82,7 +86,17 @@ function App() {
             path="/*"
             element={
               <ProtectedRoute>
-                {seller?.isProfileComplete ? <Seller /> : <CompleteProfile />}
+                {seller?.status === sellerStatus.VERIFIED &&
+                seller?.isProfileComplete ? (
+                  <Seller />
+                ) : seller?.status === sellerStatus.PENDING_APPROVAL &&
+                  seller?.isProfileComplete ? (
+                  <PendingApproval />
+                ) : seller?.status === sellerStatus.BLOCKED ? (
+                  <BlockedAccount />
+                ) : (
+                  <CompleteProfile />
+                )}
               </ProtectedRoute>
             }
           />

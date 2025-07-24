@@ -7,7 +7,9 @@ export const userStatus = Object.freeze({
   BLOCKED: "BLOCKED",
 });
 export const sellerStatus = Object.freeze({
-  VERIFIED: "VERIFIED",
   NOTVERIFIED: "NOTVERIFIED",
+  PENDING_APPROVAL: "PENDING_APPROVAL",
+  VERIFIED: "VERIFIED",
+  REJECTED: "REJECTED",
   BLOCKED: "BLOCKED",
 });

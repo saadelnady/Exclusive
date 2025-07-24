@@ -27,16 +27,16 @@ export const fetchSellerProfile = () => {
   };
 };
 // ========================================================================================
-export const editSellerProfile = ({ sellerId, values, toast }) => {
+export const editSellerProfile = ({ sellerId, values, toast, locale }) => {
   return async (dispatch) => {
     dispatch(actionCreators.putSellerProfile());
     try {
       const response = await putData(`/api/sellers/${sellerId}`, values);
       dispatch(actionCreators.putSellerProfileSuccess(response));
-      showToast(toast, response?.message, "success");
+      showToast(toast, response?.message?.[locale], "success");
     } catch (error) {
       dispatch(actionCreators.putSellerProfileFail(error));
-      showToast(toast, error?.response?.data?.message, "error");
+      showToast(toast, error?.response?.data?.message?.[locale], "error");
     }
   };
 };
@@ -105,7 +105,12 @@ export const sellerRegister = ({ values, toast, navigate }) => {
 };
 
 // =========================================================================================
-export const fetchSellers = ({ limit = "", page = "", text = "" }) => {
+export const fetchSellers = ({
+  limit = "",
+  page = "",
+  text = "",
+  status = "",
+}) => {
   return async (dispatch) => {
     dispatch(actionCreators.getSellers());
     try {
@@ -113,6 +118,10 @@ export const fetchSellers = ({ limit = "", page = "", text = "" }) => {
       if (text) {
         response = await getData(
           `/api/sellers?limit=${limit}&page=${page}&text=${text}`
+        );
+      } else if (status) {
+        response = await getData(
+          `/api/sellers?limit=${limit}&page=${page}&status=${status}`
         );
       } else {
         response = await getData(`/api/sellers?limit=${limit}&page=${page}`);

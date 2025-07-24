@@ -14,20 +14,23 @@ import { toast } from "react-toastify";
 import styles from "./styles/styles.module.scss";
 import IcError from "./assets/images/svgs/ic-error.svg";
 
-const SellerDocumentsForm = () => {
+const CompleteProfile = () => {
   const { seller } = useSelector((state) => state.sellerReducer);
   const { locale, formatMessage } = useIntl();
-  const dispatch = useDispatch();
-
   const [activeTab, setActiveTab] = useState("step1");
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const dispatch = useDispatch();
+  const tabs = [
+    { key: "step1", label: formatMessage({ id: "sellerInfo" }) },
+    { key: "step2", label: formatMessage({ id: "shopInfo" }) },
+    { key: "step3", label: formatMessage({ id: "sellerDocuments" }) },
+  ];
 
-  // حالة اكت完成 كل خطوة
   const [completed, setCompleted] = useState({
     step1: false,
     step2: false,
     step3: false,
   });
-
   const [images, setImages] = useState({
     image: { preview: null, file: null },
     frontId: { preview: null, file: null },
@@ -36,6 +39,81 @@ const SellerDocumentsForm = () => {
     taxCard: { preview: null, file: null },
     otherDocs: { preview: null, file: null },
   });
+  const validateStep = async (key) => {
+    switch (key) {
+      case "step1":
+        return await trigger([
+          "name",
+          "email",
+          "mobilePhone",
+          "address",
+          "nationalId",
+          "dateOfBirth",
+        ]);
+      case "step2":
+        return await trigger([
+          "storeName",
+          "cardHolderName",
+          "cardLast4Digits",
+          "cardBrand",
+          "expiryDate",
+          "paymentInfo.method",
+          "paymentInfo.card.cardHolderName",
+          "paymentInfo.card.cardLast4Digits",
+          "paymentInfo.card.cardBrand",
+          "paymentInfo.card.expiryDate",
+          "paymentInfo.instapay.phone",
+          "paymentInfo.vodafoneCash.phone",
+        ]);
+      case "step3":
+        return await trigger([
+          "frontId",
+          "backId",
+          "commercialRegister",
+          "taxCard",
+          "otherDocs",
+        ]);
+      default:
+        return true;
+    }
+  };
+  const handleTabSelect = async (key) => {
+    if (key === activeTab) return;
+
+    const targetIndex = tabs.findIndex((tab) => tab.key === key);
+
+    for (let i = 0; i < targetIndex; i++) {
+      if (!completed[tabs[i].key]) {
+        const isValid = await validateStep(tabs[i].key);
+        if (!isValid) return;
+        setCompleted((prev) => ({ ...prev, [tabs[i].key]: true }));
+      }
+    }
+
+    setCurrentTabIndex(targetIndex);
+    setActiveTab(key);
+  };
+  const handleNext = async () => {
+    const currentKey = tabs[currentTabIndex].key;
+    const isValid = await validateStep(currentKey);
+    if (!isValid) return;
+
+    setCompleted((prev) => ({ ...prev, [currentKey]: true }));
+
+    if (currentTabIndex < tabs.length - 1) {
+      const nextIndex = currentTabIndex + 1;
+      setCurrentTabIndex(nextIndex);
+      setActiveTab(tabs[nextIndex].key);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentTabIndex > 0) {
+      const prevIndex = currentTabIndex - 1;
+      setCurrentTabIndex(prevIndex);
+      setActiveTab(tabs[prevIndex].key);
+    }
+  };
 
   const {
     register,
@@ -128,62 +206,6 @@ const SellerDocumentsForm = () => {
     );
   };
 
-  const validateStep1 = () =>
-    trigger([
-      "name",
-      "email",
-      "mobilePhone",
-      "address",
-      "nationalId",
-      "dateOfBirth",
-    ]);
-  const validateStep2 = () =>
-    trigger([
-      "storeName",
-      "cardHolderName",
-      "cardLast4Digits",
-      "cardBrand",
-      "expiryDate",
-    ]);
-
-  // زر "التالي"
-  const handleNext = async () => {
-    const valid = await validateStep1();
-    const validStep2 = await validateStep2();
-    if (!valid || !validStep2) {
-      // ممكن توست لو حبيت
-      // toast.error(formatMessage({ id: "fixErrors" }));
-      return;
-    }
-
-    setCompleted((c) => ({ ...c, step1: true }));
-    setActiveTab("step2");
-  };
-
-  // زر "السابق"
-  const handlePrevious = () => {
-    setActiveTab("step1");
-  };
-
-  // حراسة التنقل من التابات
-  const handleTabSelect = async (k) => {
-    if (!k || k === activeTab) return;
-
-    // لو المستخدم رايح للتاب 2 يدوي من غير ما يعمل Next
-    if (k === "step2" && !completed.step1) {
-      const valid = await validateStep1();
-      if (!valid) return; // امنع الانتقال
-      setCompleted((c) => ({ ...c, step1: true }));
-    }
-
-    setActiveTab(k);
-  };
-  const tabs = [
-    { key: "step1", label: formatMessage({ id: "sellerInfo" }) },
-    { key: "step2", label: formatMessage({ id: "shopInfo" }) },
-    { key: "step3", label: formatMessage({ id: "sellerDocuments" }) },
-  ];
-
   return (
     <div className={`page ${styles.completeProfile}`}>
       <Container>
@@ -199,13 +221,13 @@ const SellerDocumentsForm = () => {
         <Tab.Container activeKey={activeTab} onSelect={handleTabSelect}>
           <Row>
             {/* Tabs Nav */}
-            <Nav className={`${styles.stepsNav || ""} mb-4`}>
+            <Nav>
               {tabs.map((tab, index) => {
                 return (
-                  <Nav.Item key={tab.key} className={styles.stepItem}>
+                  <Nav.Item key={tab.key}>
                     <Nav.Link eventKey={tab.key}>
-                      <h3 className={styles.stepIndex}>{index + 1}</h3>
-                      <span className={styles.stepLabel}>{tab.label}</span>
+                      <h3>{index + 1}</h3>
+                      <span>{tab.label}</span>
                     </Nav.Link>
                   </Nav.Item>
                 );
@@ -372,20 +394,8 @@ const SellerDocumentsForm = () => {
                         )}
                       </div>
                     </Col>
-
-                    <Col xs={12}>
-                      <Button
-                        className="btn submit"
-                        type="button"
-                        onClick={handleNext}
-                      >
-                        <FormattedMessage id="next" />
-                      </Button>
-                    </Col>
                   </Row>
                 </Tab.Pane>
-
-                {/* STEP 2 */}
                 <Tab.Pane eventKey="step2">
                   <Row>
                     <Col xs={12} md={6}>
@@ -408,107 +418,204 @@ const SellerDocumentsForm = () => {
                       </div>
                     </Col>
 
-                    {/* ---- Payment Info ---- */}
-
+                    {/* Payment Method Selector */}
                     <Col xs={12} md={6}>
                       <div className="input-wrapper">
-                        <label htmlFor="cardHolderName">
-                          <FormattedMessage id="cardHolderName" /> :
+                        <label htmlFor="paymentMethod">
+                          <FormattedMessage
+                            id="paymentMethod"
+                            defaultMessage="Payment Method"
+                          />
+                          :
                         </label>
-                        <input
-                          id="cardHolderName"
+                        <select
+                          id="method"
                           className="special-input"
-                          {...register("paymentInfo.cardHolderName", {
+                          {...register("paymentInfo.method", {
                             required: formatMessage({ id: "required" }),
                           })}
-                        />
-                        {errors?.paymentInfo?.cardHolderName && (
+                        >
+                          <option value="">--</option>
+                          <option value="card">
+                            {formatMessage({ id: "card" })}
+                          </option>
+                          <option value="instapay">
+                            {formatMessage({ id: "instapay" })}
+                          </option>
+                          <option value="vodafoneCash">
+                            {formatMessage({ id: "vodafoneCash" })}
+                          </option>
+                        </select>
+                        {errors?.paymentInfo?.method && (
                           <p className="error">
-                            <IcError />{" "}
-                            {errors.paymentInfo.cardHolderName.message}
+                            <IcError /> {errors.paymentInfo.method.message}
                           </p>
                         )}
                       </div>
                     </Col>
 
-                    <Col xs={12} md={6}>
-                      <div className="input-wrapper">
-                        <label htmlFor="cardBrand">
-                          <FormattedMessage id="cardBrand" /> :
-                        </label>
-                        <input
-                          id="cardBrand"
-                          className="special-input"
-                          {...register("paymentInfo.cardBrand", {
-                            required: formatMessage({ id: "required" }),
-                          })}
-                        />
-                        {errors?.paymentInfo?.cardBrand && (
-                          <p className="error">
-                            <IcError /> {errors.paymentInfo.cardBrand.message}
-                          </p>
-                        )}
-                      </div>
-                    </Col>
+                    {/* ====== Card Fields ====== */}
+                    {watch("paymentInfo.method") === "card" && (
+                      <>
+                        <Col xs={12} md={6}>
+                          <div className="input-wrapper">
+                            <label htmlFor="cardHolderName">
+                              <FormattedMessage id="cardHolderName" /> :
+                            </label>
+                            <input
+                              id="cardHolderName"
+                              className="special-input"
+                              {...register("paymentInfo.card.cardHolderName", {
+                                required: formatMessage({ id: "required" }),
+                              })}
+                            />
+                            {errors?.paymentInfo?.card?.cardHolderName && (
+                              <p className="error">
+                                <IcError />{" "}
+                                {errors.paymentInfo.card.cardHolderName.message}
+                              </p>
+                            )}
+                          </div>
+                        </Col>
 
-                    <Col xs={12} md={6}>
-                      <div className="input-wrapper">
-                        <label htmlFor="cardLast4Digits">
-                          <FormattedMessage id="cardLast4Digits" /> :
-                        </label>
-                        <input
-                          id="cardLast4Digits"
-                          className="special-input"
-                          maxLength={4}
-                          {...register("paymentInfo.cardLast4Digits", {
-                            required: formatMessage({ id: "required" }),
-                            pattern: {
-                              value: /^[0-9]{4}$/,
-                              message: formatMessage({ id: "invalidLast4" }),
-                            },
-                          })}
-                        />
-                        {errors?.paymentInfo?.cardLast4Digits && (
-                          <p className="error">
-                            <IcError />{" "}
-                            {errors.paymentInfo.cardLast4Digits.message}
-                          </p>
-                        )}
-                      </div>
-                    </Col>
+                        <Col xs={12} md={6}>
+                          <div className="input-wrapper">
+                            <label htmlFor="cardBrand">
+                              <FormattedMessage id="cardBrand" /> :
+                            </label>
+                            <select
+                              id="cardBrand"
+                              className="special-input"
+                              {...register("paymentInfo.card.cardBrand", {
+                                required: formatMessage({ id: "required" }),
+                              })}
+                            >
+                              <option value="">--</option>
+                              <option value="Visa">
+                                {formatMessage({ id: "visa" })}
+                              </option>
+                              <option value="MasterCard">
+                                {formatMessage({ id: "masterCard" })}
+                              </option>
+                              <option value="Discover">
+                                {formatMessage({ id: "discover" })}
+                              </option>
+                            </select>
+                            {errors?.paymentInfo?.card?.cardBrand && (
+                              <p className="error">
+                                <IcError />{" "}
+                                {errors.paymentInfo.card.cardBrand.message}
+                              </p>
+                            )}
+                          </div>
+                        </Col>
 
-                    <Col xs={12} md={6}>
-                      <div className="input-wrapper">
-                        <label htmlFor="expiryDate">
-                          <FormattedMessage id="expiryDate" /> :
-                        </label>
-                        <input
-                          id="expiryDate"
-                          type="month"
-                          className="special-input"
-                          {...register("paymentInfo.expiryDate", {
-                            required: formatMessage({ id: "required" }),
-                          })}
-                        />
-                        {errors?.paymentInfo?.expiryDate && (
-                          <p className="error">
-                            <IcError /> {errors.paymentInfo.expiryDate.message}
-                          </p>
-                        )}
-                      </div>
-                    </Col>
+                        <Col xs={12} md={6}>
+                          <div className="input-wrapper">
+                            <label htmlFor="cardLast4Digits">
+                              <FormattedMessage id="cardLast4Digits" /> :
+                            </label>
+                            <input
+                              id="cardLast4Digits"
+                              className="special-input"
+                              maxLength={4}
+                              {...register("paymentInfo.card.cardLast4Digits", {
+                                required: formatMessage({ id: "required" }),
+                                pattern: {
+                                  value: /^[0-9]{4}$/,
+                                  message: formatMessage({
+                                    id: "invalidLast4Digits",
+                                  }),
+                                },
+                              })}
+                            />
+                            {errors?.paymentInfo?.card?.cardLast4Digits && (
+                              <p className="error">
+                                <IcError />
+                                {
+                                  errors.paymentInfo.card.cardLast4Digits
+                                    .message
+                                }
+                              </p>
+                            )}
+                          </div>
+                        </Col>
 
-                    <Col
-                      xs={12}
-                      className="d-flex justify-content-between mt-3"
-                    >
-                      <button className="btn submit" type="button">
-                        <FormattedMessage id="previous" />
-                      </button>
-                      <button className="btn submit" type="button">
-                        <FormattedMessage id="previous" />
-                      </button>
-                    </Col>
+                        <Col xs={12} md={6}>
+                          <div className="input-wrapper">
+                            <label htmlFor="expiryDate">
+                              <FormattedMessage id="expiryDate" /> :
+                            </label>
+                            <input
+                              id="expiryDate"
+                              type="month"
+                              className="special-input"
+                              {...register("paymentInfo.card.expiryDate", {
+                                required: formatMessage({ id: "required" }),
+                              })}
+                            />
+                            {errors?.paymentInfo?.card?.expiryDate && (
+                              <p className="error">
+                                <IcError />{" "}
+                                {errors.paymentInfo.card.expiryDate.message}
+                              </p>
+                            )}
+                          </div>
+                        </Col>
+                      </>
+                    )}
+
+                    {/* ====== Instapay ====== */}
+                    {watch("paymentInfo.method") === "instapay" && (
+                      <Col xs={12} md={6}>
+                        <div className="input-wrapper">
+                          <label htmlFor="instapayEmail">
+                            <FormattedMessage id="instapayNumber" /> :
+                          </label>
+                          <input
+                            id="instapayNumber"
+                            className="special-input"
+                            {...register("paymentInfo.instapay.phone", {
+                              required: formatMessage({ id: "required" }),
+                            })}
+                          />
+                          {errors?.paymentInfo?.instapay?.phone && (
+                            <p className="error">
+                              <IcError />{" "}
+                              {errors.paymentInfo.instapay.phone.message}
+                            </p>
+                          )}
+                        </div>
+                      </Col>
+                    )}
+
+                    {/* ====== Vodafone Cash ====== */}
+                    {watch("paymentInfo.method") === "vodafoneCash" && (
+                      <Col xs={12} md={6}>
+                        <div className="input-wrapper">
+                          <label htmlFor="vodafoneCashPhone">
+                            <FormattedMessage id="vodafoneCashNumber" />:
+                          </label>
+                          <input
+                            id="vodafoneCashPhone"
+                            className="special-input"
+                            {...register("paymentInfo.vodafoneCash.phone", {
+                              required: formatMessage({ id: "required" }),
+                              pattern: {
+                                value: /^01[0-2,5]{1}[0-9]{8}$/,
+                                message: formatMessage({ id: "invalidPhone" }),
+                              },
+                            })}
+                          />
+                          {errors?.paymentInfo?.vodafoneCash?.phone && (
+                            <p className="error">
+                              <IcError />{" "}
+                              {errors.paymentInfo.vodafoneCash.phone.message}
+                            </p>
+                          )}
+                        </div>
+                      </Col>
+                    )}
                   </Row>
                 </Tab.Pane>
 
@@ -533,28 +640,36 @@ const SellerDocumentsForm = () => {
                         />
                       </Col>
                     ))}
-
-                    <Col
-                      xs={12}
-                      className="d-flex justify-content-between mt-3"
-                    >
-                      <button
-                        type="button"
-                        className="btn submit"
-                        onClick={handlePrevious}
-                      >
-                        <FormattedMessage id="previous" />
-                      </button>
-                      <button
-                        variant="success"
-                        type="submit"
-                        className="btn submit"
-                      >
-                        <FormattedMessage id="submit" />
-                      </button>
-                    </Col>
                   </Row>
                 </Tab.Pane>
+
+                <div className="d-flex justify-content-between mt-3">
+                  {currentTabIndex > 0 && (
+                    <button
+                      onClick={handlePrevious}
+                      disabled={currentTabIndex === 0}
+                      className="btn submit"
+                      type="button"
+                    >
+                      <FormattedMessage id="previous" />
+                    </button>
+                  )}
+                  {currentTabIndex === tabs.length - 1 && (
+                    <button type="submit" className="btn submit">
+                      <FormattedMessage id="submit" />
+                    </button>
+                  )}
+
+                  {currentTabIndex !== tabs.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="btn submit"
+                    >
+                      <FormattedMessage id="next" />
+                    </button>
+                  )}
+                </div>
               </Tab.Content>
             </form>
           </Row>
@@ -564,4 +679,4 @@ const SellerDocumentsForm = () => {
   );
 };
 
-export default SellerDocumentsForm;
+export default CompleteProfile;
