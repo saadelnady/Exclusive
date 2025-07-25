@@ -29,7 +29,6 @@ const sellerSchema = new mongoose.Schema(
         sellerStatus.NOTVERIFIED,
         sellerStatus.VERIFIED,
         sellerStatus.BLOCKED,
-        sellerStatus.REJECTED,
         sellerStatus.PENDING_APPROVAL,
       ],
     },
@@ -59,11 +58,11 @@ const sellerSchema = new mongoose.Schema(
     products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     nationalId: { type: String },
     officialDocuments: {
-      frontId: { type: String, required: true },
-      backId: { type: String, required: true },
-      taxCard: { type: String, required: true },
-      commercialRegister: { type: String, required: true },
-      otherDocs: { type: String, required: true },
+      frontId: { type: String },
+      backId: { type: String },
+      taxCard: { type: String },
+      commercialRegister: { type: String },
+      otherDocs: { type: String },
     },
     isProfileComplete: {
       type: Boolean,
@@ -76,7 +75,6 @@ const sellerSchema = new mongoose.Schema(
       method: {
         type: String,
         enum: ["card", "instapay", "vodafoneCash"],
-        required: true,
       },
       card: {
         cardHolderName: { type: String },

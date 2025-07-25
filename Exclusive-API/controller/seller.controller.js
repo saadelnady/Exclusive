@@ -375,6 +375,7 @@ const getAllSellers = asyncWrapper(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const page = parseInt(req.query.page) || 1;
   const text = req.query.text;
+  const status = req.query.status;
   const skip = (page - 1) * limit;
 
   const searchQuery = {};
@@ -389,8 +390,7 @@ const getAllSellers = asyncWrapper(async (req, res, next) => {
     const regex = { $regex: safeText, $options: "i" };
 
     searchQuery.$or = [
-      { firstName: regex },
-      { lastName: regex },
+      { name: regex },
       { email: regex },
       { mobilePhone: regex },
       { address: regex },
@@ -400,6 +400,16 @@ const getAllSellers = asyncWrapper(async (req, res, next) => {
           : undefined,
       },
     ].filter(Boolean);
+  }
+
+  if (status) {
+    console.log("status:", status); // Debug
+
+    if (Array.isArray(status)) {
+      searchQuery.status = { $in: status };
+    } else {
+      searchQuery.status = status;
+    }
   }
 
   const [sellers, totalSellersCount] = await Promise.all([
@@ -478,7 +488,6 @@ const editSeller = asyncWrapper(async (req, res, next) => {
   const updateFields = { ...req.body };
   delete updateFields.newPassword;
   delete updateFields.currentPassword;
-  console.log("updateFields", updateFields);
 
   const { paymentInfo } = updateFields;
 

@@ -10,6 +10,5 @@ export const sellerStatus = Object.freeze({
   NOTVERIFIED: "NOTVERIFIED",
   PENDING_APPROVAL: "PENDING_APPROVAL",
   VERIFIED: "VERIFIED",
-  REJECTED: "REJECTED",
   BLOCKED: "BLOCKED",
 });

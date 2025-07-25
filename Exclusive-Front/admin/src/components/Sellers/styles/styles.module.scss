@@ -63,6 +63,51 @@
         -o-border-radius: 50%;
       }
     }
+    .filterBtn {
+      height: 60px;
+      display: flex;
+      height: 60px;
+      align-items: center;
+      justify-content: center;
+      background-color: $bg-light;
+      border-radius: 10px;
+      color: $text-dark;
+      width: 150px;
+      margin-inline-start: auto;
+      border: 1px solid $border-color-light;
+      [data-theme="dark"] & {
+        background-color: $bg-dark-2;
+        border-color: $border-color-dark;
+        color: $text-light;
+      }
+      svg {
+        width: 20px;
+        height: 20px;
+        margin-inline-start: 10px;
+        fill: $primary-color;
+        [data-theme="dark"] & {
+          fill: $text-light;
+        }
+      }
+      @media (max-width: 768px) {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        svg {
+          margin-inline-start: unset;
+          width: 16px;
+          height: 16px;
+        }
+        [dir="ltr"] & {
+          left: 20px;
+        }
+        span {
+          display: none;
+        }
+      }
+    }
   }
 }
 .seller {
@@ -258,11 +303,117 @@
         }
       }
     }
+
     .modal-content {
       background-color: #ffffff;
       [data-theme="dark"] & {
         background-color: #2c2c2c;
         color: #ffffff;
+      }
+    }
+  }
+}
+.filtersOffcanvas {
+  :global {
+    .offcanvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid $border-color-light;
+      [data-theme="dark"] & {
+        border-color: $border-color-dark;
+      }
+      .offcanvas-title {
+        font-size: 20px;
+        color: $text-dark;
+        [data-theme="dark"] & {
+          color: $text-light;
+        }
+      }
+      .btn-close {
+        margin: 0;
+      }
+    }
+    .offcanvas-body {
+      padding: 20px;
+      background-color: $bg-light;
+      [data-theme="dark"] & {
+        background-color: $bg-dark-2;
+      }
+      .title {
+        font-size: 20px;
+        color: $text-dark;
+        [data-theme="dark"] & {
+          color: $text-light;
+        }
+      }
+      .filterTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: $text-dark;
+        [data-theme="dark"] & {
+          color: $text-light;
+        }
+      }
+      .form-check {
+        margin-bottom: 10px;
+        input[type="checkbox"] {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          margin-right: 10px;
+          border: 2px solid $primary-color;
+          background-color: white;
+          cursor: pointer;
+          position: relative;
+
+          &:checked {
+            background-color: $primary-color;
+          }
+          box-shadow: none;
+          // علامة الصح
+          &::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 6px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            display: none;
+          }
+
+          &:checked::after {
+            display: block;
+          }
+
+          [data-theme="dark"] & {
+            background-color: $text-light;
+            border-color: $text-light;
+
+            &:checked {
+              background-color: $text-light;
+            }
+
+            &::after {
+              border-color: $primary-color;
+            }
+          }
+        }
+
+        label {
+          font-size: 16px;
+          color: $text-dark;
+          [data-theme="dark"] & {
+            color: $text-light;
+          }
+        }
       }
     }
   }

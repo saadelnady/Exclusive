@@ -180,5 +180,19 @@
   "PendingApprovalDescription": "سيتم مراجعة حسابك من قبل فريقنا في أقرب وقت ممكن. شكرًا لصبرك.",
   "BlockedAccountTitle": "حسابك محظور",
   "BlockedAccountDescription": " حسابك محظور من قبل الإدارة. إذا كان لديك أي استفسارات، يرجى التواصل معنا عبر البريد الإلكتروني",
-  "officialDocuments": "المستندات الرسمية"
+  "officialDocuments": "المستندات الرسمية",
+  "accountStatus": "حالة الحساب",
+  "pending": "قيد المراجعة",
+  "blocked": "محظور",
+  "verified": "مفعل",
+  "notVerified": "غير مفعل",
+  "NOTVERIFIED": "غير مفعل",
+  "PENDING_APPROVAL": "قيد المراجعة",
+  "VERIFIED": "مفعل",
+  "BLOCKED": "محظور",
+  "filter": "فلتر",
+  "filterByAcountStatus": "حالة الحساب",
+  "clearFilters": "مسح الفلاتر",
+  "sellersFilter": "فلترة البائعين",
+  "verify": "تفعيل"
 }

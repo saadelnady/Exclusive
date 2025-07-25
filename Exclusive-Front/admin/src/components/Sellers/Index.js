@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import Loading from "../Shared/loading";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import IcFilter from "./assets/images/svgs/ic-filter.svg";
 import styles from "./styles/styles.module.scss";
 import Warning from "../Shared/warning/Index";
 import Pagenation from "../Shared/pagenation/Index";
@@ -13,6 +13,8 @@ import SearchBar from "../Shared/search/Index";
 import { Col, Row } from "react-bootstrap";
 import { handleImageLink } from "@/helpers/checkers";
 import { fetchSellers } from "@/store/actions/seller/sellerActions";
+import { sellerStatus } from "@/helpers/roles";
+import FiltersOffcanvas from "./Filters";
 
 const AllSellers = ({ isWarning, handleShowWarning }) => {
   const { sellers, isLoading, currentPage, totalPages } = useSelector(
@@ -20,13 +22,23 @@ const AllSellers = ({ isWarning, handleShowWarning }) => {
   );
   const { locale } = useIntl();
   const dispatch = useDispatch();
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
 
+  const handleFilterChange = (statuses) => {
+    setSelectedStatuses(statuses);
+    dispatch(fetchSellers({ status: statuses }));
+  };
   useEffect(() => {
     dispatch(fetchSellers({ limit: 10, page: 1 }));
   }, [dispatch]);
 
   const handlePageChange = (newPage) => {
-    if (newPage !== currentPage) {
+    if (selectedStatuses.length > 0) {
+      dispatch(
+        fetchSellers({ limit: 10, page: newPage, status: selectedStatuses })
+      );
+    } else if (newPage !== currentPage) {
       dispatch(fetchSellers({ limit: 10, page: newPage }));
     }
   };
@@ -83,10 +95,28 @@ const AllSellers = ({ isWarning, handleShowWarning }) => {
       name: "email",
       render: (row) => <div>{`${row?.email}`}</div>,
     },
+
     {
       label: "phone",
       name: "phone",
       render: (row) => <div>{`${row?.mobilePhone}`}</div>,
+    },
+    {
+      label: "accountStatus",
+      name: "accountStatus",
+      render: (row) => (
+        <div>
+          {row?.status === sellerStatus?.PENDING_APPROVAL ? (
+            <FormattedMessage id="pending" />
+          ) : row?.status === sellerStatus.BLOCKED ? (
+            <FormattedMessage id="blocked" />
+          ) : row?.status === sellerStatus.NOTVERIFIED ? (
+            <FormattedMessage id="notVerified" />
+          ) : (
+            <FormattedMessage id="verified" />
+          )}
+        </div>
+      ),
     },
     {
       label: "actions",
@@ -144,13 +174,13 @@ const AllSellers = ({ isWarning, handleShowWarning }) => {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className={`page ${styles.sellers}`}>
-        <Loading />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className={`page ${styles.sellers}`}>
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={`page ${styles.sellers}`}>
@@ -166,10 +196,26 @@ const AllSellers = ({ isWarning, handleShowWarning }) => {
               </p>
             </div>
           </Col>
-
-          <Col xs={12} lg={5} className="me-auto">
+          <Col xs={12} lg={5}>
             <SearchBar searchHandler={searchHandler} />
           </Col>
+          <button
+            variant="outline-primary"
+            className="filterBtn"
+            onClick={() => setShowFilters(true)}
+          >
+            <span>
+              <FormattedMessage id="filter" />
+            </span>
+            <IcFilter />
+          </button>
+
+          <FiltersOffcanvas
+            show={showFilters}
+            handleClose={() => setShowFilters(false)}
+            selectedStatuses={selectedStatuses}
+            onChange={handleFilterChange}
+          />
         </Row>
       </div>
       <Table cols={cols} rows={sellers} />

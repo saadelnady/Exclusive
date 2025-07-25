@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-funnel"
+    viewBox="0 0 16 16">
+    <path
+        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .39.812l-4.525 5.43A1.5 1.5 0 0 0 9 8.972V13.5a.5.5 0 0 1-.757.429l-2-1.2A.5.5 0 0 1 6 12.3V8.972a1.5 1.5 0 0 0-.865-1.23L.61 1.812A.5.5 0 0 1 1.5 1.5z" />
+</svg>

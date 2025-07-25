@@ -109,23 +109,33 @@ export const fetchSellers = ({
   limit = "",
   page = "",
   text = "",
-  status = "",
+  status = [],
 }) => {
   return async (dispatch) => {
     dispatch(actionCreators.getSellers());
     try {
-      let response;
-      if (text) {
-        response = await getData(
-          `/api/sellers?limit=${limit}&page=${page}&text=${text}`
-        );
-      } else if (status) {
-        response = await getData(
-          `/api/sellers?limit=${limit}&page=${page}&status=${status}`
-        );
-      } else {
-        response = await getData(`/api/sellers?limit=${limit}&page=${page}`);
-      }
+      const params = new URLSearchParams();
+      if (limit) params.append("limit", limit);
+      if (page) params.append("page", page);
+      if (text) params.append("text", text);
+
+      status.forEach((s) => params.append("status", s));
+
+      const response = await getData(`/api/sellers?${params.toString()}`);
+
+      // let response;
+      // if (text) {
+      //   response = await getData(
+      //     `/api/sellers?limit=${limit}&page=${page}&text=${text}`
+      //   );
+      // } else if (status) {
+      //   status.length > 0 ? (status = status.join(",")) : (status = "");
+      //   response = await getData(
+      //     `/api/sellers?limit=${limit}&page=${page}&status=${status}`
+      //   );
+      // } else {
+      //   response = await getData(`/api/sellers?limit=${limit}&page=${page}`);
+      // }
       dispatch(actionCreators.getSellersSuccess(response?.data));
     } catch (error) {
       dispatch(actionCreators.getSellersFail(error));

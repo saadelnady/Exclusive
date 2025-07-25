@@ -29,7 +29,7 @@ const ShowSeller = () => {
     dispatch(fetchSeller({ sellerId }));
   }, [sellerId, dispatch]);
 
-  const handleBlockSeller = (status) => {
+  const handleSellerAccount = (status) => {
     if (status === "block") {
       setShow(true);
     } else {
@@ -120,68 +120,51 @@ const ShowSeller = () => {
 
             <tr>
               <th>
-                <FormattedMessage id="accepted" />
+                <FormattedMessage id="accountStatus" />
               </th>
               <td>
-                {seller?.status === sellerStatus.PENDING_APPROVAL ? (
+                {seller?.status === sellerStatus.PENDING_APPROVAL && (
                   <div className="d-flex align-items-center gap-5">
-                    <FormattedMessage id="yes" />
+                    <FormattedMessage id="pending" />
                     <button
                       className="btn block-btn"
                       type="button"
-                      onClick={() => handleBlockSeller("unblock")}
+                      onClick={() => handleSellerAccount("unblock")}
                     >
-                      <FormattedMessage id="accept" />
+                      <FormattedMessage id="verify" />
                     </button>
                   </div>
-                ) : (
+                )}
+                {seller?.status === sellerStatus.VERIFIED && (
                   <div className="d-flex align-items-center gap-5">
-                    <FormattedMessage id="no" />
+                    <FormattedMessage id="VERIFIED" />
+
                     <button
                       className="btn block-btn"
                       type="button"
                       onClick={() => {
-                        handleBlockSeller("block");
+                        handleSellerAccount("block");
                       }}
                     >
                       <FormattedMessage id="block" />
                     </button>
                   </div>
                 )}
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <FormattedMessage id="isBlocked" />
-              </th>
-              <td>
-                {seller?.status === sellerStatus.BLOCKED ? (
+                {seller?.status === sellerStatus.BLOCKED && (
                   <div className="d-flex align-items-center gap-5">
-                    <FormattedMessage id="yes" />
+                    <FormattedMessage id="BLOCKED" />
                     <button
                       className="btn block-btn"
                       type="button"
-                      onClick={() => handleBlockSeller("unblock")}
+                      onClick={() => handleSellerAccount("unblock")}
                     >
                       <FormattedMessage id="unblock" />
                     </button>
                   </div>
-                ) : (
-                  <div className="d-flex align-items-center gap-5">
-                    <FormattedMessage id="no" />
-                    <button
-                      className="btn block-btn"
-                      type="button"
-                      onClick={() => {
-                        handleBlockSeller("block");
-                      }}
-                    >
-                      <FormattedMessage id="block" />
-                    </button>
-                  </div>
                 )}
               </td>
             </tr>
+
             {seller?.blockReason && seller?.status === sellerStatus.BLOCKED && (
               <tr>
                 <th>
