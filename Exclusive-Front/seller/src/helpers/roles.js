@@ -13,3 +13,8 @@ export const sellerStatus = Object.freeze({
   REJECTED: "REJECTED",
   BLOCKED: "BLOCKED",
 });
+export const productStatus = Object.freeze({
+  PENDING: "PENDING",
+  ACCEPTED: "ACCEPTED",
+  BLOCKED: "BLOCKED",
+});

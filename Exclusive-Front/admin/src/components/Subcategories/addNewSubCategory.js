@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles/styles.module.scss";
 import { FormattedMessage, useIntl } from "react-intl";
 import { set, useForm } from "react-hook-form";
-import { Col, Row, Dropdown, Spinner } from "react-bootstrap";
+import { Col, Row, Dropdown } from "react-bootstrap";
 
 import IcError from "./assets/images/svgs/ic-error.svg";
 

@@ -6,37 +6,63 @@ const { validationResult } = require("express-validator");
 const { productStatus, httpStatusText } = require("../utils/constants.js");
 
 const Seller = require("../models/seller.model");
+const mongoose = require("mongoose");
 
 const getProducts = asyncWrapper(async (req, res, next) => {
-  const { limit, page, text, status, type } = req.query;
-  const regex = new RegExp(text, "i");
+  const limit = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const text = req.query.text;
+  const status = req.query.status;
+  const sellerId = req.query.sellerId;
   const skip = (page - 1) * limit;
-  let query = { title: regex, status };
 
-  if (type === "flashSale") {
-    query.isFlashSale = true;
-  }
-  if (type === "notFlashSale") {
-    query.isFlashSale = false;
+  const query = {};
+
+  const escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
+  if (text) {
+    const safeText = escapeRegex(text);
+    const regex = { $regex: safeText, $options: "i" };
+
+    query.$or = [
+      { "title.ar": regex },
+      { "title.en": regex },
+      {
+        _id: mongoose.Types.ObjectId.isValid(text)
+          ? new mongoose.Types.ObjectId(text)
+          : undefined,
+      },
+    ].filter(Boolean);
   }
 
-  const products = await Product.find(query, { __v: false })
-    .populate("productOwner")
-    .limit(limit)
-    .skip(skip);
-
-  const allProducts = await Product.find(query, { __v: false });
-  if (!products) {
-    const error = appError.create(
-      "No products to show",
-      400,
-      httpStatusText.FAIL
-    );
-    return next(error);
+  if (status) {
+    if (Array.isArray(status)) {
+      query.status = { $in: status };
+    } else {
+      query.status = status;
+    }
   }
+
+  if (sellerId && mongoose.Types.ObjectId.isValid(sellerId)) {
+    query.seller = sellerId;
+  }
+
+  const [products, totalProductsCount] = await Promise.all([
+    Product.find(query, { __v: 0 }).populate("seller").limit(limit).skip(skip),
+    Product.countDocuments(query),
+  ]);
+
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
-    data: { products, total: allProducts.length },
+    data: {
+      products,
+      total: totalProductsCount,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalProductsCount / limit),
+    },
   });
 });
 
@@ -70,37 +96,6 @@ const getProduct = asyncWrapper(async (req, res, next) => {
 });
 
 // =======================================================================================
-
-const getAcceptedSellerProducts = asyncWrapper(async (req, res, next) => {
-  const { sellerId, limit, page, text } = req.query;
-  const skip = (page - 1) * limit;
-  const regex = new RegExp(text, "i");
-
-  const sellerProducts = await Product.find(
-    { title: regex, productOwner: sellerId, status: productStatus.ACCEPTED },
-    { __v: false }
-  )
-    .limit(limit)
-    .skip(skip);
-
-  const allSellerProducts = await Product.find({
-    productOwner: sellerId,
-  });
-
-  if (!sellerProducts) {
-    const error = appError.create(
-      "No products to show",
-      400,
-      httpStatusText.FAIL
-    );
-    return next(error);
-  }
-  return res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: { products: sellerProducts, total: allSellerProducts.length },
-  });
-});
-// =======================================================================================
 const addProduct = asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -109,21 +104,17 @@ const addProduct = asyncWrapper(async (req, res, next) => {
 
   const newProduct = new Product({ ...req.body });
 
-  if (req.files && req.files.length > 0) {
-    newProduct.images = req.files.map((file) => `uploads/${file?.filename}`);
-  }
-  if (req.body.options && Array.isArray(req.body.options)) {
-    newProduct.options = req.body.options;
-  }
-
   await newProduct.save();
 
-  const sellerId = req?.body?.productOwner;
+  const sellerId = req?.body?.seller;
   const targetSeller = await Seller.findById(sellerId);
 
   if (!targetSeller) {
     const error = appError.create(
-      "seller not found",
+      {
+        ar: "البائع غير موجود",
+        en: "Seller not found",
+      },
       400,
       httpStatusText.ERROR
     );
@@ -137,7 +128,10 @@ const addProduct = asyncWrapper(async (req, res, next) => {
   return res.status(201).json({
     status: httpStatusText.SUCCESS,
     data: { product: newProduct },
-    message: "Your product is under revision",
+    message: {
+      ar: "تم ارسال طلب باضافة المنتج بنجاح ",
+      en: "Product addition request sent successfully",
+    },
   });
 });
 // =======================================================================================
@@ -247,5 +241,4 @@ module.exports = {
   addProduct,
   editProduct,
   deleteProduct,
-  getAcceptedSellerProducts,
 };

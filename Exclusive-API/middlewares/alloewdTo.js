@@ -4,6 +4,7 @@ const { httpStatusText } = require("../utils/constants");
 module.exports = (...roles) => {
   return (req, res, next) => {
     const currentUserRole = req?.current?.role;
+
     if (!roles.includes(currentUserRole)) {
       const error = appError.create(
         {

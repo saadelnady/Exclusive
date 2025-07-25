@@ -12,6 +12,7 @@ const {
   productStatus,
   httpStatusText,
   sellerStatus,
+  roles,
 } = require("../utils/constants");
 
 const moment = require("moment");
@@ -236,7 +237,7 @@ const sellerLogin = asyncWrapper(async (req, res, next) => {
   if (targetSeller && matchedPassword) {
     const token = generateToken({
       id: targetSeller._id,
-      role: targetSeller.role,
+      role: roles.SELLER,
     });
     targetSeller.token = token;
     await targetSeller.save();
@@ -403,8 +404,6 @@ const getAllSellers = asyncWrapper(async (req, res, next) => {
   }
 
   if (status) {
-    console.log("status:", status); // Debug
-
     if (Array.isArray(status)) {
       searchQuery.status = { $in: status };
     } else {
@@ -557,7 +556,6 @@ const editSeller = asyncWrapper(async (req, res, next) => {
     }
   }
 
-  // التحقق من الوثائق الرسمية
   const docs = updateFields.officialDocuments;
   if (docs) {
     const { frontId, backId, commercialRegister, taxCard, otherDocs } = docs;
@@ -570,7 +568,16 @@ const editSeller = asyncWrapper(async (req, res, next) => {
       updateFields.isProfileComplete = true;
     }
   }
-
+  if (
+    updateFields?.status === sellerStatus.VERIFIED &&
+    targetSeller.isProfileComplete
+  ) {
+    await sendEmail({
+      email: targetSeller.email,
+      subject: "Account Verification Successful",
+      message: `Your account has been successfully verified. You can now start selling products.`,
+    });
+  }
   const updatedSeller = await Seller.findByIdAndUpdate(
     sellerId,
     { $set: updateFields },

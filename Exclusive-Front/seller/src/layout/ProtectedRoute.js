@@ -13,7 +13,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const decoded = decodeToken();
   const role = decoded?.role;
 
-  // لو فيه شرط على الدور، افحصه
   if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/unauthorized" replace />;
   }

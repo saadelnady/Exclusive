@@ -1,20 +1,31 @@
 const { body } = require("express-validator");
+const { productStatus } = require("../utils/constants");
 
 const productValidation = () => {
   return [
-    body("title")
+    body("title.ar")
       .notEmpty()
-      .withMessage("Product title is required")
+      .withMessage("Arabic title is required")
       .isLength({ min: 3, max: 100 })
-      .withMessage("Product title must be between 3 and 100 characters"),
+      .withMessage("Arabic title must be between 3 and 100 characters"),
 
-    body("description")
+    body("title.en")
       .notEmpty()
-      .withMessage("Product description is required")
+      .withMessage("English title is required")
+      .isLength({ min: 3, max: 100 })
+      .withMessage("English title must be between 3 and 100 characters"),
+
+    body("description.ar")
+      .notEmpty()
+      .withMessage("Arabic description is required")
       .isLength({ min: 10, max: 500 })
-      .withMessage(
-        "Product description must be between 10 and 500 characters "
-      ),
+      .withMessage("Arabic description must be between 10 and 500 characters"),
+
+    body("description.en")
+      .notEmpty()
+      .withMessage("English description is required")
+      .isLength({ min: 10, max: 500 })
+      .withMessage("English description must be between 10 and 500 characters"),
 
     body("category")
       .notEmpty()
@@ -28,39 +39,73 @@ const productValidation = () => {
       .isMongoId()
       .withMessage("Invalid subcategory ID"),
 
-    body("productOwner")
+    body("seller")
       .notEmpty()
-      .withMessage("Product owner is required")
+      .withMessage("Product seller is required")
       .isMongoId()
-      .withMessage("Invalid product owner ID"),
+      .withMessage("Invalid seller ID"),
 
-    body("options.*.size")
-      .notEmpty()
-      .withMessage("Size is required for all options"),
+    body("options")
+      .isArray({ min: 1 })
+      .withMessage("At least one option is required"),
 
-    body("options.*.color")
+    body("options.*.images")
+      .optional()
+      .isArray()
+      .withMessage("Images must be an array"),
+
+    body("options.*.attributes")
+      .isArray({ min: 1 })
+      .withMessage("Each option must have at least one attribute"),
+
+    body("options.*.attributes.*.title.ar")
       .notEmpty()
-      .withMessage("Color is required for all options"),
+      .withMessage("Arabic attribute title is required"),
+
+    body("options.*.attributes.*.title.en")
+      .notEmpty()
+      .withMessage("English attribute title is required"),
+
+    body("options.*.attributes.*.value")
+      .notEmpty()
+      .withMessage("Attribute value is required"),
 
     body("options.*.stockCount")
       .notEmpty()
-      .withMessage("stockCount is required for all options"),
+      .withMessage("Stock count is required")
+      .isInt({ min: 0 })
+      .withMessage("Stock count must be 0 or more"),
 
     body("options.*.price.priceBeforeDiscount")
       .notEmpty()
-      .withMessage("priceBeforeDiscount is required for all options"),
-
-    // body("options.*.price.discountPercentage")
-    //   .notEmpty()
-    //   .withMessage("priceBeforeDiscount is required for all options"),
+      .withMessage("Price before discount is required")
+      .isFloat({ min: 0 })
+      .withMessage("Price before discount must be 0 or more"),
 
     body("options.*.price.finalPrice")
       .notEmpty()
-      .withMessage("finalPrice is required for all options"),
+      .withMessage("Final price is required")
+      .isFloat({ min: 0 })
+      .withMessage("Final price must be 0 or more"),
 
-    // body("options.*.price.discountValue")
-    //   .notEmpty()
-    //   .withMessage("discountValue is required for all options"),
+    body("options.*.price.discountPercentage")
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage("Discount percentage must be 0 or more"),
+
+    body("options.*.price.discountValue")
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage("Discount value must be 0 or more"),
+
+    body("status")
+      .optional()
+      .isIn([
+        productStatus.ACCEPTED,
+        productStatus.BLOCKED,
+        productStatus.PENDING,
+      ])
+      .withMessage("Invalid product status"),
   ];
 };
 
