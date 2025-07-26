@@ -65,7 +65,7 @@
     }
   }
 }
-.addNewCategory {
+.addNewProduct {
   :global {
     .page-header {
       margin-bottom: 30px;
@@ -159,6 +159,7 @@
           }
         }
       }
+
       .special-select {
         position: relative;
         &::after {
@@ -186,6 +187,9 @@
         outline: none;
         border-radius: 10px;
         margin-bottom: 15px;
+        .ql-container {
+          height: 200px;
+        }
       }
       .dropdown-menu {
         text-align: right;

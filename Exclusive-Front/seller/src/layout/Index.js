@@ -12,7 +12,6 @@ import allRoutes from "./routes.js";
 const Seller = () => {
   const [isWarning, setIsWarning] = useState(false);
   const { seller } = useSelector((state) => state.sellerReducer);
-  console.log("seller", seller);
 
   const handleShowWarning = () => {
     setIsWarning(!isWarning);

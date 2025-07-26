@@ -3,6 +3,7 @@ import styles from "./styles/styles.module.scss";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Col, Row, Dropdown } from "react-bootstrap";
+import DeleteIcon from "./assets/images/svgs/ic-delete.svg";
 
 import IcError from "./assets/images/svgs/ic-error.svg";
 
@@ -13,10 +14,17 @@ import ReactQuill from "react-quill";
 import { Controller } from "react-hook-form";
 import { fetchCategories } from "@/store/actions/categories/categoriesActions";
 import { addProduct } from "@/store/actions/products/productsActions";
+import Table from "../Shared/Table/Index";
+import ProductOptionsModal from "./ProductOptionsModal";
+
 const AddNewProduct = () => {
   const { categories, currentPage, totalPages, isLoading } = useSelector(
     (state) => state.categoriesReducer
   );
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [show, setShow] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
   const {
     register,
     handleSubmit,
@@ -30,6 +38,7 @@ const AddNewProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { locale, formatMessage } = useIntl();
+  const menuRefs = useRef({});
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
@@ -79,16 +88,121 @@ const AddNewProduct = () => {
     setValue("subCategoryId", subCat._id);
     clearErrors("subCategoryId");
   };
-  const { fields: optionFields, append: appendOption } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
-    name: "options",
+    name: "items",
   });
+  const handleShow = () => {
+    setShow(!show);
+  };
+
+  const cols = [
+    {
+      label: "#",
+      name: "#",
+      render: (row, rowIdx) => <div>{rowIdx + 1}</div>,
+    },
+    {
+      label: "image",
+      name: "image",
+      render: (row, rowIdx) => (
+        <div className="img">
+          <img src={row?.image} alt="admin-img" />
+        </div>
+      ),
+    },
+    {
+      label: "title",
+      name: "title",
+      render: (row) => <div>{`${row?.title?.[locale]}`}</div>,
+    },
+    {
+      label: "subTitle",
+      name: "subTitle",
+      render: (row) => <div>{`${row?.subTitle?.[locale]}`}</div>,
+    },
+
+    {
+      label: "actions",
+      name: "actions",
+      render: (row, rowIdx) => (
+        <div
+          className="actions"
+          ref={(el) => {
+            if (el) menuRefs.current[row.id] = el;
+          }}
+        >
+          <button
+            className="actions-btn"
+            type="button"
+            onClick={() =>
+              setOpenMenuId((prev) => (prev === row.id ? null : row.id))
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <circle cx="8" cy="3" r="1.5" />
+              <circle cx="8" cy="8" r="1.5" />
+              <circle cx="8" cy="13" r="1.5" />
+            </svg>
+          </button>
+          {openMenuId === row?.id && (
+            <div className="custom-dropdown">
+              <button
+                type="button"
+                onClick={() => {
+                  handleShow();
+                  setSelectedOption(row);
+                  setSelectedIndex(rowIdx);
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="bi bi-eye"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+
+                <FormattedMessage id="view" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  // handleShowWarning();
+                  // setSelectedOption(row);
+                  // setSelectedIndex(rowIdx);
+                }}
+              >
+                <DeleteIcon />
+                <FormattedMessage id="delete" />
+              </button>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ];
   const onSubmit = async (data) => {
     // data.image = selectedImg?.preview ? selectedImg?.preview : null;
     dispatch(addProduct({ data, toast, navigate, locale }));
   };
   return (
-    <div className={`page ${styles.addNewCategory}`}>
+    <div className={`page ${styles.addNewProduct}`}>
       <div className="page-header">
         <div className="text">
           <h4 className="page-title">
@@ -292,157 +406,81 @@ const AddNewProduct = () => {
           </Col>
 
           <Col xs={12} md={6}>
-            {selectedCategory && (
-              <div className="input-wrapper">
-                <label className="label" htmlFor="subCategory">
-                  {formatMessage({ id: "subCategory" })} :
-                </label>
+            <div className="input-wrapper">
+              <label className="label" htmlFor="subCategory">
+                {formatMessage({ id: "subCategory" })} :
+              </label>
 
-                <Dropdown>
-                  <Dropdown.Toggle
-                    id="subCategory"
-                    className="special-input special-select"
-                  >
-                    {selectedSubCategory
-                      ? selectedSubCategory?.title?.[locale]
-                      : formatMessage({ id: "selectSubCategory" })}
-                  </Dropdown.Toggle>
+              <Dropdown>
+                <Dropdown.Toggle
+                  id="subCategory"
+                  className="special-input special-select"
+                >
+                  {selectedSubCategory
+                    ? selectedSubCategory?.title?.[locale]
+                    : formatMessage({ id: "selectSubCategory" })}
+                </Dropdown.Toggle>
 
-                  <Dropdown.Menu
-                    style={{
-                      maxHeight: "200px",
-                      overflowY: "auto",
-                      width: "100%",
-                    }}
-                  >
-                    {selectedCategory?.subCategories?.length > 0 ? (
-                      selectedCategory?.subCategories?.map((subCat) => (
-                        <Dropdown.Item
-                          key={subCat._id}
-                          onClick={() => handleSelectedSubCategory(subCat)}
-                        >
-                          {subCat.title?.[locale]}
-                        </Dropdown.Item>
-                      ))
-                    ) : (
+                <Dropdown.Menu
+                  style={{
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    width: "100%",
+                  }}
+                >
+                  {selectedCategory?.subCategories?.length > 0 ? (
+                    selectedCategory?.subCategories?.map((subCat) => (
                       <Dropdown.Item
-                        disabled
-                        className="text-center text-muted"
+                        key={subCat._id}
+                        onClick={() => handleSelectedSubCategory(subCat)}
                       >
-                        <FormattedMessage id="noSubCategories" />
+                        {subCat.title?.[locale]}
                       </Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
+                    ))
+                  ) : (
+                    <Dropdown.Item disabled className="text-center text-muted">
+                      <FormattedMessage id="noSubCategories" />
+                    </Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
 
-                <input
-                  type="hidden"
-                  {...register("subCategoryId", {
-                    required: formatMessage({ id: "required" }),
-                  })}
-                />
-
-                {errors.subCategoryId && errors.subCategoryId.message && (
-                  <p className="error d-flex align-items-center gap-1 mt-1">
-                    <IcError />
-                    {errors.subCategoryId.message}
-                  </p>
-                )}
-              </div>
-            )}
-          </Col>
-          {/* Options */}
-          <h3>Options</h3>
-          {optionFields.map((option, optionIndex) => (
-            <div key={option.id} className="border p-4 rounded-md">
-              {/* Images */}
               <input
-                placeholder="Image URL"
-                {...register(`options.${optionIndex}.images.0`)}
-              />
-
-              {/* Attributes */}
-              <input
-                placeholder="Attribute Title AR"
-                {...register(`options.${optionIndex}.attributes.0.title.ar`)}
-              />
-              <input
-                placeholder="Attribute Title EN"
-                {...register(`options.${optionIndex}.attributes.0.title.en`)}
-              />
-              <input
-                placeholder="Attribute Value"
-                {...register(`options.${optionIndex}.attributes.0.value`)}
-              />
-
-              {/* Stock Count */}
-              <input
-                type="number"
-                placeholder="Stock Count"
-                {...register(`options.${optionIndex}.stockCount`, {
-                  valueAsNumber: true,
+                type="hidden"
+                {...register("subCategoryId", {
+                  required: formatMessage({ id: "required" }),
                 })}
               />
 
-              {/* Price */}
-              <input
-                type="number"
-                placeholder="Price Before Discount"
-                {...register(
-                  `options.${optionIndex}.price.priceBeforeDiscount`,
-                  {
-                    valueAsNumber: true,
-                  }
-                )}
-              />
-              <input
-                type="number"
-                placeholder="Discount Percentage"
-                {...register(
-                  `options.${optionIndex}.price.discountPercentage`,
-                  {
-                    valueAsNumber: true,
-                  }
-                )}
-              />
-              <input
-                type="number"
-                placeholder="Discount Value"
-                {...register(`options.${optionIndex}.price.discountValue`, {
-                  valueAsNumber: true,
-                })}
-              />
-              <input
-                type="number"
-                placeholder="Final Price"
-                {...register(`options.${optionIndex}.price.finalPrice`, {
-                  valueAsNumber: true,
-                })}
-              />
+              {errors.subCategoryId && errors.subCategoryId.message && (
+                <p className="error d-flex align-items-center gap-1 mt-1">
+                  <IcError />
+                  {errors.subCategoryId.message}
+                </p>
+              )}
             </div>
-          ))}
+          </Col>
 
           <button
             type="button"
-            onClick={() =>
-              appendOption({
-                images: [""],
-                attributes: [{ title: { ar: "", en: "" }, value: "" }],
-                stockCount: 0,
-                price: {
-                  priceBeforeDiscount: 0,
-                  discountPercentage: 0,
-                  discountValue: 0,
-                  finalPrice: 0,
-                },
-                soldOut: 0,
-              })
-            }
+            className="btn btn-secondary mb-3 mt-2 w-25"
+            onClick={handleShow}
           >
-            + Add Option
+            <FormattedMessage id="addOption" />
           </button>
+          <h3>
+            <FormattedMessage id="options" />
+          </h3>
         </Row>
-
+        <Table cols={cols} rows={fields} />
+        <ProductOptionsModal
+          show={show}
+          handleShow={handleShow}
+          append={append}
+          selectedOption={selectedOption}
+          update={update}
+          index={selectedIndex}
+        />
         <button type="submit" className="btn submit">
           {formatMessage({ id: "addNewProduct" })}
         </button>

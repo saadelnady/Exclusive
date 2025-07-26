@@ -195,7 +195,7 @@ const Products = ({ isWarning, handleShowWarning }) => {
           </Col>
           <Col xs={12} md={4}>
             <NavLink to="/products/new">
-              + <FormattedMessage id="addCategory" />
+              + <FormattedMessage id="addProduct" />
             </NavLink>
           </Col>
           <Col xs={12} lg={5} className="me-auto">

@@ -103,5 +103,13 @@
   "noMoreCategories": "لا توجد اقسام اخرى",
   "selectSubCategory": "اختر القسم الفرعى",
   "subCategory": "القسم الفرعى",
-  "noSubCategories": "لا توجد اقسام فرعية"
+  "noSubCategories": "لا توجد اقسام فرعية",
+  "options": "الخيارات",
+  "addOption": "اضافة خيار",
+  "editOption": "تعديل خيار",
+  "selectOption": "اختر خيار",
+  "color": "اللون",
+  "size": "المقاس",
+  "weight": "الوزن",
+  "dimensions": "الابعاد"
 }
