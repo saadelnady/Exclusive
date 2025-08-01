@@ -3,10 +3,11 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
 
 import IcClose from "./assets/images/svgs/ic-close.svg";
+import IcError from "./assets/images/svgs/ic-error.svg";
 
 import styles from "./styles/modal.module.scss";
 import { attributeConfig } from "./attributeConfig";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 const OptionModal = ({
   show,
   handleShow,
@@ -15,7 +16,16 @@ const OptionModal = ({
   update,
   index,
 }) => {
-  const { register, handleSubmit, reset, control, setValue, watch } = useForm({
+  const { formatMessage, locale } = useIntl();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       images: [],
       attributes: [{ title: { ar: "", en: "" }, value: "" }],
@@ -28,6 +38,7 @@ const OptionModal = ({
       },
     },
   });
+  console.log("errors", errors);
 
   const {
     fields,
@@ -52,12 +63,16 @@ const OptionModal = ({
     } else {
       append(data);
     }
-    handleShow(); // Close modal
+    handleShow();
   };
+  const allAttributeKeys = Object.keys(attributeConfig);
+  const selectedTypes = watch("attributes")?.map((attr) => attr.type) || [];
+  const selectedValidTypes = selectedTypes.filter((t) => t);
+  const allSelected = selectedValidTypes.length >= allAttributeKeys.length;
 
   return (
     <Modal
-      size="xl"
+      dialogClassName={styles.modalFull}
       show={show}
       onHide={handleShow}
       centered
@@ -77,31 +92,28 @@ const OptionModal = ({
       </Modal.Header>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Modal.Body>
-          {/* <h6 className="mb-2">الصور</h6>
-          <Form.Control
-            type="text"
-            {...register("images.0")}
-            placeholder="رابط الصورة الأولى"
-            className="mb-3"
-          /> */}
-
           <div className="my-4 d-flex justify-content-between">
             <h6>الخصائص</h6>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              variant="secondary"
-              onClick={() =>
-                appendAttribute({ title: { ar: "", en: "" }, value: "" })
-              }
-            >
-              + إضافة خاصية
-            </button>
+
+            {!allSelected && fields.length < 4 && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() =>
+                  appendAttribute({ title: { ar: "", en: "" }, value: "" })
+                }
+              >
+                + إضافة خاصية
+              </button>
+            )}
           </div>
           <Row>
             {fields.map((field, i) => {
               const type = watch(`attributes.${i}.type`);
               const config = attributeConfig[type]?.fields || [];
+
+              const selectedTypes =
+                watch("attributes")?.map((item) => item.type) || [];
 
               return (
                 <Col key={field.id} xs={12} md={6}>
@@ -109,18 +121,38 @@ const OptionModal = ({
                     <div className="option-wrapper">
                       <label>نوع الخاصية</label>
                       <select
-                        className="special-input special-select "
-                        {...register(`attributes.${i}.type`)}
+                        className="special-input special-select"
+                        {...register(`attributes.${i}.type`, {
+                          required: formatMessage({ id: "required" }),
+                        })}
                       >
                         <option value="">
                           <FormattedMessage id="selectOption" />
                         </option>
-                        {Object.keys(attributeConfig).map((key) => (
-                          <option key={key} value={key}>
-                            <FormattedMessage id={key} />
-                          </option>
-                        ))}
+
+                        {Object.keys(attributeConfig).map((key) => {
+                          const isSelectedInAnotherField = selectedTypes.some(
+                            (t, index) => t === key && index !== i
+                          );
+
+                          return (
+                            <option
+                              key={key}
+                              value={key}
+                              disabled={isSelectedInAnotherField}
+                            >
+                              <FormattedMessage id={key} />
+                            </option>
+                          );
+                        })}
                       </select>
+                      {errors?.attributes?.[i]?.type && (
+                        <p className="error">
+                          <IcError />
+                          {errors?.attributes?.[i]?.type?.message}
+                        </p>
+                      )}
+
                       {fields.length > 1 && (
                         <button
                           type="button"
@@ -131,35 +163,68 @@ const OptionModal = ({
                         </button>
                       )}
                     </div>
+
                     <Row>
-                      {config.map((input, idx) => (
-                        <Col xs={12} md={6} key={idx}>
-                          <div className="input-wrapper">
-                            <label>{input.label}</label>
-                            <input
-                              className="special-input"
-                              type={input.type}
-                              step={input.step}
-                              {...register(`attributes.${i}.${input.name}`)}
-                            />
-                          </div>
-                        </Col>
-                      ))}
+                      {config.map((input, idx) => {
+                        const nameParts = input.name.split(".");
+                        const fieldError = nameParts.reduce(
+                          (acc, key) => acc?.[key],
+                          errors?.attributes?.[i]
+                        );
+
+                        return (
+                          <Col xs={12} md={6} key={idx}>
+                            <div className="input-wrapper">
+                              <label>{input.label}</label>
+                              <input
+                                className="special-input"
+                                type={input.type}
+                                step={input.step}
+                                {...register(`attributes.${i}.${input.name}`, {
+                                  required: formatMessage({ id: "required" }),
+                                })}
+                              />
+
+                              {fieldError?.message && (
+                                <p className="error">
+                                  <IcError />
+                                  {fieldError.message}
+                                </p>
+                              )}
+                            </div>
+                          </Col>
+                        );
+                      })}
                     </Row>
                   </div>
                 </Col>
               );
             })}
           </Row>
-
           <div className="input-wrapper mb-3">
-            <label>عدد القطع في المخزن</label>
+            <label htmlFor="stockCount">عدد القطع في المخزن</label>
             <input
+              id="stockCount"
               className="special-input"
               type="number"
-              {...register("stockCount")}
-              min={0}
+              min="0"
+              {...register("stockCount", {
+                required: formatMessage({ id: "required" }),
+                min: {
+                  value: 1,
+                  message:
+                    formatMessage({ id: "minStockIsZero" }) ||
+                    "يجب أن يكون العدد 1 أو أكثر",
+                },
+              })}
             />
+
+            {errors?.stockCount && (
+              <p className="error">
+                <IcError />
+                {errors.stockCount.message}
+              </p>
+            )}
           </div>
 
           <h6>السعر</h6>

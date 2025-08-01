@@ -215,6 +215,7 @@ const AddNewProduct = () => {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Row>
+          {/* Title */}
           <Col xs={12} md={6}>
             <div className="input-wrapper">
               <label className="label" htmlFor="titleAr">
@@ -271,6 +272,7 @@ const AddNewProduct = () => {
               )}
             </div>
           </Col>
+          {/* Description */}
           <Col xs={12} md={6}>
             <div className="input-wrapper">
               <label className="label">
@@ -307,7 +309,6 @@ const AddNewProduct = () => {
               )}
             </div>
           </Col>
-
           <Col xs={12} md={6}>
             <div className="input-wrapper">
               <label className="label">
@@ -341,6 +342,7 @@ const AddNewProduct = () => {
             </div>
           </Col>
 
+          {/* categories */}
           <Col xs={12} md={6}>
             <div className="input-wrapper">
               <label className="label" htmlFor="category">
@@ -404,7 +406,7 @@ const AddNewProduct = () => {
               )}
             </div>
           </Col>
-
+          {/* subcategories */}
           <Col xs={12} md={6}>
             <div className="input-wrapper">
               <label className="label" htmlFor="subCategory">

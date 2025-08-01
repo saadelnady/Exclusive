@@ -144,6 +144,10 @@
           position: absolute;
           top: 64px;
           left: 24px;
+          [dir="ltr"] & {
+            left: unset;
+            right: 24px;
+          }
           border: none;
           outline: none;
           background-color: transparent;
@@ -170,11 +174,12 @@
           width: 10px;
           text-align: end;
           height: 10px;
+          left: 15px;
           [dir="ltr"] & {
+            left: unset;
             right: 15px;
             text-align: start;
           }
-          left: 15px;
         }
       }
       .special-quill {

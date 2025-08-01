@@ -119,6 +119,10 @@
           position: absolute;
           top: 0;
           left: 0;
+          [dir="ltr"] & {
+            left: unset;
+            right: 0;
+          }
           width: 30px;
           height: 30px;
           display: flex;
@@ -249,4 +253,14 @@
       }
     }
   }
+}
+
+.modalFull {
+  max-width: 100vw;
+
+  @media (min-width: 1200px) {
+    max-width: 80vw;
+    margin: auto;
+  }
+  margin: 0;
 }

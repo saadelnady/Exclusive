@@ -111,5 +111,6 @@
   "color": "اللون",
   "size": "المقاس",
   "weight": "الوزن",
-  "dimensions": "الابعاد"
+  "dimensions": "الابعاد",
+  "minStockIsZero": "الكمية الادنى للمنتج يجب ان تكون 1"
 }

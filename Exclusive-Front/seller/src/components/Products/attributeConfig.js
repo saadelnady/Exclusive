@@ -24,9 +24,9 @@ export const attributeConfig = {
     fields: [
       { name: "title.ar", label: "الأبعاد (عربي)", type: "text" },
       { name: "title.en", label: "الأبعاد (إنجليزي)", type: "text" },
-      { name: "value.length", label: "الطول (سم)", type: "number" },
-      { name: "value.width", label: "العرض (سم)", type: "number" },
-      { name: "value.height", label: "الارتفاع (سم)", type: "number" },
+      { name: "value.length", label: "الطول (م)", type: "number" },
+      { name: "value.width", label: "العرض (م)", type: "number" },
+      { name: "value.height", label: "الارتفاع (م)", type: "number" },
     ],
   },
 };
